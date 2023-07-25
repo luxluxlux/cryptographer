@@ -2,12 +2,14 @@
   'abstracts/variables';
 
 @import
-  'base/reset',
+  'base/normalize',
+  'base/base',
   'base/typography';
 
 @import
+  'components/background',
+  'components/logo',
   'components/button',
-  'components/header',
   'components/input';
 
 @import

@@ -1,13 +1,13 @@
-:root{
-    --primary_color: #397FFA;
-    --secondary_color: #4050E3;
+:root {
+    --primary_color: #239EB9;
+    --secondary_color: #26798B;
+    --secondary_translucent-color: rgba(38, 121, 139, 0.5);
     --error_color: #E3565A;
-    --text-color: #000000;
-    --contrast_text-color: #FFFFFF;
-    --field_background-color: #F4F4F4;
-    --field_text-color: #A5A5A5;
-    --font-size_m: 20px;
+    --text-color: #FFFFFF;
+    --unaccented_text-color: rgba(255, 255, 255, 0.6);
+    --field_border-color: #FFFFFF;
+    --font-size_m: 18px;
     --font-size_l: 32px;
-    --border-radius: 10px;
-    --offset: 20px;
+    --border-radius: 100px;
+    --offset: 18px;
 }

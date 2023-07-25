@@ -1,12 +1,7 @@
-import { memo, forwardRef } from 'react';
+import { memo, forwardRef, HTMLProps } from 'react';
 
-interface IProps {
-    type?: string;
-    placeholder?: string;
-}
-
-const Input = forwardRef<HTMLInputElement, IProps>(({ type, placeholder }, ref) => (
-    <input ref={ref} className="input" autoComplete="off" type={type} placeholder={placeholder}/>
-));
+const Input = memo(forwardRef<HTMLInputElement, HTMLProps<HTMLInputElement>>((props, ref) => (
+    <input ref={ref} className="input" autoComplete="off" {...props} />
+)));
 
 export default Input;

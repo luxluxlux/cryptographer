@@ -1,17 +1,28 @@
 .button {
-    min-width: 150px;
-    padding: 15px 25px;
+    min-width: 200px;
+    padding: 12px 24px;
+    border: none;
     border-radius: var(--border-radius);
     font-size: var(--font-size_m);
-    color: var(--contrast_text-color);
     font-weight: bold;
-    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: 0.2s;
 
     &_primary {
         background-color: var(--primary_color);
+
+        &:hover {
+            background-color: var(--secondary_color);
+        }
     }
 
     &_secondary {
-        background-color: var(--secondary_color);
+        background-color: transparent;
+        border: 2px solid var(--primary_color);
+
+        &:hover {
+            background-color: var(--secondary_translucent-color);
+        }
     }
 }

@@ -3,12 +3,12 @@ import { clsx } from 'clsx';
 
 interface IProps {
     children: string;
-    color?: 'primary' | 'secondary';
+    style?: 'primary' | 'secondary';
     onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const Button = memo(({ children, color = 'primary', onClick }: IProps) => (
-    <button className={clsx('button', color && `button_${color}`)} onClick={onClick}>{children}</button>
+const Button = memo(({ children, style = 'primary', onClick }: IProps) => (
+    <button className={clsx('button', `button_${style}`)} onClick={onClick}>{children}</button>
 ));
 
 export default Button;

@@ -1,14 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Lobby from "pages/Lobby";
 import Password from "pages/Password";
 import Success from "pages/Success";
 import Failure from "pages/Failure";
+import Background from 'components/Background';
+import Logo from 'components/Logo';
 import "./App.scss";
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="page">
+    <div className="page">
+      <Background />
+      <div className="page__content">
+        <Logo />
         <Routes>
           <Route path="/" element={<Lobby />} />
           <Route path="/password" element={<Password />} />
@@ -16,7 +20,7 @@ function App() {
           <Route path="/failure" element={<Failure />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </div>
   );
 }
 
