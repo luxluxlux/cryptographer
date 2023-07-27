@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Header from 'components/Header';
+import Header from 'components/Logo';
 import Button from 'components/Button';
 
 const Success = memo(() => {
@@ -16,12 +16,11 @@ const Success = memo(() => {
 
     return (
         <div className="success">
-            <Header>Completed</Header>
-            <p><b>{location.state.fileName}</b> is {location.state.action}ed.</p>
+            <p className='success__description'><b>{location.state.fileName}</b> is successfully {location.state.action}ed.</p>
             <div className='password__actions'>
                 <Button onClick={handleClick}>Download</Button>
                 <Link to="/">
-                    <Button color='secondary'>Retry</Button>
+                    <Button style='secondary'>Again</Button>
                 </Link>
             </div>
         </div>
