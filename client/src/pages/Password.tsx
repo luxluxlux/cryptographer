@@ -9,10 +9,8 @@ const Password = memo(() => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const location = useLocation();
-
     const navigate = useNavigate();
 
-    // TODO Add loader image
     const [loading, setLoading] = useState(false);
 
     const handleClick = useCallback((action: 'encrypt' | 'decrypt') => {
@@ -34,16 +32,19 @@ const Password = memo(() => {
         setLoading(true);
         fetch("/crypt", { method: "POST", body: formData })
             .then(
-                (result) => {
-                    result.blob().then(data => {
+                (response) => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+
+                    return response.blob().then(data => {
                         navigate('/success', { state: { data, fileName: file.name, action } });
                     });
-                },
-                (error) => {
-                    console.error(error);
-                    navigate('/failure', { state: { fileName: file.name, action } });
                 }
-            ).finally(() => setLoading(false));
+            ).catch((error) => {
+                console.error(error);
+                navigate('/failure', { state: { fileName: file.name, action } });
+            }).finally(() => setLoading(false));
     }, [inputRef.current, location.state.file, navigate]);
 
     return (
