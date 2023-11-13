@@ -10,12 +10,10 @@ const Lobby = memo(() => {
         input.type = 'file';
         input.onchange = (event) => {
             const file = (event.target as HTMLInputElement)?.files?.[0];
-            
             if (!file) {
                 alert('An error occurred while loading.');
                 return;
             }
-
             navigate('/password', { state: { file } });
         }
         input.click();
