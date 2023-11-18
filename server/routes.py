@@ -3,6 +3,7 @@ from flask import Blueprint, request, render_template, send_file
 from cryptographer import Cryptographer
 
 routes = Blueprint("routes", __name__)
+cryptographer = Cryptographer()
 
 
 @routes.route('/')
@@ -15,8 +16,6 @@ def index():
 
 @routes.route('/crypt', methods=['POST'])
 def crypt():
-    # TODO Take out
-    cryptographer = Cryptographer()
     file = request.files.get('file')
     password = request.form.get('password')
     # TODO Handle the exception
