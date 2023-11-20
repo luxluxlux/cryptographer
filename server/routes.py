@@ -1,6 +1,6 @@
 import io
 from flask import Blueprint, request, render_template, send_file
-from cryptographer import Cryptographer
+from .cryptographer import Cryptographer
 
 routes = Blueprint("routes", __name__)
 cryptographer = Cryptographer()
