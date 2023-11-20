@@ -3,7 +3,7 @@ import base64
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from constants import TEMP_DIR
+from .constants import TEMP_DIR
 
 
 class Cryptographer:
@@ -26,6 +26,7 @@ class Cryptographer:
 
     # It should always be unique
     def __get_kdf(self):
+        # TODO Get from the configuration
         return PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,

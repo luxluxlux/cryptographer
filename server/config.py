@@ -1,6 +1,6 @@
 import os
 from configparser import ConfigParser
-from constants import TEMP_DIR
+from .constants import TEMP_DIR
 
 # Default configuration
 DEFAULT = {
