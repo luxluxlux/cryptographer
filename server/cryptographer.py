@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from .constants import TEMP_DIR
+from .config import Config
 
 
 class Cryptographer:
@@ -26,15 +27,16 @@ class Cryptographer:
 
     # It should always be unique
     def __get_kdf(self):
-        # TODO Get from the configuration
+        config = Config()
         return PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
+            algorithm=getattr(hashes, config.read('Encryption', 'Algorithm', str))(),
+            length=config.read('Encryption', 'Length', int),
             salt=self.__salt,
-            iterations=480000
+            iterations=config.read('Encryption', 'Iterations', int)
         )
 
-    def __get_salt(self):
+    @staticmethod
+    def __get_salt():
         path = os.path.join(os.path.dirname(__file__), TEMP_DIR, 'salt.bin')
         if os.path.exists(path):
             with open(path, 'rb') as file:
