@@ -9,15 +9,25 @@ DEFAULT = {
         'MaxConnectionsNumberPerMinute': 10,
         'MaxConnectionsNumberPerHour': 50,
         'MaxConnectionsNumberPerDay': 100
+    },
+    'Encryption': {
+        'Algorithm': 'SHA256',
+        'Length': 32,
+        'Iterations': 480000
     }
 }
 
 
 class Config:
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Config, cls).__new__(cls)
+        return cls.instance
+
     def __init__(self):
         self.__config = ConfigParser()
         # Don't make capital keys lower case
-        # https://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
+        # https://docs.python.org/3/library/configparser.html#configparser.ConfigParser.optionxform
         self.__config.optionxform = str
         path = os.path.join(os.path.dirname(__file__), TEMP_DIR, 'config.ini')
         if os.path.exists(path):
