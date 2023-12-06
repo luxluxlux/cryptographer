@@ -1,7 +1,7 @@
 import video from 'resources/video.mp4';
 
 const Background = () => (
-    <video autoPlay muted loop className="background">
+    <video autoPlay muted loop playsInline className="background">
         <source src={video} type="video/mp4" />
     </video>
 );
