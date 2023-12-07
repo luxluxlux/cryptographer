@@ -7,6 +7,8 @@
 
     &__image {
         width: 100px;
+        // Allows to avoid "jumps" during loading
+        height: 100px;
     }
 
     &__text {
