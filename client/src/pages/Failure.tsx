@@ -7,9 +7,9 @@ const Failure = memo(() => {
     const location = useLocation();
 
     return <div className="failure">
-        <p><b>{location.state.fileName}</b> isn’t {location.state.action}ed.</p>
+        <p className='failure__description'><b>{location.state.fileName}</b> isn’t {location.state.action}ed.</p>
         <Link to="/">
-            <Button style='secondary'>Retry</Button>
+            <Button>Retry</Button>
         </Link>
     </div>
 });
