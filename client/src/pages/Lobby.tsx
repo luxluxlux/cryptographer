@@ -6,6 +6,7 @@ const Lobby = memo(() => {
     const navigate = useNavigate();
 
     const handleClick = useCallback(() => {
+        // TODO Clean
         var input = document.createElement('input');
         input.type = 'file';
         input.onchange = (event) => {
@@ -17,7 +18,6 @@ const Lobby = memo(() => {
             navigate('/password', { state: { file } });
         }
         input.click();
-        // TODO Clean
     }, [navigate]);
 
     return (

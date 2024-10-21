@@ -15,8 +15,8 @@ def create_app():
         f"{config.read('Limits', 'MaxConnectionsNumberPerHour', int)} per hour",
         f"{config.read('Limits', 'MaxConnectionsNumberPerDay', int)} per day"
     ])
-    # Maximum file size for uploading
-    app.config['MAX_CONTENT_LENGTH'] = config.read(
-        'Limits', 'MaxContentSize', int)
+    # # Maximum file size for uploading
+    # app.config['MAX_CONTENT_LENGTH'] = config.read(
+    #     'Limits', 'MaxContentSize', int)
     app.register_blueprint(routes)
     return app

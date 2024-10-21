@@ -10,7 +10,6 @@ const Success = memo(() => {
         anchor.href = window.URL.createObjectURL(location.state.data);
         anchor.download = location.state.fileName;
         anchor.click();
-        // TODO Clean
     }, []);
 
     return (

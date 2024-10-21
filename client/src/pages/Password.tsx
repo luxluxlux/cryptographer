@@ -2,6 +2,7 @@ import { memo, useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
+import { crypt } from 'utils/crypto';
 import Button from 'components/Button';
 import Input from 'components/Input';
 
@@ -13,7 +14,7 @@ const Password = memo(() => {
 
     const [loading, setLoading] = useState(false);
 
-    const handleClick = useCallback((action: 'encrypt' | 'decrypt') => {
+    const handleClick = useCallback(async (action: 'encrypt' | 'decrypt') => {
         const password = inputRef.current?.value;
 
         const validation = validatePassword(password);
@@ -22,29 +23,24 @@ const Password = memo(() => {
             return;
         }
 
-        const file = location.state.file
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("password", password as string);
-        formData.append("action", action);
-
-        // TODO Maybe use Axios
         setLoading(true);
-        fetch("/crypt", { method: "POST", body: formData })
-            .then(
-                (response) => {
-                    if (!response.ok) {
-                        throw new Error(response.statusText);
-                    }
-                    return response.blob().then(data => {
-                        navigate('/success', { state: { data, fileName: file.name, action } });
-                    });
+        const file = location.state.file;
+        try {
+            const data = await crypt(file, password as string, action);
+            navigate('/success', {
+                state: {
+                    data: new Blob([data], { type: file.type }),
+                    fileName: file.name,
+                    action
                 }
-            ).catch((error) => {
-                console.error(error);
-                navigate('/failure', { state: { fileName: file.name, action } });
-            }).finally(() => setLoading(false));
-    }, [inputRef.current, location.state.file, navigate]);
+            });
+        } catch (error) {
+            console.error(error);
+            navigate('/failure', { state: { fileName: file.name, action } });
+        } finally {
+            setLoading(false);
+        }
+    }, [location, navigate]);
 
     return (
         <div className={clsx("password", loading && 'password__loading')}>
