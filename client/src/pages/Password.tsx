@@ -1,20 +1,40 @@
 import { memo, useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
+import { lib } from 'crypto-js';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
-import { crypt } from 'utils/crypto';
+import { download, upload } from 'utils/common';
+import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Button from 'components/Button';
 import Input from 'components/Input';
+import createImg from 'resources/create.svg';
+import uploadImg from 'resources/upload.svg';
 
 const Password = memo(() => {
     const inputRef = useRef<HTMLInputElement>(null);
-
     const location = useLocation();
     const navigate = useNavigate();
 
+    const [secretKey, setSecretKey] = useState<lib.WordArray>();
     const [loading, setLoading] = useState(false);
 
-    const handleClick = useCallback(async (action: 'encrypt' | 'decrypt') => {
+    const handleGetSecretKeyClick = useCallback(() => {
+        const data = generateSecretKey();
+        setSecretKey(data);
+        download(new Blob([data.toString()]), 'secret_key.dat');
+    }, []);
+
+    const handleAddSecretKeyClick = useCallback(async () => {
+        try {
+            const file = await upload();
+            setSecretKey(await parseSecretKey(file));
+        } catch (error) {
+            console.error(error);
+            // TODO Show a messagebox (maybe create an error logger)
+        }
+    }, []);
+
+    const handleCryptClick = useCallback(async (action: 'encrypt' | 'decrypt') => {
         const password = inputRef.current?.value;
 
         const validation = validatePassword(password);
@@ -26,7 +46,7 @@ const Password = memo(() => {
         setLoading(true);
         const file = location.state.file;
         try {
-            const data = await crypt(file, password as string, action);
+            const data = await crypt(action, file, secretKey || password as string);
             navigate('/success', {
                 state: {
                     data: new Blob([data], { type: file.type }),
@@ -40,17 +60,21 @@ const Password = memo(() => {
         } finally {
             setLoading(false);
         }
-    }, [location, navigate]);
+    }, [location.state.file, navigate, secretKey]);
 
     return (
         <div className={clsx("password", loading && 'password__loading')}>
-            {/* FIXME Value forwarding without onChange */}
-            {/* TODO Add update file button */}
-            <Input ref={inputRef} value={location.state.file.name} />
-            <Input ref={inputRef} type='password' maxLength={MAX_PASSWORD_LENGTH} placeholder='Enter the password' />
+            <Input ref={inputRef} defaultValue={location.state.file.name} readOnly={true} />
+            <div className="password__keys">
+                <Input ref={inputRef} type='password' maxLength={MAX_PASSWORD_LENGTH} placeholder='Enter the password' />
+                {/* TODO Support adaptive version */}
+                <Button onClick={() => handleGetSecretKeyClick()} icon={createImg} title="Create secret key" />
+                <Button onClick={() => handleAddSecretKeyClick()} icon={uploadImg} title="Upload secret key" />
+            </div>
+            {secretKey && <div className='password__message'>The secret key successfully loaded</div>}
             <div className='password__actions'>
-                <Button onClick={() => handleClick('encrypt')}>Encrypt</Button>
-                <Button onClick={() => handleClick('decrypt')} style="secondary">Decrypt</Button>
+                <Button onClick={() => handleCryptClick('encrypt')}>Encrypt</Button>
+                <Button onClick={() => handleCryptClick('decrypt')} style="secondary">Decrypt</Button>
             </div>
         </div>
     );

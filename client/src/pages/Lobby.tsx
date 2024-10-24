@@ -1,23 +1,19 @@
 import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { upload } from 'utils/common';
 import Button from 'components/Button';
 
 const Lobby = memo(() => {
     const navigate = useNavigate();
 
-    const handleClick = useCallback(() => {
-        // TODO Clean
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = (event) => {
-            const file = (event.target as HTMLInputElement)?.files?.[0];
-            if (!file) {
-                alert('An error occurred while loading.');
-                return;
-            }
+    const handleClick = useCallback(async () => {
+        try {
+            const file = await upload();
             navigate('/password', { state: { file } });
+        } catch (error) {
+            console.error(error);
+            // TODO Show a messagebox (maybe create an error logger)
         }
-        input.click();
     }, [navigate]);
 
     return (
