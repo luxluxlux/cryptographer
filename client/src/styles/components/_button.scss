@@ -7,6 +7,9 @@
     color: var(--text-color);
     cursor: pointer;
     transition: 0.2s;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 
     &_primary {
         background-color: var(--primary_color);
@@ -23,5 +26,16 @@
         &:hover {
             background-color: var(--secondary_translucent-color);
         }
+    }
+    
+    &_icon {
+        padding: 12px;
+        // FIXME Has no alignment with text
+        line-height: 0;
+    }
+
+    &__icon {
+        width: var(--font-size_m);
+        height: var(--font-size_m);
     }
 }

@@ -1,16 +1,14 @@
 import { memo, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { download } from 'utils/common';
 import Button from 'components/Button';
 
 const Success = memo(() => {
     const location = useLocation();
 
     const handleClick = useCallback(() => {
-        const anchor = document.createElement('a');
-        anchor.href = window.URL.createObjectURL(location.state.data);
-        anchor.download = location.state.fileName;
-        anchor.click();
-    }, []);
+        download(location.state.data, location.state.fileName);
+    }, [location.state.data, location.state.fileName]);
 
     return (
         <div className="success">
