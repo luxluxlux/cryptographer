@@ -1,4 +1,4 @@
-import { AES, PBKDF2, lib, enc } from 'crypto-js';
+import { AES, PBKDF2, HmacSHA256, lib, enc } from 'crypto-js';
 
 /**
  * Extract data as ArrayBuffer from file
@@ -57,7 +57,7 @@ export function generateSalt() {
  */
 function getHashedKey(key: lib.WordArray | string, salt: lib.WordArray) {
     return typeof key === 'string' ? PBKDF2(key, salt, {
-        // Get from the config
+        // TODO Get size from the config
         keySize: 256 / 32,
         iterations: 1000
     }) : key;
@@ -91,12 +91,13 @@ export async function encrypt(file: File, key: lib.WordArray | string): Promise<
     const hashedkey = getHashedKey(key, salt);
     const arrBuffer = await readAsArrayBuffer(file);
     const wordArray = lib.WordArray.create(arrBuffer);
-    // Get from the config
+    // TODO Get size from the config
     const iv = lib.WordArray.random(128 / 8);
+    const data = AES.encrypt(wordArray, hashedkey, { iv });
+    const dataStr = data.toString();
+    const hmac = HmacSHA256(dataStr, hashedkey);
     // FIXME Don't include the salt in a secretKey mode
-    // TODO Calculate HMAC
-    //  https://stackoverflow.com/questions/29067371/how-to-add-hmac-to-cryptojs-aes-encryption
-    return salt.toString() + iv.toString() + AES.encrypt(wordArray, hashedkey, { iv }).toString();
+    return salt.toString() + iv.toString() + hmac.toString() + dataStr;
 }
 
 /**
@@ -107,12 +108,17 @@ export async function encrypt(file: File, key: lib.WordArray | string): Promise<
 export async function decrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
     const text = await readAsText(file);
     // FIXME Don't generate the salt in a secretKey mode
+    // TODO Get positions from the config
     const salt = enc.Hex.parse(text.slice(0, 32));
     const hashedkey = getHashedKey(key, salt);
-    // Get from the config
     const iv = enc.Hex.parse(text.slice(32, 64));
-    const decrypted = AES.decrypt(text.slice(64), hashedkey, { iv });
-    return wordArrayToUint8Array(decrypted);
+    const hmac = enc.Hex.parse(text.slice(64, 128));
+    const dataStr = text.slice(128);
+    if (HmacSHA256(dataStr, hashedkey).toString() !== hmac.toString()) {
+        throw new Error("The HMAC isn't correct");
+    }
+    const data = AES.decrypt(dataStr, hashedkey, { iv });
+    return wordArrayToUint8Array(data);
 }
 
 /**
