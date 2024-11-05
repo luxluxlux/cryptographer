@@ -5,16 +5,10 @@ from .constants import TEMP_DIR
 # Default configuration
 DEFAULT = {
     'Limits': {
-        # 'MaxContentSize': 10485760,
         'MaxConnectionsNumberPerMinute': 10,
         'MaxConnectionsNumberPerHour': 50,
         'MaxConnectionsNumberPerDay': 100
     }
-    # 'Encryption': {
-    #     'Algorithm': 'SHA256',
-    #     'Length': 32,
-    #     'Iterations': 480000
-    # }
 }
 
 
