@@ -1,5 +1,5 @@
 /**
- * Upload file
+ * Upload file by the system dialog
  */
 export async function upload() {
     return new Promise<File>((resolve, reject) => {

@@ -79,15 +79,13 @@ export function generateSalt() {
 }
 
 /**
- * Get key for cryption
- * @param key Secret key ot password
- * @param salt Salt if necessary
+ * Hash key for cryption
  */
-function getHashedKey(key: lib.WordArray | string, salt: lib.WordArray) {
-    return typeof key === 'string' ? PBKDF2(key, salt, {
+function getKey(password: string, salt: lib.WordArray) {
+    return PBKDF2(password, salt, {
         keySize: bitsToWords(KEY_SIZE),
         iterations: KEY_ITERATIONS
-    }) : key;
+    });
 }
 
 /**
@@ -114,6 +112,14 @@ function calcHMAC(data: lib.CipherParams | string, iv: lib.WordArray, key: lib.W
 }
 
 /**
+ * Check if key needs hashing
+ * @param key Secret key or password
+ */
+function isHashRequired(key: lib.WordArray | string): key is 'string' {
+    return typeof key === 'string';
+}
+
+/**
  * Build file by encrypted data
  * @returns Encrypted data
  */
@@ -123,13 +129,12 @@ function buildFile({
     iv,
     data
 }: {
-    salt: lib.WordArray,
+    salt?: lib.WordArray,
     hmac: lib.WordArray,
     iv: lib.WordArray,
     data: lib.CipherParams
 }): BlobPart {
-    // FIXME Don't include the salt in a secretKey mode
-    return salt.toString() + hmac.toString() + iv.toString() + data.toString();
+    return [salt?.toString(), hmac.toString(), iv.toString(), data.toString()].filter(Boolean).join('');
 }
 
 /**
@@ -153,13 +158,15 @@ function substr(str: string, sizeArr: number[]) {
 /**
  * Parse file with encrypted data
  * @param file Processed file
+ * @param hasSalt Includes salt or not
  */
-async function parseFile(file: File) {
+async function parseFile(file: File, hasSalt?: boolean) {
     const text = await readAsText(file);
     // We are using SHA256 for HMAC calulation
-    const [saltStr, hmacStr, ivStr, data] = substr(text, [bitsToHex(SALT_SIZE), bitsToHex(256), bitsToHex(IV_SIZE)]);
+    const sizes = [hasSalt ? bitsToHex(SALT_SIZE) : 0, bitsToHex(256), bitsToHex(IV_SIZE)];
+    const [saltStr, hmacStr, ivStr, data] = substr(text, sizes);
     return {
-        salt: enc.Hex.parse(saltStr),
+        salt: saltStr ? enc.Hex.parse(saltStr) : undefined,
         hmac: enc.Hex.parse(hmacStr),
         iv: enc.Hex.parse(ivStr),
         dataStr: data,
@@ -172,8 +179,9 @@ async function parseFile(file: File) {
  * @param key Secret key or password
  */
 export async function encrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
-    const salt = generateSalt();
-    const hashedkey = getHashedKey(key, salt);
+    const hashIsRequired = isHashRequired(key);
+    const salt = hashIsRequired ? generateSalt() : undefined;
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
     const iv = lib.WordArray.random(bitsToBytes(IV_SIZE));
     const arrBuffer = await readAsArrayBuffer(file);
     const wordArray = lib.WordArray.create(arrBuffer);
@@ -193,8 +201,9 @@ export async function encrypt(file: File, key: lib.WordArray | string): Promise<
  * @param key Secret key or password
  */
 export async function decrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
-    const { salt, hmac, iv, dataStr } = await parseFile(file);
-    const hashedkey = getHashedKey(key, salt);
+    const hashIsRequired = isHashRequired(key);
+    const { salt, hmac, iv, dataStr } = await parseFile(file, hashIsRequired);
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
     if (calcHMAC(dataStr, iv, hashedkey).toString() !== hmac.toString()) {
         throw new Error("The HMAC isn't correct");
     }
