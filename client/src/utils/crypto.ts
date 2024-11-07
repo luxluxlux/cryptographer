@@ -1,5 +1,8 @@
 import { AES, PBKDF2, HmacSHA256, lib, enc } from 'crypto-js';
-import { SALT_SIZE, IV_SIZE, KEY_SIZE, KEY_ITERATIONS, SECRET_KEY_SIZE } from './constants';
+import { VERSION, VERSION_SIZE, SALT_SIZE, IV_SIZE, KEY_SIZE, KEY_ITERATIONS, SECRET_KEY_SIZE } from './constants';
+
+// HEX view of the web app version
+const HEX_VERSION = VERSION.split('.').map((str) => numToHex(+str, bitsToHex(VERSION_SIZE))).join('');
 
 /**
  * Extract data as ArrayBuffer from file
@@ -51,6 +54,15 @@ function bitsToHex(size: number) {
  */
 function bitsToWords(size: number) {
     return size / 32;
+}
+
+/**
+ * Convert a number to a hex string
+ * @param num Number
+ * @param pad Total number of characters
+ */
+function numToHex(num: number, pad: number) {
+    return num.toString(16).padStart(pad, '0');
 }
 
 /**
@@ -134,7 +146,7 @@ function buildFile({
     iv: lib.WordArray,
     data: lib.CipherParams
 }): BlobPart {
-    return [salt?.toString(), hmac.toString(), iv.toString(), data.toString()].filter(Boolean).join('');
+    return [HEX_VERSION, salt?.toString(), hmac.toString(), iv.toString(), data.toString()].filter(Boolean).join('');
 }
 
 /**
@@ -163,8 +175,10 @@ function substr(str: string, sizeArr: number[]) {
 async function parseFile(file: File, hasSalt?: boolean) {
     const text = await readAsText(file);
     // We are using SHA256 for HMAC calulation
-    const sizes = [hasSalt ? bitsToHex(SALT_SIZE) : 0, bitsToHex(256), bitsToHex(IV_SIZE)];
-    const [saltStr, hmacStr, ivStr, data] = substr(text, sizes);
+    // The version includes 3 single numbers
+    const sizes = [bitsToHex(3 * VERSION_SIZE), hasSalt ? bitsToHex(SALT_SIZE) : 0, bitsToHex(256), bitsToHex(IV_SIZE)];
+    // The first value is reserved for the version
+    const [_, saltStr, hmacStr, ivStr, data] = substr(text, sizes);
     return {
         salt: saltStr ? enc.Hex.parse(saltStr) : undefined,
         hmac: enc.Hex.parse(hmacStr),
