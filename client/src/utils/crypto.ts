@@ -1,4 +1,8 @@
 import { AES, PBKDF2, HmacSHA256, lib, enc } from 'crypto-js';
+import { VERSION, VERSION_SIZE, SALT_SIZE, IV_SIZE, KEY_SIZE, KEY_ITERATIONS, SECRET_KEY_SIZE } from './constants';
+
+// HEX view of the web app version
+const HEX_VERSION = VERSION.split('.').map((str) => numToHex(+str, bitsToHex(VERSION_SIZE))).join('');
 
 /**
  * Extract data as ArrayBuffer from file
@@ -25,8 +29,45 @@ async function readAsText(file: File) {
 }
 
 /**
+ * Calculate bytes size by bits
+ * @param size Size in bits
+ * @returns Size in bytes
+ */
+function bitsToBytes(size: number) {
+    return size / 8;
+}
+
+/**
+ * Calculate hex size by bits
+ * Hex is used as the default toString() converter in crypto-js
+ * @param size Size in bits
+ * @returns Size in hex
+ */
+function bitsToHex(size: number) {
+    return size / 4;
+}
+
+/**
+ * Calculate crypto-js word count by bits
+ * @param size Size in bits
+ * @returns Word count
+ */
+function bitsToWords(size: number) {
+    return size / 32;
+}
+
+/**
+ * Convert a number to a hex string
+ * @param num Number
+ * @param pad Total number of characters
+ */
+function numToHex(num: number, pad: number) {
+    return num.toString(16).padStart(pad, '0');
+}
+
+/**
  * Convert WordArray to native Uint8Array
- * TODO Maybe it's a good idea to use TextEncoder, but there are a lot of difficulties have to do
+ * Maybe it's a good idea to use TextEncoder, but there are a lot of difficulties have to do
  * with the encoding detection. At least this solution is faster.
  */
 function wordArrayToUint8Array(wordArray: lib.WordArray) {
@@ -46,30 +87,24 @@ function wordArrayToUint8Array(wordArray: lib.WordArray) {
  * Generate random salt
  */
 export function generateSalt() {
-    return lib.WordArray.random(128 / 8);
+    return lib.WordArray.random(bitsToBytes(SALT_SIZE));
 }
 
 /**
- * Get key for cryption
- * FIXME Genereate salt inside if necessary
- * @param key Secret key ot password
- * @param salt Salt if necessary
+ * Hash key for cryption
  */
-function getHashedKey(key: lib.WordArray | string, salt: lib.WordArray) {
-    return typeof key === 'string' ? PBKDF2(key, salt, {
-        // TODO Get size from the config
-        keySize: 256 / 32,
-        iterations: 1000
-    }) : key;
+function getKey(password: string, salt: lib.WordArray) {
+    return PBKDF2(password, salt, {
+        keySize: bitsToWords(KEY_SIZE),
+        iterations: KEY_ITERATIONS
+    });
 }
 
 /**
  * Generate secret key
- * TODO Probably generate by the mouse moving
  */
 export function generateSecretKey() {
-    // TODO Maybe make it longer
-    return lib.WordArray.random(512 / 8);
+    return lib.WordArray.random(bitsToBytes(SECRET_KEY_SIZE));
 }
 
 /**
@@ -82,39 +117,108 @@ export async function parseSecretKey(file: File) {
 }
 
 /**
- * Encrypt a file by secret data
- * @param file Processed file
- * @param key Secret key ot password
+ * Calculate HMAC
  */
-export async function encrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
-    const salt = generateSalt();
-    const hashedkey = getHashedKey(key, salt);
-    const arrBuffer = await readAsArrayBuffer(file);
-    const wordArray = lib.WordArray.create(arrBuffer);
-    // TODO Get size from the config
-    const iv = lib.WordArray.random(128 / 8);
-    const data = AES.encrypt(wordArray, hashedkey, { iv });
-    const dataStr = data.toString();
-    const hmac = HmacSHA256(dataStr, hashedkey);
-    // FIXME Don't include the salt in a secretKey mode
-    return salt.toString() + iv.toString() + hmac.toString() + dataStr;
+function calcHMAC(data: lib.CipherParams | string, iv: lib.WordArray, key: lib.WordArray) {
+    return HmacSHA256((typeof data === 'string' ? data : data.toString()) + iv.toString(), key);
 }
 
 /**
- * Decrypt a file by secret data
+ * Check if key needs hashing
+ * @param key Secret key or password
+ */
+function isHashRequired(key: lib.WordArray | string): key is 'string' {
+    return typeof key === 'string';
+}
+
+/**
+ * Build file by encrypted data
+ * @returns Encrypted data
+ */
+function buildFile({
+    salt,
+    hmac,
+    iv,
+    data
+}: {
+    salt?: lib.WordArray,
+    hmac: lib.WordArray,
+    iv: lib.WordArray,
+    data: lib.CipherParams
+}): BlobPart {
+    return [HEX_VERSION, salt?.toString(), hmac.toString(), iv.toString(), data.toString()].filter(Boolean).join('');
+}
+
+/**
+ * Extract the substrings of different sizes
+ * 'Text', [1, 2] > ['T', 'ex', 't']
+ * @param str String
+ * @param sizeArr Array of sizes
+ * @returns Substrings array
+ */
+function substr(str: string, sizeArr: number[]) {
+    let substrngs = [];
+    let pos = 0;
+    for (const size of sizeArr) {
+        substrngs.push(str.slice(pos, pos + size));
+        pos += size;
+    }
+    substrngs.push(str.slice(pos));
+    return substrngs;
+}
+
+/**
+ * Parse file with encrypted data
  * @param file Processed file
- * @param key Secret key ot password
+ * @param hasSalt Includes salt or not
+ */
+async function parseFile(file: File, hasSalt?: boolean) {
+    const text = await readAsText(file);
+    // We are using SHA256 for HMAC calulation
+    // The version includes 3 single numbers
+    const sizes = [bitsToHex(3 * VERSION_SIZE), hasSalt ? bitsToHex(SALT_SIZE) : 0, bitsToHex(256), bitsToHex(IV_SIZE)];
+    // The first value is reserved for the version
+    const [_, saltStr, hmacStr, ivStr, data] = substr(text, sizes);
+    return {
+        salt: saltStr ? enc.Hex.parse(saltStr) : undefined,
+        hmac: enc.Hex.parse(hmacStr),
+        iv: enc.Hex.parse(ivStr),
+        dataStr: data,
+    }
+}
+
+/**
+ * Encrypt a file by a secret data
+ * @param file Processed file
+ * @param key Secret key or password
+ */
+export async function encrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
+    const hashIsRequired = isHashRequired(key);
+    const salt = hashIsRequired ? generateSalt() : undefined;
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
+    const iv = lib.WordArray.random(bitsToBytes(IV_SIZE));
+    const arrBuffer = await readAsArrayBuffer(file);
+    const wordArray = lib.WordArray.create(arrBuffer);
+    const data = AES.encrypt(wordArray, hashedkey, { iv });
+    const hmac = calcHMAC(data, iv, hashedkey);
+    return buildFile({
+        salt,
+        hmac,
+        iv,
+        data,
+    });
+}
+
+/**
+ * Decrypt a file by a secret data
+ * @param file Processed file
+ * @param key Secret key or password
  */
 export async function decrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
-    const text = await readAsText(file);
-    // FIXME Don't generate the salt in a secretKey mode
-    // TODO Get positions from the config
-    const salt = enc.Hex.parse(text.slice(0, 32));
-    const hashedkey = getHashedKey(key, salt);
-    const iv = enc.Hex.parse(text.slice(32, 64));
-    const hmac = enc.Hex.parse(text.slice(64, 128));
-    const dataStr = text.slice(128);
-    if (HmacSHA256(dataStr, hashedkey).toString() !== hmac.toString()) {
+    const hashIsRequired = isHashRequired(key);
+    const { salt, hmac, iv, dataStr } = await parseFile(file, hashIsRequired);
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
+    if (calcHMAC(dataStr, iv, hashedkey).toString() !== hmac.toString()) {
         throw new Error("The HMAC isn't correct");
     }
     const data = AES.decrypt(dataStr, hashedkey, { iv });
@@ -133,5 +237,3 @@ export async function crypt(action: 'encrypt' | 'decrypt', ...args: [File, lib.W
             return decrypt(...args);
     }
 }
-
-
