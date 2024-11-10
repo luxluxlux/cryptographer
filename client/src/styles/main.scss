@@ -1,22 +1,9 @@
-@import
-  'abstracts/variables';
+@import 'abstracts/variables';
 
-@import
-  'base/normalize',
-  'base/base',
-  'base/typography';
+@import 'base/normalize', 'base/base', 'base/typography';
 
-@import
-  'components/background',
-  'components/logo',
-  'components/button',
-  'components/input';
+@import 'components/background', 'components/logo', 'components/button', 'components/input';
 
-@import
-  'layout/page';
+@import 'layout/page';
 
-@import
-  'pages/failure',
-  'pages/lobby',
-  'pages/password',
-  'pages/success';
+@import 'pages/failure', 'pages/lobby', 'pages/password', 'pages/success';

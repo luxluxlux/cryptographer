@@ -6,12 +6,16 @@ import Button from 'components/Button';
 const Failure = memo(() => {
     const location = useLocation();
 
-    return <div className="failure">
-        <p className='failure__description'><b>{location.state.fileName}</b> isn’t {location.state.action}ed.</p>
-        <Link to="/">
-            <Button>Retry</Button>
-        </Link>
-    </div>
+    return (
+        <div className="failure">
+            <p className="failure__description">
+                <b>{location.state.fileName}</b> isn’t {location.state.action}ed.
+            </p>
+            <Link to="/">
+                <Button>Retry</Button>
+            </Link>
+        </div>
+    );
 });
 
 export default Failure;

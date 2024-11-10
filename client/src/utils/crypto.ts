@@ -1,8 +1,18 @@
 import { AES, PBKDF2, HmacSHA256, lib, enc } from 'crypto-js';
-import { VERSION, VERSION_SIZE, SALT_SIZE, IV_SIZE, KEY_SIZE, KEY_ITERATIONS, SECRET_KEY_SIZE } from './constants';
+import {
+    VERSION,
+    VERSION_SIZE,
+    SALT_SIZE,
+    IV_SIZE,
+    KEY_SIZE,
+    KEY_ITERATIONS,
+    SECRET_KEY_SIZE,
+} from './constants';
 
 // HEX view of the web app version
-const HEX_VERSION = VERSION.split('.').map((str) => numToHex(+str, bitsToHex(VERSION_SIZE))).join('');
+const HEX_VERSION = VERSION.split('.')
+    .map((str) => numToHex(+str, bitsToHex(VERSION_SIZE)))
+    .join('');
 
 /**
  * Extract data as ArrayBuffer from file
@@ -12,7 +22,7 @@ async function readAsArrayBuffer(file: File) {
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
         reader.onload = () => resolve(reader.result as ArrayBuffer);
-        reader.onerror = error => reject(error);
+        reader.onerror = (error) => reject(error);
     });
 }
 
@@ -24,7 +34,7 @@ async function readAsText(file: File) {
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => resolve(reader.result as string);
-        reader.onerror = error => reject(error);
+        reader.onerror = (error) => reject(error);
     });
 }
 
@@ -96,7 +106,7 @@ export function generateSalt() {
 function getKey(password: string, salt: lib.WordArray) {
     return PBKDF2(password, salt, {
         keySize: bitsToWords(KEY_SIZE),
-        iterations: KEY_ITERATIONS
+        iterations: KEY_ITERATIONS,
     });
 }
 
@@ -139,14 +149,16 @@ function buildFile({
     salt,
     hmac,
     iv,
-    data
+    data,
 }: {
-    salt?: lib.WordArray,
-    hmac: lib.WordArray,
-    iv: lib.WordArray,
-    data: lib.CipherParams
+    salt?: lib.WordArray;
+    hmac: lib.WordArray;
+    iv: lib.WordArray;
+    data: lib.CipherParams;
 }): BlobPart {
-    return [HEX_VERSION, salt?.toString(), hmac.toString(), iv.toString(), data.toString()].filter(Boolean).join('');
+    return [HEX_VERSION, salt?.toString(), hmac.toString(), iv.toString(), data.toString()]
+        .filter(Boolean)
+        .join('');
 }
 
 /**
@@ -176,7 +188,12 @@ async function parseFile(file: File, hasSalt?: boolean) {
     const text = await readAsText(file);
     // We are using SHA256 for HMAC calulation
     // The version includes 3 single numbers
-    const sizes = [bitsToHex(3 * VERSION_SIZE), hasSalt ? bitsToHex(SALT_SIZE) : 0, bitsToHex(256), bitsToHex(IV_SIZE)];
+    const sizes = [
+        bitsToHex(3 * VERSION_SIZE),
+        hasSalt ? bitsToHex(SALT_SIZE) : 0,
+        bitsToHex(256),
+        bitsToHex(IV_SIZE),
+    ];
     // The first value is reserved for the version
     const [_, saltStr, hmacStr, ivStr, data] = substr(text, sizes);
     return {
@@ -184,7 +201,7 @@ async function parseFile(file: File, hasSalt?: boolean) {
         hmac: enc.Hex.parse(hmacStr),
         iv: enc.Hex.parse(ivStr),
         dataStr: data,
-    }
+    };
 }
 
 /**
@@ -195,7 +212,7 @@ async function parseFile(file: File, hasSalt?: boolean) {
 export async function encrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
     const hashIsRequired = isHashRequired(key);
     const salt = hashIsRequired ? generateSalt() : undefined;
-    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : (key as lib.WordArray);
     const iv = lib.WordArray.random(bitsToBytes(IV_SIZE));
     const arrBuffer = await readAsArrayBuffer(file);
     const wordArray = lib.WordArray.create(arrBuffer);
@@ -217,7 +234,7 @@ export async function encrypt(file: File, key: lib.WordArray | string): Promise<
 export async function decrypt(file: File, key: lib.WordArray | string): Promise<BlobPart> {
     const hashIsRequired = isHashRequired(key);
     const { salt, hmac, iv, dataStr } = await parseFile(file, hashIsRequired);
-    const hashedkey = hashIsRequired ? getKey(key, salt!) : key as lib.WordArray;
+    const hashedkey = hashIsRequired ? getKey(key, salt!) : (key as lib.WordArray);
     if (calcHMAC(dataStr, iv, hashedkey).toString() !== hmac.toString()) {
         throw new Error("The HMAC isn't correct");
     }
@@ -229,7 +246,10 @@ export async function decrypt(file: File, key: lib.WordArray | string): Promise<
  * Crypt a file by a secret data
  * @param action Type of an action
  */
-export async function crypt(action: 'encrypt' | 'decrypt', ...args: [File, lib.WordArray | string]) {
+export async function crypt(
+    action: 'encrypt' | 'decrypt',
+    ...args: [File, lib.WordArray | string]
+) {
     switch (action) {
         case 'encrypt':
             return encrypt(...args);

@@ -7,7 +7,7 @@ export async function upload() {
         input.type = 'file';
         input.click();
         input.onchange = (event) => resolve((event.target as HTMLInputElement).files![0]);
-        input.onerror = error => reject(error);
+        input.onerror = (error) => reject(error);
     });
 }
 

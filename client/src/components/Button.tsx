@@ -17,7 +17,7 @@ const Button = memo(({ children, style = 'primary', icon, title, onClick }: IPro
         onClick={onClick}
     >
         {/* FIXME Temporary solution, move to background CSS-property */}
-        {icon && <img className='button__icon' src={icon} alt='' />}
+        {icon && <img className="button__icon" src={icon} alt="" />}
         {children}
     </button>
 ));
