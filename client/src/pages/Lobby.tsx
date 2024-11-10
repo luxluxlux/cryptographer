@@ -18,7 +18,7 @@ const Lobby = memo(() => {
 
     return (
         <div className="lobby">
-            <div className='lobby__description'>
+            <div className="lobby__description">
                 <p>The easiest way to protect your files with the password.</p>
                 <p>Choose a file on your computer to encrypt.</p>
             </div>
@@ -27,4 +27,6 @@ const Lobby = memo(() => {
     );
 });
 
-export default Lobby;
+Lobby.displayName = 'Lobby';
+
+export default memo(Lobby);

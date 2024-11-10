@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { download } from 'utils/common';
 import Button from 'components/Button';
 
-const Success = memo(() => {
+const Success = () => {
     const location = useLocation();
 
     const handleClick = useCallback(() => {
@@ -12,8 +12,10 @@ const Success = memo(() => {
 
     return (
         <div className="success">
-            <p className='success__description'><b>{location.state.fileName}</b> is successfully {location.state.action}ed.</p>
-            <div className='password__actions'>
+            <p className="success__description">
+                <b>{location.state.fileName}</b> is successfully {location.state.action}ed.
+            </p>
+            <div className="password__actions">
                 <Button onClick={handleClick}>Download</Button>
                 <Link to="/">
                     <Button>Again</Button>
@@ -21,6 +23,8 @@ const Success = memo(() => {
             </div>
         </div>
     );
-});
+};
 
-export default Success;
+Success.displayName = 'Success';
+
+export default memo(Success);

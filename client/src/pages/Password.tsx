@@ -10,7 +10,7 @@ import Input from 'components/Input';
 import createImg from 'resources/create.svg';
 import uploadImg from 'resources/upload.svg';
 
-const Password = memo(() => {
+const Password = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const location = useLocation();
     const navigate = useNavigate();
@@ -34,51 +34,71 @@ const Password = memo(() => {
         }
     }, []);
 
-    const handleCryptClick = useCallback(async (action: 'encrypt' | 'decrypt') => {
-        const password = inputRef.current?.value;
+    const handleCryptClick = useCallback(
+        async (action: 'encrypt' | 'decrypt') => {
+            const password = inputRef.current?.value;
 
-        const validation = validatePassword(password);
-        if (validation !== true) {
-            alert(validation);
-            return;
-        }
+            const validation = validatePassword(password);
+            if (validation !== true) {
+                alert(validation);
+                return;
+            }
 
-        setLoading(true);
-        const file = location.state.file;
-        try {
-            const data = await crypt(action, file, secretKey || password as string);
-            navigate('/success', {
-                state: {
-                    data: new Blob([data], { type: file.type }),
-                    fileName: file.name,
-                    action
-                }
-            });
-        } catch (error) {
-            console.error(error);
-            navigate('/failure', { state: { fileName: file.name, action } });
-        } finally {
-            setLoading(false);
-        }
-    }, [location.state.file, navigate, secretKey]);
+            setLoading(true);
+            const file = location.state.file;
+            try {
+                const data = await crypt(action, file, secretKey || (password as string));
+                navigate('/success', {
+                    state: {
+                        data: new Blob([data], { type: file.type }),
+                        fileName: file.name,
+                        action,
+                    },
+                });
+            } catch (error) {
+                console.error(error);
+                navigate('/failure', { state: { fileName: file.name, action } });
+            } finally {
+                setLoading(false);
+            }
+        },
+        [location.state.file, navigate, secretKey]
+    );
 
     return (
-        <div className={clsx("password", loading && 'password__loading')}>
+        <div className={clsx('password', loading && 'password__loading')}>
             <Input ref={inputRef} defaultValue={location.state.file.name} readOnly={true} />
             <div className="password__keys">
-                <Input ref={inputRef} type='password' maxLength={MAX_PASSWORD_LENGTH} placeholder='Enter the password' />
+                <Input
+                    ref={inputRef}
+                    type="password"
+                    maxLength={MAX_PASSWORD_LENGTH}
+                    placeholder="Enter the password"
+                />
                 {/* TODO Support adaptive version */}
-                <Button onClick={() => handleGetSecretKeyClick()} icon={createImg} title="Create secret key" />
-                <Button onClick={() => handleAddSecretKeyClick()} icon={uploadImg} title="Upload secret key" />
+                <Button
+                    onClick={() => handleGetSecretKeyClick()}
+                    icon={createImg}
+                    title="Create secret key"
+                />
+                <Button
+                    onClick={() => handleAddSecretKeyClick()}
+                    icon={uploadImg}
+                    title="Upload secret key"
+                />
             </div>
-            {secretKey && <div className='password__message'>The secret key successfully loaded</div>}
-            <div className='password__actions'>
+            {secretKey && (
+                <div className="password__message">The secret key successfully loaded</div>
+            )}
+            <div className="password__actions">
                 <Button onClick={() => handleCryptClick('encrypt')}>Encrypt</Button>
-                <Button onClick={() => handleCryptClick('decrypt')} style="secondary">Decrypt</Button>
+                <Button onClick={() => handleCryptClick('decrypt')} style="secondary">
+                    Decrypt
+                </Button>
             </div>
         </div>
     );
-});
+};
 
 function validatePassword(password?: string): true | string {
     if (!password) {
@@ -96,4 +116,6 @@ function validatePassword(password?: string): true | string {
     return true;
 }
 
-export default Password;
+Password.displayName = 'Password';
+
+export default memo(Password);

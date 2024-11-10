@@ -6,4 +6,6 @@ const Background = () => (
     </video>
 );
 
+Background.displayName = 'Background';
+
 export default Background;
