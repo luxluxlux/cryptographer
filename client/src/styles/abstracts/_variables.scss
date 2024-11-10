@@ -1,12 +1,12 @@
 :root {
-    --primary_color: #239EB9;
-    --secondary_color: #26798B;
-    --secondary_translucent-color: rgba(38, 121, 139, 0.5);
-    --error_color: #E3565A;
-    --text-color: #FFFFFF;
-    --background_color: #000000;
-    --unaccented_text-color: rgba(255, 255, 255, 0.6);
-    --field_border-color: #FFFFFF;
+    --primary_color: #239eb9;
+    --secondary_color: #26798b;
+    --secondary_translucent-color: rgb(38 121 139 / 50%);
+    --error_color: #e3565a;
+    --text-color: #fff;
+    --background_color: #000;
+    --unaccented_text-color: rgba(255 255 255 / 60%);
+    --field_border-color: #fff;
     --font-size_m: 18px;
     --font-size_l: 32px;
     --border-radius: 100px;
