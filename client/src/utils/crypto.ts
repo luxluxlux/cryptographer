@@ -169,7 +169,7 @@ function buildFile({
  * @returns Substrings array
  */
 function substr(str: string, sizeArr: number[]) {
-    let substrngs = [];
+    const substrngs = [];
     let pos = 0;
     for (const size of sizeArr) {
         substrngs.push(str.slice(pos, pos + size));

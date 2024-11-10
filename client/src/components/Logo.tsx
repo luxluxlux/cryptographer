@@ -9,4 +9,6 @@ const Logo = () => (
     </Link>
 );
 
+Logo.displayName = 'Logo';
+
 export default memo(Logo);

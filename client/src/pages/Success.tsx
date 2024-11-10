@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { download } from 'utils/common';
 import Button from 'components/Button';
 
-const Success = memo(() => {
+const Success = () => {
     const location = useLocation();
 
     const handleClick = useCallback(() => {
@@ -23,6 +23,8 @@ const Success = memo(() => {
             </div>
         </div>
     );
-});
+};
 
-export default Success;
+Success.displayName = 'Success';
+
+export default memo(Success);

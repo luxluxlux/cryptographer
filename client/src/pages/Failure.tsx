@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Button from 'components/Button';
 
 // TODO Rename to "Fail"
-const Failure = memo(() => {
+const Failure = () => {
     const location = useLocation();
 
     return (
@@ -16,6 +16,8 @@ const Failure = memo(() => {
             </Link>
         </div>
     );
-});
+};
 
-export default Failure;
+Failure.displayName = 'Failure';
+
+export default memo(Failure);

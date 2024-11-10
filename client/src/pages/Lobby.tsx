@@ -27,4 +27,6 @@ const Lobby = memo(() => {
     );
 });
 
-export default Lobby;
+Lobby.displayName = 'Lobby';
+
+export default memo(Lobby);

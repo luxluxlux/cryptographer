@@ -10,7 +10,7 @@ import Input from 'components/Input';
 import createImg from 'resources/create.svg';
 import uploadImg from 'resources/upload.svg';
 
-const Password = memo(() => {
+const Password = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const location = useLocation();
     const navigate = useNavigate();
@@ -98,7 +98,7 @@ const Password = memo(() => {
             </div>
         </div>
     );
-});
+};
 
 function validatePassword(password?: string): true | string {
     if (!password) {
@@ -116,4 +116,6 @@ function validatePassword(password?: string): true | string {
     return true;
 }
 
-export default Password;
+Password.displayName = 'Password';
+
+export default memo(Password);
