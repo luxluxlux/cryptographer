@@ -1,0 +1,11 @@
+.credits {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    gap: var(--offset_m);
+
+    &__text {
+        font-size: var(--font-size_s);
+    }
+}
