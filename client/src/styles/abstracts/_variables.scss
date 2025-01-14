@@ -1,14 +1,18 @@
 :root {
-    --primary_color: #239eb9;
-    --secondary_color: #26798b;
-    --secondary_translucent-color: rgb(38 121 139 / 50%);
-    --error_color: #e3565a;
     --text-color: #fff;
-    --background_color: #000;
-    --unaccented_text-color: rgba(255 255 255 / 60%);
-    --field_border-color: #fff;
-    --font-size_m: 18px;
+    --button-color: #0006;
+    --button-outlined-hover-color: #fff1;
+    --button-contained-hover-color: #0003;
+    --menu-color: #000;
+    --font-size_xs: 14px;
+    --font-size_s: 16px;
+    --font-size_m: 20px;
     --font-size_l: 32px;
-    --border-radius: 100px;
-    --offset: 18px;
+    --offset_xs: 8px;
+    --offset_s: 12px;
+    --offset_m: 20px;
+    --offset_l: 24px;
+    --offset_xl: 30px;
+    --offset_2xl: 40px;
+    --border-radius: 999px;
 }

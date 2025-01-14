@@ -1,5 +1,6 @@
 @import 'abstracts/variables';
 @import 'base/normalize', 'base/base', 'base/typography';
-@import 'components/background', 'components/logo', 'components/button', 'components/input';
-@import 'layout/page';
+@import 'components/logo', 'components/menu', 'components/credits', 'components/windowManager',
+    'components/loading', 'components/stage';
+@import 'layout/base';
 @import 'pages/failure', 'pages/lobby', 'pages/password', 'pages/success';

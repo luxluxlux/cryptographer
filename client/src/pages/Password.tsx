@@ -1,53 +1,98 @@
-import { memo, useCallback, useState, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { clsx } from 'clsx';
+import { memo, useCallback, useState, useContext, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { lib } from 'crypto-js';
+import Button from '@mui/material/Button';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import CachedIcon from '@mui/icons-material/Cached';
+import AddModeratorIcon from '@mui/icons-material/AddModerator';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import ClearIcon from '@mui/icons-material/Clear';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
 import { download, upload } from 'utils/common';
+import { WindowManagerContext } from 'utils/windows';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
-import Button from 'components/Button';
-import Input from 'components/Input';
-import createImg from 'resources/create.svg';
-import uploadImg from 'resources/upload.svg';
+import Loading from 'windows/Loading';
+import LicenseAgreement from 'windows/LicenseAgreement';
 
+// TODO Move to interfaces file
+interface ISecretKey {
+    key: lib.WordArray;
+    name: string;
+}
+
+// TODO Rename (it's not only the password anymore)
 const Password = () => {
-    const inputRef = useRef<HTMLInputElement>(null);
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [secretKey, setSecretKey] = useState<lib.WordArray>();
-    const [loading, setLoading] = useState(false);
+    const windowContext = useContext(WindowManagerContext);
 
-    const handleGetSecretKeyClick = useCallback(() => {
-        const data = generateSecretKey();
-        setSecretKey(data);
-        download(new Blob([data.toString()]), 'secret_key.dat');
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
+    const [secretKey, setSecretKey] = useState<ISecretKey | null>(null);
+
+    const handlePasswordChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value);
     }, []);
 
-    const handleAddSecretKeyClick = useCallback(async () => {
+    const handleOpenSecretKeyMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    }, []);
+
+    const handleRemoveSecretKey = useCallback(() => {
+        setSecretKey(null);
+    }, []);
+
+    const handleCreateSecretKey = useCallback(() => {
+        const key = generateSecretKey();
+        const name = 'secret_key.dat';
+        setSecretKey({
+            key,
+            name,
+        });
+        download(new Blob([key.toString()]), name);
+    }, []);
+
+    const handleUploadSecretKey = useCallback(async () => {
         try {
             const file = await upload();
-            setSecretKey(await parseSecretKey(file));
+            setSecretKey({
+                key: await parseSecretKey(file),
+                name: file.name,
+            });
         } catch (error) {
             console.error(error);
             // TODO Show a messagebox (maybe create an error logger)
         }
     }, []);
 
+    const handleCloseSecretKeyMenu = () => {
+        setAnchorEl(null);
+    };
+
+    const handleClickAgreement = useCallback(() => {
+        windowContext.open(<LicenseAgreement />);
+    }, []);
+
     const handleCryptClick = useCallback(
         async (action: 'encrypt' | 'decrypt') => {
-            const password = inputRef.current?.value;
-
-            const validation = validatePassword(password);
+            const validation = secretKey ? validateKey(secretKey.key) : validatePassword(password);
             if (validation !== true) {
                 alert(validation);
                 return;
             }
 
-            setLoading(true);
+            windowContext.open(<Loading title="File processing, please wait..." />, true, false);
             const file = location.state.file;
             try {
-                const data = await crypt(action, file, secretKey || (password as string));
+                const data = await crypt(action, file, secretKey?.key || password!);
                 navigate('/success', {
                     state: {
                         data: new Blob([data], { type: file.type }),
@@ -59,48 +104,114 @@ const Password = () => {
                 console.error(error);
                 navigate('/failure', { state: { fileName: file.name, action } });
             } finally {
-                setLoading(false);
+                windowContext.close();
             }
         },
-        [location.state.file, navigate, secretKey]
+        [location.state.file, navigate, password, secretKey]
     );
 
     return (
-        <div className={clsx('password', loading && 'password__loading')}>
-            <Input ref={inputRef} defaultValue={location.state.file.name} readOnly={true} />
-            <div className="password__keys">
+        <div className="password">
+            {/* FIXME Fix input focus color */}
+            <div className="password__inputs">
                 <Input
-                    ref={inputRef}
-                    type="password"
-                    maxLength={MAX_PASSWORD_LENGTH}
-                    placeholder="Enter the password"
+                    value={location.state.file.name}
+                    readOnly
+                    endAdornment={
+                        <InputAdornment position="end">
+                            {/* TODO Open the file dialog */}
+                            <IconButton
+                                component={Link}
+                                to="/"
+                                size="small"
+                                title="Change the file"
+                            >
+                                <CachedIcon fontSize="small" />
+                            </IconButton>
+                        </InputAdornment>
+                    }
                 />
-                {/* TODO Support adaptive version */}
-                <Button
-                    onClick={() => handleGetSecretKeyClick()}
-                    icon={createImg}
-                    title="Create secret key"
-                />
-                <Button
-                    onClick={() => handleAddSecretKeyClick()}
-                    icon={uploadImg}
-                    title="Upload secret key"
+                {/* TODO Add eye button to the endAdornment */}
+                <Input
+                    type={secretKey ? undefined : 'password'}
+                    placeholder={secretKey ? undefined : 'Enter the password'}
+                    value={secretKey ? secretKey.name : password}
+                    readOnly={!!secretKey}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                size="small"
+                                title={secretKey ? 'Change the secret key' : 'Add secret key'}
+                                onClick={handleOpenSecretKeyMenu}
+                            >
+                                {secretKey ? (
+                                    <VerifiedUserIcon fontSize="small" />
+                                ) : (
+                                    <AddModeratorIcon fontSize="small" />
+                                )}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    onChange={handlePasswordChanged}
                 />
             </div>
-            {secretKey && (
-                <div className="password__message">The secret key successfully loaded</div>
-            )}
+            <div className="password__agreement-label">
+                <span>By continuing, you agree to </span>
+                <Button className="password__agreement-label-button" onClick={handleClickAgreement}>
+                    the license terms and conditions
+                </Button>
+            </div>
+            {/* TODO Add hints for empty password or key */}
             <div className="password__actions">
-                <Button onClick={() => handleCryptClick('encrypt')}>Encrypt</Button>
-                <Button onClick={() => handleCryptClick('decrypt')} style="secondary">
+                <Button
+                    variant="contained"
+                    disabled={!password && !secretKey}
+                    onClick={() => handleCryptClick('encrypt')}
+                >
+                    Encrypt
+                </Button>
+                <Button
+                    variant="outlined"
+                    disabled={!password && !secretKey}
+                    onClick={() => handleCryptClick('decrypt')}
+                >
                     Decrypt
                 </Button>
             </div>
+            <Menu
+                anchorEl={anchorEl}
+                open={!!anchorEl}
+                onClose={handleCloseSecretKeyMenu}
+                onClick={handleCloseSecretKeyMenu}
+            >
+                {/* TODO Add short description and popup tip */}
+                {/* FIXME This item appears immideately after adding of the secret key */}
+                {secretKey && (
+                    <MenuItem onClick={handleRemoveSecretKey}>
+                        <ListItemIcon>
+                            <ClearIcon fontSize="small" />
+                        </ListItemIcon>
+                        Remove the key
+                    </MenuItem>
+                )}
+                <MenuItem onClick={handleCreateSecretKey}>
+                    <ListItemIcon>
+                        <AddIcon fontSize="small" />
+                    </ListItemIcon>
+                    Create new secret key
+                </MenuItem>
+                <MenuItem onClick={handleUploadSecretKey}>
+                    <ListItemIcon>
+                        <UploadIcon fontSize="small" />
+                    </ListItemIcon>
+                    Upload another one
+                </MenuItem>
+            </Menu>
         </div>
     );
 };
 
-function validatePassword(password?: string): true | string {
+function validatePassword(password: string | null): true | string {
     if (!password) {
         return 'The password is empty';
     }
@@ -113,6 +224,11 @@ function validatePassword(password?: string): true | string {
         return `Password must contain no more than ${MAX_PASSWORD_LENGTH} characters`;
     }
 
+    return true;
+}
+
+function validateKey(key: lib.WordArray): true | string {
+    // FXIME Add key validation
     return true;
 }
 

@@ -1,11 +1,35 @@
 .success {
     display: flex;
     flex-direction: column;
-    gap: var(--offset);
+    gap: var(--offset_xl);
     align-items: center;
 
     &__description {
         text-align: center;
-        color: var(--unaccented_text-color);
+        margin: 0;
+    }
+
+    &__actions {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--offset_m);
+    }
+
+    &__socials {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--offset_s);
+
+        &-title {
+            font-size: var(--font-size_xs);
+        }
+
+        &-icons {
+            display: flex;
+            gap: var(--offset_s);
+        }
     }
 }

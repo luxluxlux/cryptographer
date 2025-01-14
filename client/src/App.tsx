@@ -1,27 +1,41 @@
 import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { PATH } from 'utils/constants';
+import theme from 'utils/theme';
 import Lobby from 'pages/Lobby';
 import Password from 'pages/Password';
 import Success from 'pages/Success';
 import Failure from 'pages/Failure';
-import Background from 'components/Background';
+import Base from 'components/Base';
 import Logo from 'components/Logo';
+import Menu from 'components/Menu';
+import Credits from 'components/Credits';
+import Stage from 'components/Stage';
 import './App.scss';
 
 function App() {
     return (
-        <div className="page">
-            <Background />
-            <div className="page__content">
-                <Logo />
-                <Routes>
-                    <Route path="/" element={<Lobby />} />
-                    <Route path="/password" element={<Password />} />
-                    <Route path="/success" element={<Success />} />
-                    <Route path="/failure" element={<Failure />} />
-                </Routes>
-            </div>
-        </div>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <Base
+                    logo={<Logo />}
+                    menu={<Menu />}
+                    footer={<Credits />}
+                    stage={<Stage />}
+                    content={
+                        <Routes>
+                            <Route path={PATH.UPLOAD} element={<Lobby />} />
+                            <Route path={PATH.KEY} element={<Password />} />
+                            <Route path={PATH.SUCCESS} element={<Success />} />
+                            <Route path={PATH.ERROR} element={<Failure />} />
+                        </Routes>
+                    }
+                />
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }
+
+App.displayName = 'App';
 
 export default App;
