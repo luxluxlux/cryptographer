@@ -1,0 +1,17 @@
+.window-manager {
+    &_modal {
+        z-index: 999;
+    }
+
+    &__content {
+        max-width: 1024px;
+        overflow-y: scroll;
+        max-height: 100%;
+        box-sizing: border-box;
+        padding: var(--offset_xl);
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}

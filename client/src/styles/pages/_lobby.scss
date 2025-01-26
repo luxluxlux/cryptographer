@@ -1,11 +1,22 @@
 .lobby {
     display: flex;
     flex-direction: column;
-    gap: var(--offset);
     align-items: center;
+    gap: var(--offset_xl);
 
     &__description {
         text-align: center;
-        color: var(--unaccented_text-color);
+        margin: 0;
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--offset_s);
+
+        &-hint {
+            font-size: var(--font-size_xs);
+        }
     }
 }

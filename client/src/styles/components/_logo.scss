@@ -1,18 +1,19 @@
 .logo {
     display: flex;
-    flex-direction: column;
     align-items: center;
     text-decoration: none;
     color: var(--text-color);
+    gap: var(--offset_m);
 
     &__image {
-        width: 100px;
-        // Allows to avoid "jumps" during loading
-        height: 100px;
+        width: 40px;
+        // It helps to avoid "jumps" during the loading
+        height: 40px;
     }
 
     &__text {
-        font-size: var(--font-size_l);
+        font-size: var(--font-size_m);
         font-weight: bold;
+        margin: unset;
     }
 }

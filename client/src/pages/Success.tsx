@@ -1,10 +1,14 @@
 import { memo, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import { download } from 'utils/common';
-import Button from 'components/Button';
+import telegram from 'resources/socials/telegram.svg';
+import facebook from 'resources/socials/facebook.svg';
+import x from 'resources/socials/x.svg';
 
 const Success = () => {
     const location = useLocation();
+    const hostname = window.location.hostname;
 
     const handleClick = useCallback(() => {
         download(location.state.data, location.state.fileName);
@@ -13,13 +17,40 @@ const Success = () => {
     return (
         <div className="success">
             <p className="success__description">
-                <b>{location.state.fileName}</b> is successfully {location.state.action}ed.
+                <b>{location.state.fileName}</b> was successfully {location.state.action}ed.
             </p>
-            <div className="password__actions">
-                <Button onClick={handleClick}>Download</Button>
-                <Link to="/">
-                    <Button>Again</Button>
-                </Link>
+            <div className="success__actions">
+                <Button variant="contained" onClick={handleClick}>
+                    Download
+                </Button>
+                <Button component={Link} to="/" variant="outlined">
+                    Again
+                </Button>
+            </div>
+            <div className="success__socials">
+                <div className="success__socials-title">Tell your friends about us</div>
+                {/* FIXME Mark the socials forbidden in the Russian Federation and other countries */}
+                {/* TODO Add the text description to the url params */}
+                {/* TODO Make this list flexible for diffirent countries */}
+                <div className="success__socials-icons">
+                    <Link
+                        to={'https://t.me/share/url?url=' + hostname}
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <img src={telegram} alt="Telegram logo" />
+                    </Link>
+                    <Link
+                        to={'https://www.facebook.com/sharer/sharer.php?u=' + hostname}
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <img src={facebook} alt="Facebook logo" />
+                    </Link>
+                    <Link to={'http://x.com/share?url=' + hostname} target="_blank" rel="noopener">
+                        <img src={x} alt="X (Twitter) logo" />
+                    </Link>
+                </div>
             </div>
         </div>
     );
