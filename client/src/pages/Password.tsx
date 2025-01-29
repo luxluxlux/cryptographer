@@ -1,5 +1,5 @@
-import { memo, useCallback, useState, useContext, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { memo, useCallback, useState, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
@@ -37,6 +37,16 @@ const Password = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [password, setPassword] = useState<string | null>(null);
     const [secretKey, setSecretKey] = useState<ISecretKey | null>(null);
+
+    const handleFileClick = useCallback(async () => {
+        try {
+            const file = await upload();
+            navigate('/password', { state: { file } });
+        } catch (error) {
+            console.error(error);
+            // TODO Show a messagebox (maybe create an error logger)
+        }
+    }, []);
 
     const handlePasswordChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
@@ -81,7 +91,7 @@ const Password = () => {
         windowContext.open(<LicenseAgreement />);
     }, []);
 
-    const handleCryptClick = useCallback(
+    const handleCrypt = useCallback(
         async (action: 'encrypt' | 'decrypt') => {
             const validation = secretKey ? validateKey(secretKey.key) : validatePassword(password);
             if (validation !== true) {
@@ -110,6 +120,10 @@ const Password = () => {
         [location.state.file, navigate, password, secretKey]
     );
 
+    const handleEncryptClick = useCallback(() => handleCrypt('encrypt'), [handleCrypt]);
+
+    const handleDecryptClick = useCallback(() => handleCrypt('decrypt'), [handleCrypt]);
+
     return (
         <div className="password">
             {/* FIXME Fix input focus color */}
@@ -119,12 +133,10 @@ const Password = () => {
                     readOnly
                     endAdornment={
                         <InputAdornment position="end">
-                            {/* TODO Open the file dialog */}
                             <IconButton
-                                component={Link}
-                                to="/"
                                 size="small"
                                 title="Change the file"
+                                onClick={handleFileClick}
                             >
                                 <CachedIcon fontSize="small" />
                             </IconButton>
@@ -166,14 +178,14 @@ const Password = () => {
                 <Button
                     variant="contained"
                     disabled={!password && !secretKey}
-                    onClick={() => handleCryptClick('encrypt')}
+                    onClick={handleEncryptClick}
                 >
                     Encrypt
                 </Button>
                 <Button
                     variant="outlined"
                     disabled={!password && !secretKey}
-                    onClick={() => handleCryptClick('decrypt')}
+                    onClick={handleDecryptClick}
                 >
                     Decrypt
                 </Button>
