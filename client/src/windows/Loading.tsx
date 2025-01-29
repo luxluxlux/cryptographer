@@ -1,13 +1,12 @@
-import loading from 'resources/loading.svg';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface IProps {
     title?: string;
 }
 
-// TODO Use as decorative image
 const Loading = ({ title = 'Loading, please wait...' }: IProps) => (
     <div className="loading">
-        <img className="loading__image" src={loading} alt="Loading" />
+        <CircularProgress color="inherit" size={60} />
         <div>{title}</div>
     </div>
 );

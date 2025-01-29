@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import github from 'resources/github.svg';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Credits = () => (
     // FIXME Move link to the config
@@ -11,7 +11,7 @@ const Credits = () => (
         className="credits"
     >
         <div className="credits__text">We’re on GitHub</div>
-        <img src={github} alt="GitHub logo" />
+        <GitHubIcon className="credits__icon" />
     </Link>
 );
 
