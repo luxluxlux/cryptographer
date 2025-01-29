@@ -1,10 +1,9 @@
 import { memo } from 'react';
-import arrow from 'resources/arrow.svg';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const Connector = () => (
     <div className="stage-connector">
-        {/* TODO Use MUI arrow icon */}
-        <img src={arrow} />
+        <NavigateNextIcon />
     </div>
 );
 

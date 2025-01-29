@@ -2,10 +2,5 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--offset_m);
-
-    &__image {
-        width: 100px;
-        height: 100px;
-    }
+    gap: var(--offset_l);
 }
