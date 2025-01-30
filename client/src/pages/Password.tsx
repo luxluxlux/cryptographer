@@ -1,5 +1,5 @@
 import { memo, useCallback, useState, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
@@ -117,19 +117,25 @@ const Password = () => {
                 windowContext.close();
             }
         },
-        [location.state.file, navigate, password, secretKey]
+        [location.state, navigate, password, secretKey]
     );
 
     const handleEncryptClick = useCallback(() => handleCrypt('encrypt'), [handleCrypt]);
 
     const handleDecryptClick = useCallback(() => handleCrypt('decrypt'), [handleCrypt]);
 
+    if (!location.state) {
+        return <Navigate to="/" replace />;
+    }
+
     return (
         <div className="password">
             {/* FIXME Fix input focus color */}
             <div className="password__inputs">
+                {/* TODO Add ellipsis */}
                 <Input
                     value={location.state.file.name}
+                    title={location.state.file.name}
                     readOnly
                     endAdornment={
                         <InputAdornment position="end">
@@ -172,6 +178,7 @@ const Password = () => {
                 <Button className="password__agreement-label-button" onClick={handleClickAgreement}>
                     the license terms and conditions
                 </Button>
+                <span>.</span>
             </div>
             {/* TODO Add hints for empty password or key */}
             <div className="password__actions">

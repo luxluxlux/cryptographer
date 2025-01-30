@@ -1,5 +1,5 @@
 import { memo, useContext, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { WindowManagerContext } from 'utils/windows';
 import WhatsWrong from 'windows/WhatsWrong';
@@ -14,6 +14,10 @@ const Failure = () => {
     const handleAboutClick = useCallback(() => {
         windowContext.open(<WhatsWrong />);
     }, [windowContext.open]);
+
+    if (!location.state) {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="failure">
