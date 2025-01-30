@@ -114,6 +114,9 @@ export default createTheme({
                     '&.Mui-active': {
                         fontWeight: 'bold',
                     },
+                    '&.Mui-disabled': {
+                        color: 'var(--text-readonly-color)',
+                    },
                 },
             },
         },

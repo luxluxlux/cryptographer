@@ -12,6 +12,8 @@ import Menu from 'components/Menu';
 import Credits from 'components/Credits';
 import Stage from 'components/Stage';
 import './App.scss';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/700.css';
 
 function App() {
     return (
