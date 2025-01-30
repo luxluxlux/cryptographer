@@ -22,3 +22,12 @@ export function download(data: Blob, fileName: string) {
     anchor.download = fileName;
     anchor.click();
 }
+
+/**
+ * Hide the end of the string under an ellipsis
+ * @param text String
+ * @param maxLength Max length of the string
+ */
+export function ellipse(text: string, maxLength: number) {
+    return text.length > maxLength ? (text.slice(0, maxLength / 2) + '...' + text.slice(-maxLength / 2)) : text;
+}
