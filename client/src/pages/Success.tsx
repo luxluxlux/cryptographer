@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { download } from 'utils/common';
 import telegram from 'resources/socials/telegram.svg';
@@ -12,7 +12,11 @@ const Success = () => {
 
     const handleClick = useCallback(() => {
         download(location.state.data, location.state.fileName);
-    }, [location.state.data, location.state.fileName]);
+    }, [location.state]);
+
+    if (!location.state) {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="success">
