@@ -3,7 +3,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const Connector = () => (
     <div className="stage-connector">
-        <NavigateNextIcon />
+        <NavigateNextIcon fontSize="small" />
     </div>
 );
 
