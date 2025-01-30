@@ -1,7 +1,8 @@
 import { memo, useCallback } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import { download } from 'utils/common';
+import { MAX_ELLIPSED_FILENAME_LENGTH } from 'utils/constants';
+import { download, ellipse } from 'utils/common';
 import telegram from 'resources/socials/telegram.svg';
 import facebook from 'resources/socials/facebook.svg';
 import x from 'resources/socials/x.svg';
@@ -21,7 +22,10 @@ const Success = () => {
     return (
         <div className="success">
             <p className="success__description">
-                <b>{location.state.fileName}</b> was successfully {location.state.action}ed.
+                <b title={location.state.fileName}>
+                    {ellipse(location.state.fileName, MAX_ELLIPSED_FILENAME_LENGTH)}
+                </b>{' '}
+                was successfully {location.state.action}ed.
             </p>
             <div className="success__actions">
                 <Button variant="contained" onClick={handleClick}>

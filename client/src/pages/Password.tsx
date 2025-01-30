@@ -9,6 +9,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import CachedIcon from '@mui/icons-material/Cached';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -36,6 +38,7 @@ const Password = () => {
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [password, setPassword] = useState<string | null>(null);
+    const [passwordIsVisible, setPasswordIsVisible] = useState<boolean>(false);
     const [secretKey, setSecretKey] = useState<ISecretKey | null>(null);
 
     const handleFileClick = useCallback(async () => {
@@ -50,6 +53,10 @@ const Password = () => {
 
     const handlePasswordChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
+    }, []);
+
+    const handleTogglePassword = useCallback(() => {
+        setPasswordIsVisible((isVisible) => !isVisible);
     }, []);
 
     const handleOpenSecretKeyMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -149,14 +156,26 @@ const Password = () => {
                         </InputAdornment>
                     }
                 />
-                {/* TODO Add eye button to the endAdornment */}
                 <Input
-                    type={secretKey ? undefined : 'password'}
+                    type={secretKey || passwordIsVisible ? 'text' : 'password'}
                     placeholder={secretKey ? undefined : 'Enter the password'}
-                    value={secretKey ? secretKey.name : password}
+                    value={secretKey?.name || password}
                     readOnly={!!secretKey}
                     endAdornment={
                         <InputAdornment position="end">
+                            {!secretKey && (
+                                <IconButton
+                                    size="small"
+                                    title={passwordIsVisible ? 'Hide password' : 'Show password'}
+                                    onClick={handleTogglePassword}
+                                >
+                                    {passwordIsVisible ? (
+                                        <VisibilityOffIcon fontSize="small" />
+                                    ) : (
+                                        <VisibilityIcon fontSize="small" />
+                                    )}
+                                </IconButton>
+                            )}
                             <IconButton
                                 size="small"
                                 title={secretKey ? 'Change the secret key' : 'Add secret key'}
