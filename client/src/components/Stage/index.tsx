@@ -18,11 +18,11 @@ const Stage = () => {
 
     return (
         <nav>
-            {/*
-                TODO Make connectors dependent on the stage
-                https://stackoverflow.com/questions/62796363/material-ui-stepper-4-different-connector-color-at-4-different-steps
-            */}
-            <Stepper activeStep={STAGE_IDS[stage]} connector={<Connector />}>
+            <Stepper
+                activeStep={STAGE_IDS[stage]}
+                // MUI connector has no props, and one way to make it update state is to use a key
+                connector={<Connector key={stage} />}
+            >
                 {(Object.keys(STAGE_DATA) as (keyof typeof STAGE_DATA)[]).map((key) => {
                     const value = STAGE_DATA[key];
                     // Index can be equal to 0
