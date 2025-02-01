@@ -25,6 +25,7 @@ export function download(data: Blob, fileName: string) {
 
 /**
  * Hide the end of the string under an ellipsis
+ * TODO Adapt to particular width
  * @param text String
  * @param maxLength Max length of the string
  */

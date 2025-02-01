@@ -65,12 +65,38 @@
     }
 
     &__blur {
-        position: absolute;
-        top: calc(50% + 50px);
-        width: 100%;
-        height: 500px;
-        backdrop-filter: blur(100px);
-        mask-image: linear-gradient(#0000, #000 20%);
+        // Be careful! Large width with main content intersection may cause blur artifacts
+        // (caught on Chrome desktop)
+        $horizontal-width: 300px;
+        $horizontal-offset: $body-width / 2 - $horizontal-width / 2;
+        $filter: blur(100px);
+
+        &-left {
+            position: absolute;
+            right: calc(50% + $horizontal-offset);
+            height: 100%;
+            width: $horizontal-width;
+            backdrop-filter: $filter;
+            mask-image: linear-gradient(to left, #0000, #000 20%);
+        }
+
+        &-right {
+            position: absolute;
+            left: calc(50% + $horizontal-offset);
+            height: 100%;
+            width: $horizontal-width;
+            backdrop-filter: $filter;
+            mask-image: linear-gradient(to right, #0000, #000 20%);
+        }
+
+        &-bottom {
+            position: absolute;
+            top: calc(50% + 50px);
+            width: 100%;
+            height: 500px;
+            backdrop-filter: $filter;
+            mask-image: linear-gradient(#0000, #000 20%);
+        }
     }
 
     &__glow {
