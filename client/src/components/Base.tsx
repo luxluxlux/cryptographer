@@ -23,12 +23,14 @@ const Base = (props: IProps) => {
                     <div className="base__gradient-left" />
                     <div className="base__gradient-right" />
                 </div>
-                <div className="base__blur" />
+                <div className="base__blur-left" />
+                <div className="base__blur-right" />
+                <div className="base__blur-bottom" />
                 <div className="base__glow" />
-                {/* FIXME Use id, not key */}
                 <div
                     className="base__overlay"
                     style={{
+                        // FIXME Use id, not key
                         backgroundColor: STAGE_DATA[stage].color,
                     }}
                 />

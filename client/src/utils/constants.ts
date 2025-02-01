@@ -74,6 +74,3 @@ export const enum WINDOW {
     ABOUT = 'about',
     HOW_IT_WORKS = 'how_it_works',
 }
-
-// Max length of the file name before the ellipsis
-export const MAX_ELLIPSED_FILENAME_LENGTH = 42;
