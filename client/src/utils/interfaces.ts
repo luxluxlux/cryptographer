@@ -6,7 +6,13 @@ export interface IStep {
     color: string;
 }
 
+export interface IWindowManagerOptions {
+    modal?: boolean;
+    closable?: boolean;
+    fullscreen?: boolean;
+}
+
 export interface IWindowManagerContext {
-    open: (content: ReactNode, modal?: boolean, closable?: boolean) => void;
+    open: (content: ReactNode, options?: IWindowManagerOptions) => void;
     close: () => void;
 }

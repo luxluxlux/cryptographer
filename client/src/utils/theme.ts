@@ -71,7 +71,7 @@ export default createTheme({
                             return {
                                 ...common,
                                 borderColor: 'unset',
-                                borderRadius: 'var(--border-radius)',
+                                borderRadius: 'var(--border-radius-infinity)',
                                 padding: '6px 40px',
                                 minWidth: '150px',
                                 "&:hover": {
@@ -85,7 +85,7 @@ export default createTheme({
                                 boxShadow: 'unset',
                                 // Compensation for the border
                                 border: '1px solid transparent',
-                                borderRadius: 'var(--border-radius)',
+                                borderRadius: 'var(--border-radius-infinity)',
                                 padding: '6px 40px',
                                 minWidth: '150px',
                                 "&:hover": {

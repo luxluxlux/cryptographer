@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useContext } from 'react';
+import { memo, useCallback, useState, useContext, ChangeEvent, MouseEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
 import Button from '@mui/material/Button';
@@ -51,7 +51,7 @@ const Password = () => {
         }
     }, []);
 
-    const handlePasswordChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePasswordChanged = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
     }, []);
 
@@ -59,7 +59,7 @@ const Password = () => {
         setPasswordIsVisible((isVisible) => !isVisible);
     }, []);
 
-    const handleOpenSecretKeyMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    const handleOpenSecretKeyMenu = useCallback((event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     }, []);
 
@@ -106,7 +106,10 @@ const Password = () => {
                 return;
             }
 
-            windowContext.open(<Loading title="File processing, please wait..." />, true, false);
+            windowContext.open(<Loading title="File processing, please wait..." />, {
+                modal: true,
+                closable: false,
+            });
             const file = location.state.file;
             try {
                 const data = await crypt(action, file, secretKey?.key || password!);

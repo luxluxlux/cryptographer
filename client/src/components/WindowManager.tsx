@@ -1,36 +1,50 @@
 import { useState, useCallback, useMemo, useRef, memo, ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
+import { IWindowManagerContext } from 'utils/interfaces';
 import { WindowManagerContext } from 'utils/windows';
 
 interface IProps {
     children: ReactNode;
 }
 
-// TODO Consider definition instead of istance
+interface IState {
+    content: ReactNode | null;
+    modal: boolean;
+    fullscreen: boolean;
+}
+
 // TODO Close if page changed
 function WindowManager(props: IProps) {
     const closableRef = useRef(true);
 
-    const [content, setContent] = useState<ReactNode>(null);
-    const [modal, setModal] = useState(false);
+    const [state, setState] = useState<IState>({
+        content: null,
+        modal: false,
+        fullscreen: false,
+    });
 
-    const stateContextValue = useMemo(
+    const close = useCallback(() => {
+        setState((prev) => ({ ...prev, content: null }));
+    }, []);
+
+    const stateContextValue = useMemo<IWindowManagerContext>(
         () => ({
-            open: (content: ReactNode, modal?: boolean, closable: boolean = true) => {
-                closableRef.current = closable;
-                setModal(!!modal);
-                setContent(content);
+            open: (content, options) => {
+                closableRef.current = options?.closable ?? true;
+                setState({
+                    content: content,
+                    modal: !!options?.modal,
+                    fullscreen: !!options?.fullscreen,
+                });
             },
-            close: () => {
-                setContent(null);
-            },
+            close,
         }),
-        []
+        [close]
     );
 
     const handleClose = useCallback(() => {
         if (closableRef.current) {
-            setContent(null);
+            close();
         }
     }, []);
 
@@ -39,11 +53,16 @@ function WindowManager(props: IProps) {
             {props.children}
             {/* TODO Use cross button for close */}
             <Backdrop
-                className={modal ? 'window-manager_modal' : undefined}
-                open={!!content}
+                className={state.modal ? 'window-manager_modal' : undefined}
+                open={!!state.content}
                 onClick={handleClose}
             >
-                <div className="window-manager__content">{content}</div>
+                {/* TODO Adapt fullscreen to non-modal mode */}
+                {state.fullscreen ? (
+                    state.content
+                ) : (
+                    <div className="window-manager__content">{state.content}</div>
+                )}
             </Backdrop>
         </WindowManagerContext.Provider>
     );
