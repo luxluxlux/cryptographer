@@ -1,7 +1,7 @@
 import { memo, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import { upload } from 'utils/common';
+import { upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/windows';
 import HowItWorks from 'windows/HowItWorks';
 
@@ -16,6 +16,11 @@ const Lobby = memo(() => {
     const handleFileClick = useCallback(async () => {
         try {
             const file = await upload();
+            const validation = validateFile(file);
+            if (validation !== true) {
+                alert(validation);
+                return;
+            }
             navigate('/password', { state: { file } });
         } catch (error) {
             console.error(error);
@@ -34,11 +39,7 @@ const Lobby = memo(() => {
                 <Button variant="contained" onClick={handleFileClick}>
                     Select file
                 </Button>
-                {/*
-                    TODO Add drag-n-drop
-                    https://github.com/luxluxlux/cryptographer/issues/37
-                */}
-                {/* <div className="lobby__actions-hint">or drop it here</div> */}
+                <div className="lobby__actions-hint">or drop it here</div>
             </div>
         </div>
     );

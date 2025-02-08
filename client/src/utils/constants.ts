@@ -26,6 +26,9 @@ export const KEY_ITERATIONS = 1000;
 // Secret key size in bits
 export const SECRET_KEY_SIZE = 512;
 
+// Max file size in MB
+export const MAX_FILE_SIZE_MB = 10;
+
 // TODO Is it redundant?
 export const enum PATH {
     UPLOAD = '/',
@@ -57,7 +60,7 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
     },
     [STAGE.KEY]: {
         index: 1,
-        text: 'Enter the key',
+        text: 'Secure',
         color: '#00fff0',
     },
     [STAGE.SUCCESS]: {
