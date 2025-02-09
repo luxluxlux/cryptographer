@@ -18,7 +18,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
-import { download, upload } from 'utils/common';
+import { download, upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Loading from 'windows/Loading';
@@ -45,6 +45,11 @@ const Password = () => {
     const handleFileClick = useCallback(async () => {
         try {
             const file = await upload();
+            const validation = validateFile(file);
+            if (validation !== true) {
+                enqueueSnackbar(validation, { variant: 'warning' });
+                return;
+            }
             navigate('/password', { state: { file } });
         } catch (error) {
             enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
