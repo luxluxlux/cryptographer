@@ -1,6 +1,7 @@
 import { memo, useCallback, useState, useContext, ChangeEvent, MouseEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
+import { enqueueSnackbar } from 'notistack';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -18,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
 import { download, upload } from 'utils/common';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Loading from 'windows/Loading';
 import LicenseAgreement from 'windows/LicenseAgreement';
@@ -46,8 +47,8 @@ const Password = () => {
             const file = await upload();
             navigate('/password', { state: { file } });
         } catch (error) {
+            enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
             console.error(error);
-            // TODO Show a messagebox (maybe create an error logger)
         }
     }, []);
 
@@ -85,8 +86,8 @@ const Password = () => {
                 name: file.name,
             });
         } catch (error) {
+            enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
             console.error(error);
-            // TODO Show a messagebox (maybe create an error logger)
         }
     }, []);
 
@@ -102,7 +103,7 @@ const Password = () => {
         async (action: 'encrypt' | 'decrypt') => {
             const validation = secretKey ? validateKey(secretKey.key) : validatePassword(password);
             if (validation !== true) {
-                alert(validation);
+                enqueueSnackbar(validation, { variant: 'warning' });
                 return;
             }
 
@@ -254,15 +255,15 @@ const Password = () => {
 
 function validatePassword(password: string | null): true | string {
     if (!password) {
-        return 'The password is empty';
+        return 'The password is empty.';
     }
 
     if (password.length < MIN_PASSWORD_LENGTH) {
-        return `Password must contain at least ${MIN_PASSWORD_LENGTH} characters`;
+        return `Password must contain at least ${MIN_PASSWORD_LENGTH} characters.`;
     }
 
     if (password.length > MAX_PASSWORD_LENGTH) {
-        return `Password must contain no more than ${MAX_PASSWORD_LENGTH} characters`;
+        return `Password must contain no more than ${MAX_PASSWORD_LENGTH} characters.`;
     }
 
     return true;

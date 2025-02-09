@@ -41,11 +41,11 @@ export function ellipse(text: string, maxLength: number) {
  */
 export function validateFile(file: File) {
     if (file.size === 0) {
-        return `Folders and empty files are not allowed`;
+        return `Folders and empty files are not allowed.`;
     }
 
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        return `The file must be no more than ${MAX_FILE_SIZE_MB} MB`;
+        return `The file must be no more than ${MAX_FILE_SIZE_MB} MB.`;
     }
 
     return true;
@@ -57,13 +57,13 @@ export function validateFile(file: File) {
  */
 export function validateFiles(files: FileList) {
     const length = files.length;
-    
+
     if (length < 1) {
-        return 'At least one file is required';
+        return 'At least one file is required.';
     }
 
     if (length > 1) {
-        return 'No more than one file at a time';
+        return 'No more than one file at a time.';
     }
 
     const file = files[0];

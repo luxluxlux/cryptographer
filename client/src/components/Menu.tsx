@@ -3,7 +3,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 import HowItWorks from 'windows/HowItWorks';
 import About from 'windows/About';
 

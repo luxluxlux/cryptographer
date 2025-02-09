@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useRef, memo, ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import { IWindowManagerContext } from 'utils/interfaces';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 
 interface IProps {
     children: ReactNode;

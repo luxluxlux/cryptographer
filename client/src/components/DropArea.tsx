@@ -1,7 +1,8 @@
 import { ReactNode, memo, useContext, useCallback, DragEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 import { validateFiles } from 'utils/common';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 import DragNDrop from 'windows/DragNDrop';
 
 interface IProps {
@@ -16,7 +17,7 @@ const DropArea = (props: IProps) => {
         (files: FileList) => {
             const validation = validateFiles(files);
             if (validation !== true) {
-                alert(validation);
+                enqueueSnackbar(validation, { variant: 'warning' });
                 return;
             }
             const file = files[0];

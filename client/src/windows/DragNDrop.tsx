@@ -1,7 +1,7 @@
 import { useCallback, useContext, useRef, DragEvent } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { MAX_FILE_SIZE_MB } from 'utils/constants';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 
 interface IProps {
     onDrop?: (files: FileList) => void;

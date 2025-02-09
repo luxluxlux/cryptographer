@@ -8,7 +8,7 @@ export const VERSION = '0.0.0';
 export const VERSION_SIZE = 16;
 
 // TODO Make a config and get this params from it
-export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_PASSWORD_LENGTH = 127;
 
 // Salt size in bits
