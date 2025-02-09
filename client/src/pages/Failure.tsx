@@ -2,7 +2,7 @@ import { memo, useContext, useCallback } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { ellipse } from 'utils/common';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 import WhatsWrong from 'windows/WhatsWrong';
 
 // TODO Rename to "Fail"

@@ -1,13 +1,15 @@
 import { memo, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import { useSnackbar } from 'notistack';
 import { upload, validateFile } from 'utils/common';
-import { WindowManagerContext } from 'utils/windows';
+import { WindowManagerContext } from 'utils/contexts';
 import HowItWorks from 'windows/HowItWorks';
 
 const Lobby = memo(() => {
     const navigate = useNavigate();
     const windowContext = useContext(WindowManagerContext);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleAboutClick = useCallback(() => {
         windowContext.open(<HowItWorks />);
@@ -18,15 +20,15 @@ const Lobby = memo(() => {
             const file = await upload();
             const validation = validateFile(file);
             if (validation !== true) {
-                alert(validation);
+                enqueueSnackbar(validation, { variant: 'warning' });
                 return;
             }
             navigate('/password', { state: { file } });
         } catch (error) {
+            enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
             console.error(error);
-            // TODO Show a messagebox (maybe create an error logger)
         }
-    }, [navigate]);
+    }, [enqueueSnackbar]);
 
     return (
         <div className="lobby">
