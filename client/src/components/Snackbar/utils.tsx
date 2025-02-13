@@ -1,4 +1,6 @@
 import { ComponentProps, forwardRef } from 'react';
+import { useSnackbar as useNotistack } from 'notistack';
+import { ProviderContext } from './interfaces';
 import Component from './Component';
 
 export function getComponentWithVariant(variant: ComponentProps<typeof Component>['variant']) {
@@ -8,3 +10,5 @@ export function getComponentWithVariant(variant: ComponentProps<typeof Component
         }
     );
 }
+
+export const useSnackbar = useNotistack as () => ProviderContext;

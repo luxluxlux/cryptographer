@@ -1,7 +1,7 @@
 import { memo, useCallback, useState, useContext, ChangeEvent, MouseEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
-import { enqueueSnackbar } from 'notistack';
+import { useSnackbar } from 'components/Snackbar';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -18,7 +18,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
-import { download, upload, validateFile } from 'utils/common';
+import { download, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Loading from 'windows/Loading';
@@ -34,7 +34,7 @@ interface ISecretKey {
 const Password = () => {
     const location = useLocation();
     const navigate = useNavigate();
-
+    const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -47,12 +47,20 @@ const Password = () => {
             const file = await upload();
             const validation = validateFile(file);
             if (validation !== true) {
-                enqueueSnackbar(validation, { variant: 'warning' });
+                enqueueSnackbar({
+                    variant: 'warning',
+                    title: 'Unable to upload file',
+                    message: validation,
+                });
                 return;
             }
             navigate('/password', { state: { file } });
         } catch (error) {
-            enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
+            enqueueSnackbar({
+                variant: 'error',
+                title: 'Failed to upload file',
+                message: 'Something went wrong. Please try again.',
+            });
             console.error(error);
         }
     }, []);
@@ -91,7 +99,11 @@ const Password = () => {
                 name: file.name,
             });
         } catch (error) {
-            enqueueSnackbar('Something went wrong. Please try again.', { variant: 'error' });
+            enqueueSnackbar({
+                variant: 'error',
+                title: 'Failed to upload file',
+                message: 'Something went wrong. Please try again.',
+            });
             console.error(error);
         }
     }, []);
@@ -108,7 +120,11 @@ const Password = () => {
         async (action: 'encrypt' | 'decrypt') => {
             const validation = secretKey ? validateKey(secretKey.key) : validatePassword(password);
             if (validation !== true) {
-                enqueueSnackbar(validation, { variant: 'warning' });
+                enqueueSnackbar({
+                    variant: 'warning',
+                    title: `Unable to ${action} file`,
+                    message: validation,
+                });
                 return;
             }
 
@@ -118,7 +134,15 @@ const Password = () => {
             });
             const file = location.state.file;
             try {
-                const data = await crypt(action, file, secretKey?.key || password!);
+                const result = await Promise.allSettled([
+                    crypt(action, file, secretKey?.key || password!),
+                    // Give the user some time to think about the universe
+                    wait(1000),
+                ]);
+                if (result[0].status === 'rejected') {
+                    throw result[0].reason;
+                }
+                const data = result[0].value;
                 navigate('/success', {
                     state: {
                         data: new Blob([data], { type: file.type }),
@@ -127,8 +151,15 @@ const Password = () => {
                     },
                 });
             } catch (error) {
+                enqueueSnackbar({
+                    variant: 'error',
+                    message:
+                        action === 'encrypt'
+                            ? 'Check that the file is not damaged.'
+                            : `Check that the password is correct and make sure the file is not damaged.`,
+                    title: `Failed to ${action} file`,
+                });
                 console.error(error);
-                navigate('/failure', { state: { fileName: file.name, action } });
             } finally {
                 windowContext.close();
             }
