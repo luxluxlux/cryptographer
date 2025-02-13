@@ -69,3 +69,11 @@ export function validateFiles(files: FileList) {
     const file = files[0];
     return validateFile(file);
 }
+
+/**
+ * Wait for a certain amount of time
+ * @param interval In ms 
+ */
+export function wait(interval: number) {
+    return new Promise((resolve) => setTimeout(resolve, interval));
+}

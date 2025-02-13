@@ -1,6 +1,6 @@
 import { ReactNode, memo, useContext, useCallback, DragEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { enqueueSnackbar } from 'notistack';
+import { useSnackbar } from 'components/Snackbar';
 import { validateFiles } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import DragNDrop from 'windows/DragNDrop';
@@ -11,13 +11,18 @@ interface IProps {
 
 const DropArea = (props: IProps) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
     const handleDrop = useCallback(
         (files: FileList) => {
             const validation = validateFiles(files);
             if (validation !== true) {
-                enqueueSnackbar(validation, { variant: 'warning' });
+                enqueueSnackbar({
+                    variant: 'warning',
+                    title: 'Unable to upload file',
+                    message: validation,
+                });
                 return;
             }
             const file = files[0];

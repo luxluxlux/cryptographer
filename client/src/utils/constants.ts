@@ -34,14 +34,12 @@ export const enum PATH {
     UPLOAD = '/',
     KEY = '/password',
     SUCCESS = '/success',
-    ERROR = '/failure',
 }
 
 export const enum STAGE {
     UPLOAD = 'upload',
     KEY = 'key',
     SUCCESS = 'success',
-    ERROR = 'error',
 }
 
 // TODO Is it redundant?
@@ -49,7 +47,6 @@ export const PATH_STAGE: Record<PATH, STAGE> = {
     [PATH.UPLOAD]: STAGE.UPLOAD,
     [PATH.KEY]: STAGE.KEY,
     [PATH.SUCCESS]: STAGE.SUCCESS,
-    [PATH.ERROR]: STAGE.ERROR,
 }
 
 export const STAGE_DATA: Record<STAGE, IStep> = {
@@ -67,9 +64,6 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
         index: 2,
         text: 'Download',
         color: '#4aff87',
-    },
-    [STAGE.ERROR]: {
-        color: '#ff2600',
     },
 };
 
