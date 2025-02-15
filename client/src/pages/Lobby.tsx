@@ -2,7 +2,8 @@ import { memo, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { useSnackbar } from 'components/Snackbar';
-import { upload, validateFile } from 'utils/common';
+import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
+import { ellipse, upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import HowItWorks from 'windows/HowItWorks';
 
@@ -23,7 +24,12 @@ const Lobby = memo(() => {
                 enqueueSnackbar({
                     variant: 'warning',
                     title: 'Unable to upload file',
-                    message: validation,
+                    message: (
+                        <>
+                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> isn&apos;t
+                            uploaded. {validation}
+                        </>
+                    ),
                 });
                 return;
             }

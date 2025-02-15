@@ -17,8 +17,12 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
-import { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } from 'utils/constants';
-import { download, upload, validateFile, wait } from 'utils/common';
+import {
+    MIN_PASSWORD_LENGTH,
+    MAX_PASSWORD_LENGTH,
+    MAX_ALERT_FILENAME_LENGTH,
+} from 'utils/constants';
+import { download, ellipse, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Loading from 'windows/Loading';
@@ -50,10 +54,25 @@ const Password = () => {
                 enqueueSnackbar({
                     variant: 'warning',
                     title: 'Unable to upload file',
-                    message: validation,
+                    message: (
+                        <>
+                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> isn&apos;t
+                            uploaded. {validation}
+                        </>
+                    ),
                 });
                 return;
             }
+            enqueueSnackbar({
+                variant: 'success',
+                title: 'File replaced successfully',
+                message: (
+                    <>
+                        <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and ready
+                        for processing.
+                    </>
+                ),
+            });
             navigate('/password', { state: { file } });
         } catch (error) {
             enqueueSnackbar({
@@ -79,6 +98,10 @@ const Password = () => {
 
     const handleRemoveSecretKey = useCallback(() => {
         setSecretKey(null);
+        enqueueSnackbar({
+            title: 'Key removed',
+            message: 'Use a different one or set a password.',
+        });
     }, []);
 
     const handleCreateSecretKey = useCallback(() => {
@@ -89,14 +112,35 @@ const Password = () => {
             name,
         });
         download(new Blob([key.toString()]), name);
+        enqueueSnackbar({
+            variant: 'success',
+            title: 'Key created successfully',
+            message: (
+                <>
+                    <b>{ellipse(name, MAX_ALERT_FILENAME_LENGTH)}</b> is downloaded to your device
+                    and ready to use.
+                </>
+            ),
+        });
     }, []);
 
+    // TODO Add validation here
     const handleUploadSecretKey = useCallback(async () => {
         try {
             const file = await upload();
             setSecretKey({
                 key: await parseSecretKey(file),
                 name: file.name,
+            });
+            enqueueSnackbar({
+                variant: 'success',
+                title: 'Key uploaded successfully',
+                message: (
+                    <>
+                        <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and ready
+                        to use.
+                    </>
+                ),
             });
         } catch (error) {
             enqueueSnackbar({
@@ -155,8 +199,8 @@ const Password = () => {
                     variant: 'error',
                     message:
                         action === 'encrypt'
-                            ? 'Check that the file is not damaged.'
-                            : `Check that the password is correct and make sure the file is not damaged.`,
+                            ? 'Check if the file is damaged or replace it with another one.'
+                            : 'Check that the password or key is correct and make sure the file is not damaged.',
                     title: `Failed to ${action} file`,
                 });
                 console.error(error);

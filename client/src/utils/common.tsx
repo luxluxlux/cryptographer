@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { MAX_FILE_SIZE_MB } from './constants';
 
 /**
@@ -27,25 +28,32 @@ export function download(data: Blob, fileName: string) {
 
 /**
  * Hide the end of the string under an ellipsis
- * TODO Adapt to particular width
  * @param text String
  * @param maxLength Max length of the string
  */
 export function ellipse(text: string, maxLength: number) {
-    return text.length > maxLength ? (text.slice(0, maxLength / 2) + '...' + text.slice(-maxLength / 2)) : text;
+    const maxLengthWithDots = maxLength - 3;
+    if (text.length > maxLengthWithDots) {
+        return (
+            text.slice(0, Math.ceil(maxLengthWithDots / 2)) +
+            '...' +
+            text.slice(-Math.floor(maxLengthWithDots / 2))
+        );
+    }
+    return text;
 }
 
 /**
  * Check one file
  * @param file File
  */
-export function validateFile(file: File) {
+export function validateFile(file: File): boolean | string | ReactNode {
     if (file.size === 0) {
-        return `Folders and empty files are not allowed.`;
+        return 'Folders and empty files are not allowed.';
     }
 
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        return `The file must be no more than ${MAX_FILE_SIZE_MB} MB.`;
+        return <>The file must be no more than {MAX_FILE_SIZE_MB}&nbsp;MB.</>;
     }
 
     return true;
@@ -72,7 +80,7 @@ export function validateFiles(files: FileList) {
 
 /**
  * Wait for a certain amount of time
- * @param interval In ms 
+ * @param interval In ms
  */
 export function wait(interval: number) {
     return new Promise((resolve) => setTimeout(resolve, interval));

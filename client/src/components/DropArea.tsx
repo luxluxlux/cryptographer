@@ -1,7 +1,8 @@
 import { ReactNode, memo, useContext, useCallback, DragEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'components/Snackbar';
-import { validateFiles } from 'utils/common';
+import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
+import { ellipse, validateFiles } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import DragNDrop from 'windows/DragNDrop';
 
@@ -11,6 +12,7 @@ interface IProps {
 
 const DropArea = (props: IProps) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
@@ -21,11 +23,31 @@ const DropArea = (props: IProps) => {
                 enqueueSnackbar({
                     variant: 'warning',
                     title: 'Unable to upload file',
-                    message: validation,
+                    message:
+                        files.length === 1 ? (
+                            <>
+                                <b>{ellipse(files[0].name, MAX_ALERT_FILENAME_LENGTH)}</b>{' '}
+                                isn&apos;t uploaded. {validation}
+                            </>
+                        ) : (
+                            validation
+                        ),
                 });
                 return;
             }
             const file = files[0];
+            if (location.pathname === '/password') {
+                enqueueSnackbar({
+                    variant: 'success',
+                    title: 'File replaced successfully',
+                    message: (
+                        <>
+                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and
+                            ready for processing.
+                        </>
+                    ),
+                });
+            }
             navigate('/password', { state: { file } });
         },
         [navigate, windowContext.open]

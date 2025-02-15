@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { download, ellipse } from 'utils/common';
@@ -14,6 +14,10 @@ const Success = () => {
         download(location.state.data, location.state.fileName);
     }, [location.state]);
 
+    useEffect(() => {
+        download(location.state.data, location.state.fileName);
+    }, []);
+
     if (!location.state) {
         return <Navigate to="/" replace />;
     }
@@ -22,7 +26,7 @@ const Success = () => {
         <div className="success">
             <p className="success__description">
                 <b title={location.state.fileName}>{ellipse(location.state.fileName, 40)}</b> was
-                successfully {location.state.action}ed.
+                successfully {location.state.action}ed and downloaded. If not, use the button below.
             </p>
             <div className="success__actions">
                 <Button variant="contained" onClick={handleClick}>
