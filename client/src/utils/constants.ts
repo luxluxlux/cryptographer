@@ -29,6 +29,9 @@ export const SECRET_KEY_SIZE = 512;
 // Max file size in MB
 export const MAX_FILE_SIZE_MB = 10;
 
+// Maximum length of the file name inside the alert
+export const MAX_ALERT_FILENAME_LENGTH = 30;
+
 // TODO Is it redundant?
 export const enum PATH {
     UPLOAD = '/',
@@ -53,7 +56,7 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
     [STAGE.UPLOAD]: {
         index: 0,
         text: 'Select file',
-        color: '#009dff',
+        color: '#00aaff',
     },
     [STAGE.KEY]: {
         index: 1,
@@ -63,7 +66,7 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
     [STAGE.SUCCESS]: {
         index: 2,
         text: 'Download',
-        color: '#4aff87',
+        color: '#4aff90',
     },
 };
 
