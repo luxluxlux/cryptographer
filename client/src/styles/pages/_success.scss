@@ -29,7 +29,19 @@
 
         &-icons {
             display: flex;
-            gap: var(--offset_s);
+            flex-direction: column;
+            align-items: center;
+            gap: var(--offset_xs);
+
+            &-links {
+                display: flex;
+                gap: var(--offset_s);
+            }
+
+            &-attribution {
+                color: var(--text-readonly-color);
+                font-size: var(--font-size_2xs);
+            }
         }
     }
 }

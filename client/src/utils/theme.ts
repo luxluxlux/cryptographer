@@ -152,6 +152,11 @@ export default createTheme({
                     fontSize: 'var(--font-size_s)',
                 },
             },
+        },
+        MuiLink: {
+            defaultProps: {
+                color: 'inherit',
+            },
         }
     },
 });
