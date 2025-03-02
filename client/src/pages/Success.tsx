@@ -16,7 +16,9 @@ const Success = () => {
     }, [location.state]);
 
     useEffect(() => {
-        download(location.state.data, location.state.fileName);
+        if (location.state) {
+            download(location.state.data, location.state.fileName);
+        }
     }, []);
 
     if (!location.state) {

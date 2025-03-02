@@ -56,7 +56,7 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
     [STAGE.UPLOAD]: {
         index: 0,
         text: 'Select file',
-        color: '#00aaff',
+        color: '#009dff',
     },
     [STAGE.KEY]: {
         index: 1,
