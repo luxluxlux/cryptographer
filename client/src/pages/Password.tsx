@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { lib } from 'crypto-js';
 import { useSnackbar } from 'components/Snackbar';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
@@ -21,8 +22,9 @@ import {
     MIN_PASSWORD_LENGTH,
     MAX_PASSWORD_LENGTH,
     MAX_ALERT_FILENAME_LENGTH,
+    KEY_EXTENSION,
 } from 'utils/constants';
-import { download, ellipse, upload, validateFile, wait } from 'utils/common';
+import { download, ellipse, generateRandomString, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
 import Loading from 'windows/Loading';
@@ -63,16 +65,6 @@ const Password = () => {
                 });
                 return;
             }
-            enqueueSnackbar({
-                variant: 'success',
-                title: 'File replaced successfully',
-                message: (
-                    <>
-                        <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and ready
-                        for processing.
-                    </>
-                ),
-            });
             navigate('/password', { state: { file } });
         } catch (error) {
             enqueueSnackbar({
@@ -98,23 +90,18 @@ const Password = () => {
 
     const handleRemoveSecretKey = useCallback(() => {
         setSecretKey(null);
-        enqueueSnackbar({
-            title: 'Key removed',
-            message: 'Use a different one or set a password.',
-        });
     }, []);
 
     const handleCreateSecretKey = useCallback(() => {
         const key = generateSecretKey();
-        const name = 'secret_key.dat';
+        const name = generateRandomString(8) + KEY_EXTENSION;
         setSecretKey({
             key,
             name,
         });
         download(new Blob([key.toString()]), name);
         enqueueSnackbar({
-            variant: 'success',
-            title: 'Key created successfully',
+            title: 'The secret key is generated',
             message: (
                 <>
                     <b>{ellipse(name, MAX_ALERT_FILENAME_LENGTH)}</b> is downloaded to your device
@@ -127,20 +114,10 @@ const Password = () => {
     // TODO Add validation here
     const handleUploadSecretKey = useCallback(async () => {
         try {
-            const file = await upload();
+            const file = await upload(KEY_EXTENSION);
             setSecretKey({
                 key: await parseSecretKey(file),
                 name: file.name,
-            });
-            enqueueSnackbar({
-                variant: 'success',
-                title: 'Key uploaded successfully',
-                message: (
-                    <>
-                        <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and ready
-                        to use.
-                    </>
-                ),
             });
         } catch (error) {
             enqueueSnackbar({
@@ -276,11 +253,9 @@ const Password = () => {
                     onChange={handlePasswordChanged}
                 />
             </div>
-            <div className="password__agreement-label">
+            <div className="password__agreement">
                 <span>By continuing, you agree to </span>
-                <Button className="password__agreement-label-button" onClick={handleClickAgreement}>
-                    the license terms and conditions
-                </Button>
+                <Link onClick={handleClickAgreement}>the license terms and conditions</Link>
                 <span>.</span>
             </div>
             {/* TODO Add hints for empty password or key */}
@@ -309,14 +284,14 @@ const Password = () => {
                 {/* TODO Add short description and popup tip */}
                 {/* FIXME This item appears immideately after adding of the secret key */}
                 {secretKey && (
-                    <MenuItem onClick={handleRemoveSecretKey}>
+                    <MenuItem divider onClick={handleRemoveSecretKey}>
                         <ListItemIcon>
                             <ClearIcon fontSize="small" />
                         </ListItemIcon>
                         Remove the key
                     </MenuItem>
                 )}
-                <MenuItem onClick={handleCreateSecretKey}>
+                <MenuItem divider onClick={handleCreateSecretKey}>
                     <ListItemIcon>
                         <AddIcon fontSize="small" />
                     </ListItemIcon>

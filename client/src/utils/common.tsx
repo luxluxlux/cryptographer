@@ -4,10 +4,13 @@ import { MAX_FILE_SIZE_MB } from './constants';
 /**
  * Upload file by the system dialog
  */
-export async function upload() {
+export async function upload(type?: string) {
     return new Promise<File>((resolve, reject) => {
         const input = document.createElement('input');
         input.type = 'file';
+        if (type) {
+            input.accept = type;
+        }
         input.click();
         input.onchange = (event) => resolve((event.target as HTMLInputElement).files![0]);
         input.onerror = (error) => reject(error);
@@ -84,4 +87,18 @@ export function validateFiles(files: FileList) {
  */
 export function wait(interval: number) {
     return new Promise((resolve) => setTimeout(resolve, interval));
+}
+
+/**
+ * Generate random string
+ * @param length Length of the string
+ */
+export function generateRandomString(length: number) {
+    // Digits from 0 to 9 and characters from 'a' to 'z'
+    const base = 36;
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * base).toString(base);
+    }
+    return result;
 }

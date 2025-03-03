@@ -1,0 +1,103 @@
+@use 'sass:color';
+@import 'styles/layout/variables';
+
+@function rev-angle($angle) {
+    @return 360 - $angle;
+}
+
+.desktop-background {
+    &__gradient {
+        $height: 650px;
+        $color-0: #ffd1ec;
+        $color-1: #ffabdcbb;
+        $color-2: #ff77c6bb;
+        $color-3: #db5ba6bb;
+        $color-4: #d11f8aaa;
+        $color-5: #18131a21;
+        $color-6: #07161200;
+        $color-7: #0000;
+        $color-8: #e752aa2e;
+        $angle-0: 0;
+        $angle-1: 7;
+        $angle-2: 12;
+        $angle-3: 22;
+        $angle-4: 55;
+        $angle-5: 150;
+        $angle-6: 330;
+        $angle-7: 357;
+        $angle-8: 359;
+        $angle-00: 360;
+
+        position: absolute;
+        width: 100%;
+        height: $height;
+        top: calc(50% - $height / 2 - $grad-offset);
+        display: flex;
+
+        &-left {
+            width: 50%;
+            background: conic-gradient(
+                from 90deg at calc(100% - $body-width / 2) 50%,
+                $color-0 $angle-0 + deg,
+                $color-1 $angle-1 + deg,
+                $color-2 $angle-2 + deg,
+                $color-3 $angle-3 + deg,
+                $color-4 $angle-4 + deg,
+                $color-5 $angle-5 + deg,
+                $color-6 $angle-6 + deg,
+                $color-7 $angle-7 + deg,
+                $color-8 $angle-8 + deg,
+                $color-0 $angle-00 + deg
+            );
+        }
+
+        &-right {
+            width: 50%;
+            background: conic-gradient(
+                from 270deg at calc($body-width / 2) 50%,
+                $color-0 rev-angle($angle-00) + deg,
+                $color-8 rev-angle($angle-8) + deg,
+                $color-7 rev-angle($angle-7) + deg,
+                $color-6 rev-angle($angle-6) + deg,
+                $color-5 rev-angle($angle-5) + deg,
+                $color-4 rev-angle($angle-4) + deg,
+                $color-3 rev-angle($angle-3) + deg,
+                $color-2 rev-angle($angle-2) + deg,
+                $color-1 rev-angle($angle-1) + deg,
+                $color-0 rev-angle($angle-0) + deg
+            );
+        }
+    }
+
+    &__blur {
+        position: absolute;
+        top: calc(50% + 50px);
+        width: 100%;
+        height: 500px;
+        backdrop-filter: blur(100px);
+        mask-image: linear-gradient(#0000, #000 20%);
+    }
+
+    &__glow {
+        $width: 800px;
+        $height: 280px;
+
+        position: absolute;
+        width: $width;
+        height: $height;
+        left: calc(50% - $width / 2);
+        top: calc(50% - $height / 2 + 35px);
+        border-radius: 50%;
+        background-color: #c30074;
+        filter: blur(200px);
+    }
+
+    &__overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #009dff;
+        mix-blend-mode: color;
+        transition: background-color 500ms ease-in-out;
+    }
+}

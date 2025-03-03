@@ -1,3 +1,5 @@
+@import 'styles/abstracts/breakpoints';
+
 .window-manager {
     &_modal {
         z-index: 999;
@@ -5,13 +7,38 @@
 
     &__content {
         max-width: 1024px;
-        max-height: 100%;
-        overflow-y: scroll;
+        height: 100%;
+        padding: 80px var(--offset_xl);
+        overflow-y: hidden;
         box-sizing: border-box;
-        padding: var(--offset_xl);
+        display: flex;
 
-        &::-webkit-scrollbar {
-            display: none;
+        @media screen and (width < $breakpoint-s) {
+            padding-left: var(--offset_m);
+            padding-right: var(--offset_m);
+        }
+
+        &-container {
+            $transition: 20px;
+
+            display: flex;
+            overflow-x: hidden;
+            align-items: center;
+            mask-image: linear-gradient(
+                transparent 0,
+                #000 $transition,
+                #000 calc(100% - $transition),
+                transparent 100%
+            );
+
+            &-scroll {
+                max-height: 100%;
+                overflow-y: scroll;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+            }
         }
     }
 }

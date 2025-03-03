@@ -61,7 +61,13 @@ function WindowManager(props: IProps) {
                 {state.fullscreen ? (
                     state.content
                 ) : (
-                    <div className="window-manager__content">{state.content}</div>
+                    <div className="window-manager__content">
+                        <div className="window-manager__content-container">
+                            <div className="window-manager__content-container-scroll">
+                                {state.content}
+                            </div>
+                        </div>
+                    </div>
                 )}
             </Backdrop>
         </WindowManagerContext.Provider>

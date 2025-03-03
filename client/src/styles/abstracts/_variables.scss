@@ -1,11 +1,14 @@
+@import 'styles/abstracts/breakpoints';
+
 :root {
     --text-color: #fff;
     --text-readonly-color: #ffffff7f;
     --text-unaccented-color: #ffffff7f;
-    --button-color: #0006;
+    --button-color: #fff;
+    --button-text-color: #070707;
     --button-outlined-hover-color: #fff1;
-    --button-contained-hover-color: #0003;
-    --menu-color: #000;
+    --button-contained-hover-color: #ffffffbf;
+    --menu-color: #0008;
     --font-size_2xs: 10px;
     --font-size_xs: 14px;
     --font-size_s: 16px;
@@ -17,5 +20,7 @@
     --offset_l: 24px;
     --offset_xl: 30px;
     --offset_2xl: 40px;
+    --border-radius-m: 8px;
     --border-radius-infinity: 999px;
+    --blur-filter: blur(20px);
 }

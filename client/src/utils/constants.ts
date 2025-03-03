@@ -32,6 +32,9 @@ export const MAX_FILE_SIZE_MB = 10;
 // Maximum length of the file name inside the alert
 export const MAX_ALERT_FILENAME_LENGTH = 30;
 
+// Extension of the secret key file
+export const KEY_EXTENSION = '.crg';
+
 // TODO Is it redundant?
 export const enum PATH {
     UPLOAD = '/',
@@ -69,8 +72,3 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
         color: '#4aff90',
     },
 };
-
-export const enum WINDOW {
-    ABOUT = 'about',
-    HOW_IT_WORKS = 'how_it_works',
-}

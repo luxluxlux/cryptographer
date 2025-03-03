@@ -1,13 +1,16 @@
 import { memo, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import { useSnackbar } from 'components/Snackbar';
 import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
 import { ellipse, upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
+import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
 import HowItWorks from 'windows/HowItWorks';
 
 const Lobby = memo(() => {
+    const isDesktop = useBreakpoint(BREAKPOINT.S);
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
@@ -50,12 +53,12 @@ const Lobby = memo(() => {
                 Welcome to the <b>Cryptographer</b>! The easiest way to protect your file with a
                 password or key.
             </p>
-            <Button onClick={handleAboutClick}>How does it work?</Button>
+            <Link onClick={handleAboutClick}>How does it work?</Link>
             <div className="lobby__actions">
                 <Button variant="contained" onClick={handleFileClick}>
                     Select file
                 </Button>
-                <div className="lobby__actions-hint">or drop it here</div>
+                {isDesktop && <div className="lobby__actions-hint">or drop it here</div>}
             </div>
         </div>
     );

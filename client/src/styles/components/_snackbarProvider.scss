@@ -1,3 +1,10 @@
+@import 'styles/abstracts/breakpoints';
+
 .snackback-component {
     max-width: 400px;
+    backdrop-filter: var(--blur-filter);
+
+    @media (width < $breakpoint-s) {
+        max-width: 100%;
+    }
 }
