@@ -1,0 +1,42 @@
+<svg width="393" height="852" viewBox="0 0 393 852" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#figureFilter)">
+    <rect width="443" height="902" clip-path="url(#clipPath)" fill="url(#figureGrad)" />
+  </g>
+  <g style="mix-blend-mode:lighten" filter="url(#glowFilter)">
+    <path d="M19 399C10 516 123 807 416 855C710 902 736 -74 492 2C248 78 29 263 19 399Z" fill="url(#glowGrad)" fill-opacity="0.7" />
+  </g>
+  <defs>
+    <clipPath id="clipPath">
+      <path d="M605 621C555 872 126 649 196 426C304 83 -165 79 381 -120C927 -318 655 370 605 621Z" fill="url(#figureGrad)">
+        <animateTransform attributeName="transform" type="rotate" from="0 196.5 426" to="360 196.5 426" dur="30s" repeatCount="indefinite" />
+      </path>
+    </clipPath>
+    <filter id="figureFilter" x="0" y="-354" width="473" height="1265" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix"/>
+      <feGaussianBlur stdDeviation="30"/>
+    </filter>
+    <filter id="glowFilter" x="-355" y="-690" width="1232" height="1941" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix"/>
+      <feGaussianBlur stdDeviation="200"/>
+    </filter>
+    <radialGradient id="figureGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(503 386) rotate(-157.65) scale(505 1328)">
+      <stop offset="0.11" stop-color="white" stop-opacity="0.93"/>
+      <stop offset="0.25" stop-color="#D0C9FA" stop-opacity="0.77"/>
+      <stop offset="0.37" stop-color="#4D93FD" stop-opacity="0.77"/>
+      <stop offset="0.49" stop-color="#008CFF" stop-opacity="0.77"/>
+      <stop offset="0.72" stop-color="#005154" stop-opacity="0.88"/>
+      <stop offset="0.89" stop-color="#02000F"/>
+    </radialGradient>
+    <radialGradient id="glowGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(445 384) rotate(-159.062) scale(500 1248)">
+      <stop offset="0.11" stop-color="white" stop-opacity="0.93"/>
+      <stop offset="0.25" stop-color="#D0C9FA" stop-opacity="0.77"/>
+      <stop offset="0.37" stop-color="#654DFD" stop-opacity="0.77"/>
+      <stop offset="0.49" stop-color="#2400FF" stop-opacity="0.77"/>
+      <stop offset="0.72" stop-color="#0C0054" stop-opacity="0.88"/>
+      <stop offset="0.89" stop-color="#02000F"/>
+    </radialGradient>
+  </defs>
+</svg>
+

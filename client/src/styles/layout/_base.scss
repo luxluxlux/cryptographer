@@ -1,129 +1,14 @@
 @use 'sass:math';
-
-@function rev-angle($angle) {
-    @return 360 - $angle;
-}
+@import 'styles/abstracts/breakpoints';
+@import 'styles/layout/variables';
 
 .base {
-    $body-width: 1100px;
-    $grad-offset: 90px;
-
     background-color: #070707;
     position: fixed;
     width: 100%;
     height: 100svh;
     // For old browsers
     height: 100%;
-
-    &__gradient {
-        $height: 550px;
-        $color-0: #ff80cb;
-        $color-1: #cc1985;
-        $color-2: #18131a21;
-        $color-3: #07161200;
-        $color-4: #0000;
-        $color-5: #e752aa2e;
-        $angle-0: 0;
-        $angle-1: 55;
-        $angle-2: 150;
-        $angle-3: 330;
-        $angle-4: 357;
-        $angle-5: 359;
-        $angle-6: 360;
-
-        position: absolute;
-        width: $body-width;
-        height: $height;
-        top: calc(50% - $height / 2 - $grad-offset);
-        left: calc(50% - $body-width / 2);
-        display: flex;
-
-        &-left {
-            width: $body-width / 2;
-            background: conic-gradient(
-                from 90deg at 50% 50%,
-                $color-0 $angle-0 + deg,
-                $color-1 $angle-1 + deg,
-                $color-2 $angle-2 + deg,
-                $color-3 $angle-3 + deg,
-                $color-4 $angle-4 + deg,
-                $color-5 $angle-5 + deg,
-                $color-0 $angle-6 + deg
-            );
-        }
-
-        &-right {
-            width: $body-width / 2;
-            background: conic-gradient(
-                from 270deg at 50% 50%,
-                $color-0 rev-angle($angle-6) + deg,
-                $color-5 rev-angle($angle-5) + deg,
-                $color-4 rev-angle($angle-4) + deg,
-                $color-3 rev-angle($angle-3) + deg,
-                $color-2 rev-angle($angle-2) + deg,
-                $color-1 rev-angle($angle-1) + deg,
-                $color-0 rev-angle($angle-0) + deg
-            );
-        }
-    }
-
-    &__blur {
-        // Be careful! Large width with main content intersection may cause blur artifacts
-        // (caught on Chrome desktop)
-        $horizontal-width: 300px;
-        $horizontal-offset: $body-width / 2 - $horizontal-width / 2;
-        $filter: blur(100px);
-
-        &-left {
-            position: absolute;
-            right: calc(50% + $horizontal-offset);
-            height: 100%;
-            width: $horizontal-width;
-            backdrop-filter: $filter;
-            mask-image: linear-gradient(to left, #0000, #000 20%);
-        }
-
-        &-right {
-            position: absolute;
-            left: calc(50% + $horizontal-offset);
-            height: 100%;
-            width: $horizontal-width;
-            backdrop-filter: $filter;
-            mask-image: linear-gradient(to right, #0000, #000 20%);
-        }
-
-        &-bottom {
-            position: absolute;
-            top: calc(50% + 50px);
-            width: 100%;
-            height: 500px;
-            backdrop-filter: $filter;
-            mask-image: linear-gradient(#0000, #000 20%);
-        }
-    }
-
-    &__glow {
-        $width: 800px;
-        $height: 280px;
-
-        position: absolute;
-        width: $width;
-        height: $height;
-        left: calc(50% - $width / 2);
-        top: calc(50% - $height / 2 + 35px);
-        border-radius: 50%;
-        background-color: #c30074;
-        filter: blur(200px);
-    }
-
-    &__overlay {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: #009dff;
-        mix-blend-mode: color;
-        transition: background-color 500ms ease-in-out;
-    }
 
     &__header {
         position: absolute;
@@ -134,6 +19,12 @@
         align-items: center;
         justify-content: space-between;
         z-index: 1;
+
+        @media (width < $breakpoint-s) {
+            left: var(--offset_m);
+            right: var(--offset_m);
+            top: var(--offset_m);
+        }
     }
 
     &__body {
@@ -142,29 +33,40 @@
         $height: $stage-height + $content-height;
 
         position: absolute;
-        width: $body-width / 2;
-        height: $height;
-        // FIXME Stylelint-prettier conflict
-        top: calc(
-            50% - $height / 2 - (($grad-offset - math.abs($content-height - $stage-height) / 2))
-        );
-        left: calc(50% - $body-width / 4);
-        display: flex;
-        flex-direction: column;
 
-        &-stage {
-            height: $stage-height;
+        @media (width < $breakpoint-s) {
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: var(--offset_m);
             box-sizing: border-box;
-            padding: var(--offset_m) var(--offset_2xl);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
-        &-content {
-            height: $content-height;
-            box-sizing: border-box;
-            padding: var(--offset_2xl);
+        @media (width >= $breakpoint-s) {
+            width: $body-width;
+            height: $height;
+            // FIXME Stylelint-prettier conflict
+            top: calc(
+                50% - $height / 2 - (($grad-offset - math.abs($content-height - $stage-height) / 2))
+            );
+            left: calc(50% - $body-width / 2);
+            display: flex;
+            flex-direction: column;
+
+            &-stage {
+                height: $stage-height;
+                box-sizing: border-box;
+                padding: var(--offset_m) var(--offset_2xl);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            &-content {
+                height: $content-height;
+                box-sizing: border-box;
+                padding: var(--offset_2xl);
+            }
         }
     }
 
@@ -173,5 +75,10 @@
         right: var(--offset_xl);
         bottom: var(--offset_l);
         z-index: 1;
+
+        @media (width < $breakpoint-s) {
+            right: var(--offset_m);
+            bottom: var(--offset_m);
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { ReactNode, memo, useContext, useCallback, DragEvent } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'components/Snackbar';
 import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
 import { ellipse, validateFiles } from 'utils/common';
@@ -12,7 +12,6 @@ interface IProps {
 
 const DropArea = (props: IProps) => {
     const navigate = useNavigate();
-    const location = useLocation();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
@@ -35,20 +34,7 @@ const DropArea = (props: IProps) => {
                 });
                 return;
             }
-            const file = files[0];
-            if (location.pathname === '/password') {
-                enqueueSnackbar({
-                    variant: 'success',
-                    title: 'File replaced successfully',
-                    message: (
-                        <>
-                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> is uploaded and
-                            ready for processing.
-                        </>
-                    ),
-                });
-            }
-            navigate('/password', { state: { file } });
+            navigate('/password', { state: { file: files[0] } });
         },
         [navigate, windowContext.open]
     );

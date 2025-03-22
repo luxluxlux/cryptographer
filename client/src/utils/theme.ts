@@ -1,4 +1,7 @@
+import { unstable_createBreakpoints } from "@mui/system/createBreakpoints";
 import { createTheme } from '@mui/material/styles';
+
+const breakpoints = unstable_createBreakpoints({});
 
 // TODO Is it possible to use it as CSS?
 // https://mui.com/material-ui/integrations/interoperability/#global-css
@@ -20,7 +23,7 @@ export default createTheme({
                         {
                             props: { invisible: false },
                             style: {
-                                backdropFilter: 'blur(20px)',
+                                backdropFilter: 'var(--blur-filter)',
                             },
                         },
                     ],
@@ -56,24 +59,13 @@ export default createTheme({
                         fontWeight: 'inherit',
                     };
                     switch (ownerState.variant) {
-                        case 'text':
-                            return {
-                                ...common,
-                                textDecoration: 'underline',
-                                padding: 'unset',
-                                verticalAlign: 'unset',
-                                "&:hover": {
-                                    backgroundColor: 'unset',
-                                    textDecoration: 'underline',
-                                }
-                            }
                         case 'outlined':
                             return {
                                 ...common,
                                 borderColor: 'unset',
                                 borderRadius: 'var(--border-radius-infinity)',
                                 padding: '6px 40px',
-                                minWidth: '150px',
+                                minWidth: 150,
                                 "&:hover": {
                                     backgroundColor: 'var(--button-outlined-hover-color)',
                                 }
@@ -81,13 +73,14 @@ export default createTheme({
                         case 'contained':
                             return {
                                 ...common,
+                                color: 'var(--button-text-color)',
                                 backgroundColor: 'var(--button-color)',
                                 boxShadow: 'unset',
                                 // Compensation for the border
                                 border: '1px solid transparent',
                                 borderRadius: 'var(--border-radius-infinity)',
-                                padding: '6px 40px',
-                                minWidth: '150px',
+                                padding: '6px 35px',
+                                minWidth: 150,
                                 "&:hover": {
                                     backgroundColor: 'var(--button-contained-hover-color)',
                                     boxShadow: 'unset',
@@ -140,20 +133,41 @@ export default createTheme({
         },
         MuiMenu: {
             styleOverrides: {
+                list: {
+                    padding: 'unset',
+                },
                 paper: {
                     backgroundColor: 'var(--menu-color)',
+                    backgroundImage: 'unset',
+                    backdropFilter: 'var(--blur-filter)',
                     fontSize: 'var(--font-size_s)',
-                },
+                    borderRadius: 'var(--border-radius-m)',
+                }
             },
         },
         MuiMenuItem: {
             styleOverrides: {
                 root: {
                     fontSize: 'var(--font-size_s)',
+                    [breakpoints.up('sm')]: {
+                        minHeight: 42,
+                    },
                 },
             },
         },
         MuiLink: {
+            styleOverrides: {
+                root: {
+                    variants: [
+                        {
+                            props: (props) => props.onClick,
+                            style: {
+                                cursor: 'pointer',
+                            },
+                        },
+                    ],
+                },
+            },
             defaultProps: {
                 color: 'inherit',
             },

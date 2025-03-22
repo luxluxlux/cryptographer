@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom';
+import Link from '@mui/material/Link';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Credits = () => (
     // FIXME Move link to the config
-    // TODO Maybe use button
     <Link
-        to="https://github.com/luxluxlux/cryptographer"
+        href="https://github.com/luxluxlux/cryptographer"
         target="_blank"
         rel="noopener"
         className="credits"

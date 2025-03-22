@@ -2,12 +2,14 @@ import { memo, useCallback, useEffect } from 'react';
 import { Link as RouterLink, useLocation, Navigate } from 'react-router-dom';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import { download, ellipse } from 'utils/common';
-import telegram from 'resources/socials/telegram.svg';
-import facebook from 'resources/socials/facebook.svg';
-import x from 'resources/socials/x.svg';
+import { download, ellipse, wait } from 'utils/common';
+import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import XIcon from '@mui/icons-material/X';
 
 const Success = () => {
+    const isDesktop = useBreakpoint(BREAKPOINT.S);
     const location = useLocation();
     const hostname = window.location.hostname;
 
@@ -17,7 +19,12 @@ const Success = () => {
 
     useEffect(() => {
         if (location.state) {
-            download(location.state.data, location.state.fileName);
+            (async () => {
+                // TODD Add check that the current page doesn't change
+                // Give the user some time to read the result
+                await wait(isDesktop ? 1000 : 2000);
+                download(location.state.data, location.state.fileName);
+            })();
         }
     }, []);
 
@@ -41,39 +48,31 @@ const Success = () => {
             </div>
             <div className="success__socials">
                 <div className="success__socials-title">Tell your friends about us</div>
-                <div className="success__socials-icons">
-                    {/* FIXME Mark the socials forbidden in the Russian Federation and other countries */}
-                    {/* TODO Make this list flexible for diffirent countries */}
-                    {/* TODO Add the text description to the url params */}
-                    <div className="success__socials-icons-links">
-                        <RouterLink
-                            to={'https://t.me/share/url?url=' + hostname}
-                            target="_blank"
-                            rel="noopener"
-                        >
-                            <img src={telegram} alt="Telegram logo" />
-                        </RouterLink>
-                        <RouterLink
-                            to={'https://www.facebook.com/sharer/sharer.php?u=' + hostname}
-                            target="_blank"
-                            rel="noopener"
-                        >
-                            <img src={facebook} alt="Facebook logo" />
-                        </RouterLink>
-                        <RouterLink
-                            to={'http://x.com/share?url=' + hostname}
-                            target="_blank"
-                            rel="noopener"
-                        >
-                            <img src={x} alt="X (Twitter) logo" />
-                        </RouterLink>
-                    </div>
-                    <div className="success__socials-icons-attribution">
-                        Designed by{' '}
-                        <MuiLink href="https://freepik.com/" target="_blank" rel="noopener">
-                            Freepic
-                        </MuiLink>
-                    </div>
+                {/* FIXME Mark the socials forbidden in the Russian Federation and other countries */}
+                {/* TODO Make this list flexible for diffirent countries */}
+                {/* TODO Add the text description to the url params */}
+                <div className="success__socials-links">
+                    <MuiLink
+                        href={'https://t.me/share/url?url=' + hostname}
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <TelegramIcon fontSize="small" />
+                    </MuiLink>
+                    <MuiLink
+                        href={'https://www.facebook.com/sharer/sharer.php?u=' + hostname}
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <FacebookIcon fontSize="small" />
+                    </MuiLink>
+                    <MuiLink
+                        href={'http://x.com/share?url=' + hostname}
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <XIcon fontSize="small" />
+                    </MuiLink>
                 </div>
             </div>
         </div>
