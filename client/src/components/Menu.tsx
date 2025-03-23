@@ -40,14 +40,20 @@ const Menu = () => {
     return (
         <nav>
             {isDesktop ? (
-                <List className="menu__list" sx={{ padding: 'unset', gap: 'var(--offset_2xl)' }}>
-                    <ListItem sx={{ padding: 'unset' }}>
-                        <ListItemButton sx={{ padding: 'unset' }} onClick={handleHowItWorksClick}>
+                <List className="menu__list">
+                    <ListItem className="menu__list-item">
+                        <ListItemButton
+                            className="menu__list-item-button"
+                            onClick={handleHowItWorksClick}
+                        >
                             <ListItemText primary="How&nbsp;it&nbsp;works" />
                         </ListItemButton>
                     </ListItem>
-                    <ListItem sx={{ padding: 'unset' }}>
-                        <ListItemButton sx={{ padding: 'unset' }} onClick={handleAboutClick}>
+                    <ListItem className="menu__list-item">
+                        <ListItemButton
+                            className="menu__list-item-button"
+                            onClick={handleAboutClick}
+                        >
                             <ListItemText primary="About" />
                         </ListItemButton>
                     </ListItem>

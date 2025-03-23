@@ -30,6 +30,15 @@
         &-links {
             display: flex;
             gap: var(--offset_s);
+
+            &-link {
+                line-height: 0;
+
+                &:focus-visible {
+                    padding: var(--offset_xs);
+                    margin: calc(-1 * var(--offset_xs));
+                }
+            }
         }
     }
 }

@@ -5,6 +5,12 @@
     color: var(--text-color);
     gap: var(--offset_m);
 
+    &:focus-visible {
+        padding: var(--offset_xs) var(--offset_m) var(--offset_xs) var(--offset_xs);
+        margin: calc(-1 * var(--offset_xs)) calc(-1 * var(--offset_m)) calc(-1 * var(--offset_xs))
+            calc(-1 * var(--offset_xs));
+    }
+
     &__image {
         width: 40px;
         // It helps to avoid "jumps" during the loading
@@ -15,5 +21,5 @@
         font-size: var(--font-size_m);
         font-weight: bold;
         margin: unset;
-    } 
+    }
 }

@@ -9,8 +9,11 @@
     --text-unaccented-color: #ffffff7f;
     --button-color: #fff;
     --button-text-color: #070707;
-    --button-outlined-hover-color: #fff1;
+    --button-outlined-hover-color: #ffffff14;
     --button-contained-hover-color: #ffffffbf;
+    --button-text-focus-color: #ffffff1f;
+    --button-outlined-focus-color: #ffffff1f;
+    --button-contained-focus-color: #ffffffbf;
     --input-focus-border-color: #fff;
     --menu-color: #0008;
     --font-size_2xs: 10px;
@@ -18,6 +21,7 @@
     --font-size_s: 16px;
     --font-size_m: 18px;
     --font-size_l: 28px;
+    --offset_2xs: 4px;
     --offset_xs: 8px;
     --offset_s: 12px;
     --offset_m: 20px;
@@ -25,6 +29,7 @@
     --offset_xl: 30px;
     --offset_2xl: 40px;
     --border-radius-m: 8px;
-    --border-radius-infinity: 999px;
+    --border-radius-l: 12px;
+    --border-radius-infinite: 999px;
     --blur-filter: blur(20px);
 }

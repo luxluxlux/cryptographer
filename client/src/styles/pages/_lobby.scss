@@ -9,6 +9,13 @@
         margin: 0;
     }
 
+    &__about {
+        &:focus-visible {
+            padding: var(--offset_2xs) var(--offset_xs);
+            margin: calc(-1 * var(--offset_2xs)) calc(-1 * var(--offset_xs));
+        }
+    }
+
     &__actions {
         display: flex;
         flex-direction: column;

@@ -53,6 +53,7 @@ const Success = () => {
                 {/* TODO Add the text description to the url params */}
                 <div className="success__socials-links">
                     <MuiLink
+                        className="success__socials-links-link"
                         href={'https://t.me/share/url?url=' + hostname}
                         target="_blank"
                         rel="noopener"
@@ -60,6 +61,7 @@ const Success = () => {
                         <TelegramIcon fontSize="small" />
                     </MuiLink>
                     <MuiLink
+                        className="success__socials-links-link"
                         href={'https://www.facebook.com/sharer/sharer.php?u=' + hostname}
                         target="_blank"
                         rel="noopener"
@@ -67,6 +69,7 @@ const Success = () => {
                         <FacebookIcon fontSize="small" />
                     </MuiLink>
                     <MuiLink
+                        className="success__socials-links-link"
                         href={'http://x.com/share?url=' + hostname}
                         target="_blank"
                         rel="noopener"

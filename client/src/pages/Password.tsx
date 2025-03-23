@@ -198,12 +198,12 @@ const Password = () => {
 
     return (
         <div className="password">
-            {/* FIXME Fix input focus color */}
             <div className="password__inputs">
                 {/* TODO Add ellipsis */}
                 <Input
                     value={location.state.file.name}
                     title={location.state.file.name}
+                    inputProps={{ tabIndex: -1 }}
                     readOnly
                     endAdornment={
                         <InputAdornment position="end">
@@ -222,6 +222,7 @@ const Password = () => {
                     placeholder={secretKey ? undefined : 'Enter the password'}
                     value={secretKey?.name || password}
                     readOnly={!!secretKey}
+                    autoFocus
                     endAdornment={
                         <InputAdornment position="end">
                             {!secretKey && (
@@ -255,7 +256,14 @@ const Password = () => {
             </div>
             <div className="password__agreement">
                 <span>By continuing, you agree to </span>
-                <Link onClick={handleClickAgreement}>the license terms and conditions</Link>
+                {/* Avoid word wrap on narrow screens */}
+                <Link
+                    className="password__agreement-link"
+                    component={'button'}
+                    onClick={handleClickAgreement}
+                >
+                    the license terms
+                </Link>
                 <span>.</span>
             </div>
             {/* TODO Add hints for empty password or key */}

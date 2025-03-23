@@ -53,7 +53,9 @@ const Lobby = memo(() => {
                 Welcome to the <b>Cryptographer</b>! The easiest way to protect your file with a
                 password or key.
             </p>
-            <Link onClick={handleAboutClick}>How does it work?</Link>
+            <Link className="lobby__about" component="button" onClick={handleAboutClick}>
+                How does it work?
+            </Link>
             <div className="lobby__actions">
                 <Button variant="contained" onClick={handleFileClick}>
                     Select file
