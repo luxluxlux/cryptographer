@@ -1,4 +1,4 @@
-import { ReactNode, memo } from 'react';
+import { CSSProperties, ReactNode, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import WindowManager from 'components/WindowManager';
 import DropArea from 'components/DropArea';
@@ -22,14 +22,17 @@ const Base = (props: IProps) => {
     const color = STAGE_DATA[stage].color;
 
     return (
-        <div className="base">
+        <div
+            className="base"
+            style={
+                {
+                    '--primary-color': color,
+                } as CSSProperties
+            }
+        >
             <WindowManager>
                 <DropArea>
-                    {isDesktop ? (
-                        <DesktopBackground color={color} />
-                    ) : (
-                        <MobileBackground color={color} />
-                    )}
+                    {isDesktop ? <DesktopBackground /> : <MobileBackground />}
                     <header>
                         <div className="base__header">
                             <div>{props.logo}</div>

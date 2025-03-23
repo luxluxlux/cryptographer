@@ -171,6 +171,15 @@ export default createTheme({
             defaultProps: {
                 color: 'inherit',
             },
+        },
+        MuiInput: {
+            styleOverrides: {
+                root: {
+                    '&::after': {
+                        borderBottom: '2px solid var(--input-focus-border-color)',
+                    },
+                },
+            },
         }
     },
 });
