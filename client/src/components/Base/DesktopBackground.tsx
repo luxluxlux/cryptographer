@@ -1,10 +1,6 @@
 import { memo } from 'react';
 
-interface IProps {
-    color: string;
-}
-
-const DesktopBackground = (props: IProps) => (
+const DesktopBackground = () => (
     <div className="desktop-background">
         <div className="desktop-background__gradient">
             <div className="desktop-background__gradient-left" />
@@ -12,12 +8,7 @@ const DesktopBackground = (props: IProps) => (
         </div>
         <div className="desktop-background__blur" />
         <div className="desktop-background__glow" />
-        <div
-            className="desktop-background__overlay"
-            style={{
-                backgroundColor: props.color,
-            }}
-        />
+        <div className="desktop-background__overlay" />
     </div>
 );
 

@@ -1,6 +1,9 @@
+@use 'sass:color';
 @import 'styles/abstracts/breakpoints';
 
 :root {
+    // Default value, depends on the current page
+    --primarty-color: #009dff;
     --text-color: #fff;
     --text-readonly-color: #ffffff7f;
     --text-unaccented-color: #ffffff7f;
@@ -8,6 +11,7 @@
     --button-text-color: #070707;
     --button-outlined-hover-color: #fff1;
     --button-contained-hover-color: #ffffffbf;
+    --input-focus-border-color: #fff;
     --menu-color: #0008;
     --font-size_2xs: 10px;
     --font-size_xs: 14px;

@@ -1,4 +1,3 @@
-@use 'sass:color';
 @import 'styles/layout/variables';
 
 @function rev-angle($angle) {
@@ -96,7 +95,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background-color: #009dff;
+        background-color: var(--primary-color);
         mix-blend-mode: color;
         transition: background-color 500ms ease-in-out;
     }
