@@ -30,70 +30,68 @@ export default createTheme({
                 },
             },
         },
-        // TODO Enable ripple for all type of buttons except text
         MuiButtonBase: {
-            defaultProps: {
-                disableRipple: true,
-            },
-        },
-        MuiListItemButton: {
-            styleOverrides: {
-                root: {
-                    "&:hover": {
-                        backgroundColor: 'transparent',
-                    }
-                }
-            },
             defaultProps: {
                 disableRipple: true,
             },
         },
         MuiButton: {
             styleOverrides: {
-                // FIXME Use variants
-                // https://mui.com/material-ui/customization/theme-components/?srsltid=AfmBOopdfKgVx0BA_5PTkrcKEEfrKO_4by5-Lf0CWtuZPBZ1B5XDTv1h#variants
-                root: ({ ownerState }) => {
+                root: () => {
                     const common = {
                         color: 'inherit',
                         fontSize: 'var(--font-size_m)',
                         fontWeight: 'inherit',
+                        minWidth: 150,
+                        borderRadius: 'var(--border-radius-infinite)',
+                        padding: '6px 34px',
                     };
-                    switch (ownerState.variant) {
-                        case 'outlined':
-                            return {
-                                ...common,
-                                borderColor: 'unset',
-                                borderRadius: 'var(--border-radius-infinity)',
-                                padding: '6px 40px',
-                                minWidth: 150,
-                                "&:hover": {
-                                    backgroundColor: 'var(--button-outlined-hover-color)',
-                                }
-                            }
-                        case 'contained':
-                            return {
-                                ...common,
-                                color: 'var(--button-text-color)',
-                                backgroundColor: 'var(--button-color)',
-                                boxShadow: 'unset',
-                                // Compensation for the border
-                                border: '1px solid transparent',
-                                borderRadius: 'var(--border-radius-infinity)',
-                                padding: '6px 35px',
-                                minWidth: 150,
-                                "&:hover": {
-                                    backgroundColor: 'var(--button-contained-hover-color)',
+                    return {
+                        variants: [
+                            {
+                                props: { variant: 'outlined' },
+                                style: {
+                                    ...common,
+                                    borderColor: 'unset',
+                                    "&:hover": {
+                                        backgroundColor: 'var(--button-outlined-hover-color)',
+                                    },
+                                    '&:focus-visible': {
+                                        backgroundColor: 'var(--button-outlined-focus-color)',
+                                    },
+                                },
+                            },
+                            {
+                                props: { variant: 'contained' },
+                                style: {
+                                    ...common,
+                                    color: 'var(--button-text-color)',
+                                    backgroundColor: 'var(--button-color)',
                                     boxShadow: 'unset',
-                                }
-                            }
+                                    // Compensation for the border
+                                    border: '1px solid transparent',
+                                    "&:hover": {
+                                        backgroundColor: 'var(--button-contained-hover-color)',
+                                        boxShadow: 'unset',
+                                    },
+                                    '&:focus-visible': {
+                                        backgroundColor: 'var(--button-contained-focus-color)',
+                                        boxShadow: 'unset',
+                                    },
+                                },
+                            },
+                        ],
                     }
                 }
             },
         },
-        // TODO Enable after button ripple is enabled
         MuiIconButton: {
-            defaultProps: {
-                disableRipple: true,
+            styleOverrides: {
+                root: {
+                    '&:focus-visible': {
+                        backgroundColor: 'var(--button-text-focus-color)',
+                    },
+                },
             },
         },
         MuiStepLabel: {
@@ -158,14 +156,14 @@ export default createTheme({
         MuiLink: {
             styleOverrides: {
                 root: {
-                    variants: [
-                        {
-                            props: (props) => props.onClick,
-                            style: {
-                                cursor: 'pointer',
-                            },
-                        },
-                    ],
+                    cursor: 'pointer',
+                    verticalAlign: 'unset',
+                    '&:focus-visible': {
+                        outline: 'none',
+                        border: 'none',
+                        borderRadius: 'var(--border-radius-infinite)',
+                        backgroundColor: 'var(--button-text-focus-color)',
+                    },
                 },
             },
             defaultProps: {
@@ -178,6 +176,13 @@ export default createTheme({
                     '&::after': {
                         borderBottom: '2px solid var(--input-focus-border-color)',
                     },
+                },
+            },
+        },
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 'var(--border-radius-l)',
                 },
             },
         }

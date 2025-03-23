@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef, memo, ReactNode } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect, memo, ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import { IWindowManagerContext } from 'utils/interfaces';
 import { WindowManagerContext } from 'utils/contexts';
@@ -47,6 +47,19 @@ function WindowManager(props: IProps) {
             close();
         }
     }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && closableRef.current) {
+                close();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [close]);
 
     return (
         <WindowManagerContext.Provider value={stateContextValue}>

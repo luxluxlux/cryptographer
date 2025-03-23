@@ -4,10 +4,16 @@
     text-decoration: none;
     gap: var(--offset_m);
 
+    &:focus-visible {
+        padding: var(--offset_xs) var(--offset_xs) var(--offset_xs) var(--offset_m);
+        margin: calc(-1 * var(--offset_xs)) calc(-1 * var(--offset_xs)) calc(-1 * var(--offset_xs))
+            calc(-1 * var(--offset_m));
+    }
+
     &__text {
         font-size: var(--font-size_s);
     }
-    
+
     &__icon {
         font-size: 36px;
     }
