@@ -5,8 +5,11 @@ import Button from '@mui/material/Button';
 import { download, ellipse, wait } from 'utils/common';
 import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
 import TelegramIcon from '@mui/icons-material/Telegram';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import XIcon from '@mui/icons-material/X';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+
+const SHARED_TEXT =
+    'I protect my files with a password using Cryptographer. Protect your files too!';
 
 const Success = () => {
     const isDesktop = useBreakpoint(BREAKPOINT.S);
@@ -52,36 +55,37 @@ const Success = () => {
             </div>
             <div className="success__socials">
                 <div className="success__socials-title">Tell your friends about us</div>
-                {/* 
-                    FIXME Mark the socials forbidden in the Russian Federation and other countries
-                    https://blog.safedns.com/understanding-censorship-exploring-banned-social-media-content-filtering-and-internet-access-restrictions-worldwide/
+                {/*
+                    Don't use URLSearchParams, it replaces spaces with '+'.
+                    It can cause problems, for example, in Telegram.
                 */}
-                {/* TODO Make this list flexible for diffirent countries */}
-                {/* TODO Add the text description to the url params */}
                 <div className="success__socials-links">
                     <MuiLink
                         className="success__socials-links-link"
-                        href={'https://t.me/share/url?url=' + hostname}
+                        href={`https://t.me/share/url?url=${hostname}&text=${SHARED_TEXT}`}
                         target="_blank"
                         rel="noopener"
+                        title="Telegram"
                     >
                         <TelegramIcon fontSize="small" />
                     </MuiLink>
                     <MuiLink
                         className="success__socials-links-link"
-                        href={'https://www.facebook.com/sharer/sharer.php?u=' + hostname}
+                        href={`https://wa.me/?text=${hostname}%0A${SHARED_TEXT}`}
                         target="_blank"
                         rel="noopener"
+                        title="WhatsApp"
                     >
-                        <FacebookIcon fontSize="small" />
+                        <WhatsAppIcon fontSize="small" />
                     </MuiLink>
                     <MuiLink
                         className="success__socials-links-link"
-                        href={'http://x.com/share?url=' + hostname}
+                        href={`https://www.linkedin.com/shareArticle?mini=true&url=${hostname}&text=${SHARED_TEXT}`}
                         target="_blank"
                         rel="noopener"
+                        title="LinkedIn"
                     >
-                        <XIcon fontSize="small" />
+                        <LinkedInIcon fontSize="small" />
                     </MuiLink>
                 </div>
             </div>
