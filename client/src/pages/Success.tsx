@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { Link as RouterLink, useLocation, Navigate } from 'react-router-dom';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
@@ -12,6 +12,7 @@ const Success = () => {
     const isDesktop = useBreakpoint(BREAKPOINT.S);
     const location = useLocation();
     const hostname = window.location.hostname;
+    const rootRef = useRef(null);
 
     const handleClick = useCallback(() => {
         download(location.state.data, location.state.fileName);
@@ -23,7 +24,10 @@ const Success = () => {
                 // TODD Add check that the current page doesn't change
                 // Give the user some time to read the result
                 await wait(isDesktop ? 1000 : 2000);
-                download(location.state.data, location.state.fileName);
+                // Download file only if user is still on this page
+                if (rootRef.current) {
+                    download(location.state.data, location.state.fileName);
+                }
             })();
         }
     }, []);
@@ -33,7 +37,7 @@ const Success = () => {
     }
 
     return (
-        <div className="success">
+        <div ref={rootRef} className="success">
             <p className="success__description">
                 <b title={location.state.fileName}>{ellipse(location.state.fileName, 40)}</b> was
                 successfully {location.state.action}ed and downloaded. If not, use the button below.
@@ -48,7 +52,10 @@ const Success = () => {
             </div>
             <div className="success__socials">
                 <div className="success__socials-title">Tell your friends about us</div>
-                {/* FIXME Mark the socials forbidden in the Russian Federation and other countries */}
+                {/* 
+                    FIXME Mark the socials forbidden in the Russian Federation and other countries
+                    https://blog.safedns.com/understanding-censorship-exploring-banned-social-media-content-filtering-and-internet-access-restrictions-worldwide/
+                */}
                 {/* TODO Make this list flexible for diffirent countries */}
                 {/* TODO Add the text description to the url params */}
                 <div className="success__socials-links">
