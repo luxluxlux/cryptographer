@@ -1,5 +1,21 @@
 import { ReactNode } from 'react';
+import { ParsedVersion, Version } from './interfaces';
 import { MAX_FILE_SIZE_MB } from './constants';
+
+/**
+ * Parse a version string into a tuple
+ * @param str The version string to parse, in the format 'major.minor.revision'
+ * @return The parsed version tuple, or throws an error if the version string is invalid
+ */
+export function parseVersion(str: Version, size: number): ParsedVersion {
+    const version = str.split('.').map(Number);
+    // No letters, only numbers
+    // No more than 1 byte (0-255) for each number
+    if (version.length !== size || version.some((v) => v < 0 || v > 255)) {
+        throw new Error('Invalid application version');
+    }
+    return version as ParsedVersion;
+}
 
 /**
  * Upload file by the system dialog
@@ -35,11 +51,15 @@ export function download(data: Blob, fileName: string) {
  * @param maxLength Max length of the string
  */
 export function ellipse(text: string, maxLength: number) {
-    const maxLengthWithDots = maxLength - 3;
-    if (text.length > maxLengthWithDots) {
+    if (text.length > maxLength) {
+        const maxLengthWithDots = maxLength - 3;
+        const ellipsis = '...';
+        if (maxLengthWithDots <= 0) {
+            return ellipsis;
+        }
         return (
             text.slice(0, Math.ceil(maxLengthWithDots / 2)) +
-            '...' +
+            ellipsis +
             text.slice(-Math.floor(maxLengthWithDots / 2))
         );
     }
@@ -87,18 +107,4 @@ export function validateFiles(files: FileList) {
  */
 export function wait(interval: number) {
     return new Promise((resolve) => setTimeout(resolve, interval));
-}
-
-/**
- * Generate random string
- * @param length Length of the string
- */
-export function generateRandomString(length: number) {
-    // Digits from 0 to 9 and characters from 'a' to 'z'
-    const base = 36;
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += Math.floor(Math.random() * base).toString(base);
-    }
-    return result;
 }

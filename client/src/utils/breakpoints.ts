@@ -9,7 +9,7 @@ export const enum BREAKPOINT {
 /**
  * React hook to observe the screen size
  * Warning! Only for client side use
- * TODO Try to use MUI breakpoints
+ * TODO: Try to use MUI breakpoints
  * @returns 
  */
 export function useWindowSize() {

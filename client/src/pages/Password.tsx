@@ -1,52 +1,34 @@
-import { memo, useCallback, useState, useContext, ChangeEvent, MouseEvent } from 'react';
+import { memo, useCallback, useState, useContext, ChangeEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { lib } from 'crypto-js';
 import { useSnackbar } from 'components/Snackbar';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import CachedIcon from '@mui/icons-material/Cached';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import AddModeratorIcon from '@mui/icons-material/AddModerator';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
-import ClearIcon from '@mui/icons-material/Clear';
-import AddIcon from '@mui/icons-material/Add';
-import UploadIcon from '@mui/icons-material/Upload';
 import {
     MIN_PASSWORD_LENGTH,
     MAX_PASSWORD_LENGTH,
     MAX_ALERT_FILENAME_LENGTH,
-    KEY_EXTENSION,
 } from 'utils/constants';
-import { download, ellipse, generateRandomString, upload, validateFile, wait } from 'utils/common';
+import { ellipse, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
-import { crypt, generateSecretKey, parseSecretKey } from 'utils/crypto';
+import { crypt } from 'utils/crypto/core';
 import Loading from 'windows/Loading';
 import LicenseAgreement from 'windows/LicenseAgreement';
 
-// TODO Move to interfaces file
-interface ISecretKey {
-    key: lib.WordArray;
-    name: string;
-}
-
-// TODO Rename (it's not only the password anymore)
+// TODO: Rename
 const Password = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [password, setPassword] = useState<string | null>(null);
     const [passwordIsVisible, setPasswordIsVisible] = useState<boolean>(false);
-    const [secretKey, setSecretKey] = useState<ISecretKey | null>(null);
 
     const handleFileClick = useCallback(async () => {
         try {
@@ -84,62 +66,13 @@ const Password = () => {
         setPasswordIsVisible((isVisible) => !isVisible);
     }, []);
 
-    const handleOpenSecretKeyMenu = useCallback((event: MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    }, []);
-
-    const handleRemoveSecretKey = useCallback(() => {
-        setSecretKey(null);
-    }, []);
-
-    const handleCreateSecretKey = useCallback(() => {
-        const key = generateSecretKey();
-        const name = generateRandomString(8) + KEY_EXTENSION;
-        setSecretKey({
-            key,
-            name,
-        });
-        download(new Blob([key.toString()]), name);
-        enqueueSnackbar({
-            title: 'The secret key is generated',
-            message: (
-                <>
-                    <b>{ellipse(name, MAX_ALERT_FILENAME_LENGTH)}</b> is downloaded to your device
-                    and ready to use.
-                </>
-            ),
-        });
-    }, []);
-
-    // TODO Add validation here
-    const handleUploadSecretKey = useCallback(async () => {
-        try {
-            const file = await upload(KEY_EXTENSION);
-            setSecretKey({
-                key: await parseSecretKey(file),
-                name: file.name,
-            });
-        } catch (error) {
-            enqueueSnackbar({
-                variant: 'error',
-                title: 'Failed to upload file',
-                message: 'Something went wrong. Please try again.',
-            });
-            console.error(error);
-        }
-    }, []);
-
-    const handleCloseSecretKeyMenu = () => {
-        setAnchorEl(null);
-    };
-
     const handleClickAgreement = useCallback(() => {
         windowContext.open(<LicenseAgreement />);
     }, []);
 
     const handleCrypt = useCallback(
         async (action: 'encrypt' | 'decrypt') => {
-            const validation = secretKey ? validateKey(secretKey.key) : validatePassword(password);
+            const validation = validatePassword(password);
             if (validation !== true) {
                 enqueueSnackbar({
                     variant: 'warning',
@@ -156,7 +89,7 @@ const Password = () => {
             const file = location.state.file;
             try {
                 const result = await Promise.allSettled([
-                    crypt(action, file, secretKey?.key || password!),
+                    crypt(action, file, password!),
                     // Give the user some time to think about the universe
                     wait(1000),
                 ]);
@@ -185,7 +118,7 @@ const Password = () => {
                 windowContext.close();
             }
         },
-        [location.state, navigate, password, secretKey]
+        [location.state, navigate, password]
     );
 
     const handleEncryptClick = useCallback(() => handleCrypt('encrypt'), [handleCrypt]);
@@ -199,7 +132,7 @@ const Password = () => {
     return (
         <div className="password">
             <div className="password__inputs">
-                {/* TODO Add ellipsis */}
+                {/* TODO: Add ellipsis */}
                 <Input
                     value={location.state.file.name}
                     title={location.state.file.name}
@@ -218,35 +151,21 @@ const Password = () => {
                     }
                 />
                 <Input
-                    type={secretKey || passwordIsVisible ? 'text' : 'password'}
-                    placeholder={secretKey ? undefined : 'Enter the password'}
-                    value={secretKey?.name || password}
-                    readOnly={!!secretKey}
+                    type={passwordIsVisible ? 'text' : 'password'}
+                    placeholder="Enter the password"
+                    value={password}
                     autoFocus
                     endAdornment={
                         <InputAdornment position="end">
-                            {!secretKey && (
-                                <IconButton
-                                    size="small"
-                                    title={passwordIsVisible ? 'Hide password' : 'Show password'}
-                                    onClick={handleTogglePassword}
-                                >
-                                    {passwordIsVisible ? (
-                                        <VisibilityOffIcon fontSize="small" />
-                                    ) : (
-                                        <VisibilityIcon fontSize="small" />
-                                    )}
-                                </IconButton>
-                            )}
                             <IconButton
                                 size="small"
-                                title={secretKey ? 'Change the secret key' : 'Add secret key'}
-                                onClick={handleOpenSecretKeyMenu}
+                                title={passwordIsVisible ? 'Hide password' : 'Show password'}
+                                onClick={handleTogglePassword}
                             >
-                                {secretKey ? (
-                                    <VerifiedUserIcon fontSize="small" />
+                                {passwordIsVisible ? (
+                                    <VisibilityOffIcon fontSize="small" />
                                 ) : (
-                                    <AddModeratorIcon fontSize="small" />
+                                    <VisibilityIcon fontSize="small" />
                                 )}
                             </IconButton>
                         </InputAdornment>
@@ -266,52 +185,15 @@ const Password = () => {
                 </Link>
                 <span>.</span>
             </div>
-            {/* TODO Add hints for empty password or key */}
+            {/* TODO: Add hints for empty password or key */}
             <div className="password__actions">
-                <Button
-                    variant="contained"
-                    disabled={!password && !secretKey}
-                    onClick={handleEncryptClick}
-                >
+                <Button variant="contained" disabled={!password} onClick={handleEncryptClick}>
                     Encrypt
                 </Button>
-                <Button
-                    variant="outlined"
-                    disabled={!password && !secretKey}
-                    onClick={handleDecryptClick}
-                >
+                <Button variant="outlined" disabled={!password} onClick={handleDecryptClick}>
                     Decrypt
                 </Button>
             </div>
-            <Menu
-                anchorEl={anchorEl}
-                open={!!anchorEl}
-                onClose={handleCloseSecretKeyMenu}
-                onClick={handleCloseSecretKeyMenu}
-            >
-                {/* TODO Add short description and popup tip */}
-                {/* FIXME This item appears immideately after adding of the secret key */}
-                {secretKey && (
-                    <MenuItem divider onClick={handleRemoveSecretKey}>
-                        <ListItemIcon>
-                            <ClearIcon fontSize="small" />
-                        </ListItemIcon>
-                        Remove the key
-                    </MenuItem>
-                )}
-                <MenuItem divider onClick={handleCreateSecretKey}>
-                    <ListItemIcon>
-                        <AddIcon fontSize="small" />
-                    </ListItemIcon>
-                    Create new secret key
-                </MenuItem>
-                <MenuItem onClick={handleUploadSecretKey}>
-                    <ListItemIcon>
-                        <UploadIcon fontSize="small" />
-                    </ListItemIcon>
-                    Upload another one
-                </MenuItem>
-            </Menu>
         </div>
     );
 };
@@ -329,11 +211,6 @@ function validatePassword(password: string | null): true | string {
         return `Password must contain no more than ${MAX_PASSWORD_LENGTH} characters.`;
     }
 
-    return true;
-}
-
-function validateKey(key: lib.WordArray): true | string {
-    // FXIME Add key validation
     return true;
 }
 

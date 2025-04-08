@@ -1,4 +1,4 @@
-# TODO Install npm-dependencies and build static files
+# TODO: Install npm-dependencies and build static files
 FROM tiangolo/uwsgi-nginx-flask:python3.11
 RUN apt-get update
 RUN apt-get --assume-yes install bash nano

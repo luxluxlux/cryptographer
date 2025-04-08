@@ -13,7 +13,7 @@ interface IState {
     fullscreen: boolean;
 }
 
-// TODO Close if page changed
+// TODO: Close if page changed
 function WindowManager(props: IProps) {
     const closableRef = useRef(true);
 
@@ -64,13 +64,13 @@ function WindowManager(props: IProps) {
     return (
         <WindowManagerContext.Provider value={stateContextValue}>
             {props.children}
-            {/* TODO Use cross button for close */}
+            {/* TODO: Use cross button for close */}
             <Backdrop
                 className={state.modal ? 'window-manager_modal' : undefined}
                 open={!!state.content}
                 onClick={handleClose}
             >
-                {/* TODO Adapt fullscreen to non-modal mode */}
+                {/* TODO: Adapt fullscreen to non-modal mode */}
                 {state.fullscreen ? (
                     state.content
                 ) : (

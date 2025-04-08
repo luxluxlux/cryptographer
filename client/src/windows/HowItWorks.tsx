@@ -1,4 +1,4 @@
-// TODO Prepare text
+// TODO: Prepare text
 const HowItWorks = () => (
     <div>
         <h2>How does it work?</h2>

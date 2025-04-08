@@ -3,7 +3,7 @@ import { createTheme } from '@mui/material/styles';
 
 const breakpoints = unstable_createBreakpoints({});
 
-// TODO Is it possible to use it as CSS?
+// TODO: Is it possible to use it as CSS?
 // https://mui.com/material-ui/integrations/interoperability/#global-css
 export default createTheme({
     palette: {
@@ -98,7 +98,7 @@ export default createTheme({
             styleOverrides: {
                 label: {
                     fontSize: 'unset',
-                    // FIXME Remove CSS classes
+                    // FIXME: Remove CSS classes
                     '&.Mui-completed': {
                         fontWeight: 'unset',
                     },

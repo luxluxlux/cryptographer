@@ -1,30 +1,22 @@
-import { IStep } from './interfaces';
+import { parseVersion } from './common';
+import { IStep, Version } from './interfaces';
 
-// Web application version - 3 characters separated by a dot, such as 0.1.0, 1.2.14, etc.
-// Caution! Each single number of the version mustn't exceed the VERSION_SIZE
-// FIXME Track it globally after https://github.com/luxluxlux/cryptographer/issues/35
-export const VERSION = '0.0.0';
-// Max size of the single number of the version in bits
-export const VERSION_SIZE = 16;
+// Version size in bytes
+export const VERSION_SIZE = 3;
 
-// TODO Make a config and get this params from it
+// Web application version ('major.minor.revision')
+// Warning! No letters! Only numbers! No greater than 1 byte (0-255) for each number
+// Don't forget to sync with the package.json
+export const VERSION: Version = '0.0.1';
+
+// Version parsed into the tuple ([major, minor, revision])
+export const PARSED_VERSION = parseVersion(VERSION, VERSION_SIZE);
+
+// Minimum password length
 export const MIN_PASSWORD_LENGTH = 8;
+
+// Maximum password length
 export const MAX_PASSWORD_LENGTH = 127;
-
-// Salt size in bits
-export const SALT_SIZE = 128;
-
-// Initialization vector size in bits
-export const IV_SIZE = 128;
-
-// Key size in bits
-export const KEY_SIZE = 256;
-
-// Count of iterations of key hash function
-export const KEY_ITERATIONS = 1000;
-
-// Secret key size in bits
-export const SECRET_KEY_SIZE = 512;
 
 // Max file size in MB
 export const MAX_FILE_SIZE_MB = 10;
@@ -32,10 +24,7 @@ export const MAX_FILE_SIZE_MB = 10;
 // Maximum length of the file name inside the alert
 export const MAX_ALERT_FILENAME_LENGTH = 30;
 
-// Extension of the secret key file
-export const KEY_EXTENSION = '.crg';
-
-// TODO Is it redundant?
+// TODO: Is it redundant?
 export const enum PATH {
     UPLOAD = '/',
     KEY = '/password',
@@ -48,7 +37,7 @@ export const enum STAGE {
     SUCCESS = 'success',
 }
 
-// TODO Is it redundant?
+// TODO: Is it redundant?
 export const PATH_STAGE: Record<PATH, STAGE> = {
     [PATH.UPLOAD]: STAGE.UPLOAD,
     [PATH.KEY]: STAGE.KEY,

@@ -1,4 +1,4 @@
-// TODO Prepare text
+// TODO: Prepare text
 const About = () => (
     <div>
         <p>
