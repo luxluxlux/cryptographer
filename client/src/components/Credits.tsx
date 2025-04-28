@@ -2,7 +2,7 @@ import Link from '@mui/material/Link';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Credits = () => (
-    // FIXME Move link to the config
+    // FIXME: Move link to the config
     <Link
         href="https://github.com/luxluxlux/cryptographer"
         target="_blank"

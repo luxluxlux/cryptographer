@@ -11,7 +11,7 @@ const STAGE_IDS = Object.fromEntries(
     (Object.keys(STAGE_DATA) as (keyof typeof STAGE_DATA)[]).map((key, index) => [key, index])
 );
 
-// TODO Rename to Step
+// TODO: Rename to Step
 const Stage = () => {
     const location = useLocation();
     const stage = PATH_STAGE[location.pathname as PATH];

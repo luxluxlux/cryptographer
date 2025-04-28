@@ -1,4 +1,4 @@
-// TODO Prepare text
+// TODO: Prepare text
 const WhatsWrong = () => (
     <div>
         <h2>What&apos;s wrong?</h2>

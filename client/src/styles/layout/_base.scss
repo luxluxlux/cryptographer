@@ -45,7 +45,7 @@
         @media (width >= $breakpoint-s) {
             width: $body-width;
             height: $height;
-            // FIXME Stylelint-prettier conflict
+            // FIXME: Stylelint-prettier conflict
             top: calc(
                 50% - $height / 2 - (($grad-offset - math.abs($content-height - $stage-height) / 2))
             );

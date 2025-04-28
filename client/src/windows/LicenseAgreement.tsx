@@ -1,4 +1,4 @@
-// TODO Prepare text
+// TODO: Prepare text
 const LicenseAgreement = () => (
     <div>
         <h2>License Agreement</h2>
