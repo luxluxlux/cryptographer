@@ -1,4 +1,4 @@
-import { AES, PBKDF2, HmacSHA256, lib } from 'crypto-js';
+import { AES, PBKDF2, HmacSHA512, lib } from 'crypto-js';
 import { PARSED_VERSION } from 'utils/constants';
 import {
     assemble,
@@ -25,8 +25,8 @@ export function generateSalt(): lib.WordArray {
 }
 
 /**
- * Generate random Initialization Vector (IV)
- * @returns Randomly generated Initialization Vector (IV)
+ * Generate random initialization vector (IV)
+ * @returns Randomly generated initialization vector (IV)
  */
 export function generateIV(): lib.WordArray {
     return lib.WordArray.random(IV_SIZE);
@@ -48,12 +48,15 @@ export function getKey(password: string, salt: lib.WordArray): lib.WordArray {
 /**
  * Calculate HMAC of the encrypted data
  * @param data Encrypted data
- * @param iv Initialization Vector (IV)
+ * @param iv Initialization vector (IV)
  * @param key Hashed key
  * @returns HMAC of the encrypted data
  */
 export function calcHMAC(data: lib.CipherParams, iv: lib.WordArray, key: lib.WordArray): lib.WordArray {
-    return HmacSHA256(concatWordArrays(data.ciphertext, iv), key);
+    // The chosen method is based on recommended parameters (https://www.keylength.com/)
+    // and the fact that modern PC processors are increasingly built on 64-bit architecture,
+    // which works faster with SHA512, while attackers use GPUs, which are poor at 64-bit arithmetic
+    return HmacSHA512(concatWordArrays(data.ciphertext, iv), key);
 }
 
 /**
