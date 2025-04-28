@@ -3,16 +3,26 @@ import { VERSION_SIZE } from 'utils/constants';
 import { FixedFileFormat } from './interfaces';
 
 // Salt size in bytes
+// The selected value is based on the recommended params
+// https://en.wikipedia.org/wiki/PBKDF2
 export const SALT_SIZE = 16;
 
-// Initialization vector size in bytes
+// Initialization vector (IV) size in bytes
+// The vector size is determined by AES in CBC mode. In that case IV must have the same length
+// as the block. AES uses 128-bit blocks, so a 128-bit IV.
+// https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CBC
 export const IV_SIZE = 16;
 
-// Key size in words
-export const KEY_SIZE = 8;
+// Key size in words (32 bits each)
+// The chosen method is based on recommended parameters (https://www.keylength.com/)
+// and the fact that modern PC processors are increasingly built on 64-bit architecture,
+// while attackers use GPUs, which are poor at 64-bit arithmetic
+export const KEY_SIZE = 16;
 
 // Count of iterations of key hash function
-export const KEY_ITERATIONS = 1000;
+// The selected value may seem outdated, but we use it to ensure stable operation for weak clients
+// https://en.wikipedia.org/wiki/PBKDF2
+export const KEY_ITERATIONS = 5000;
 
 // Default cipher parameters
 export const DEFAULT_CIPHER_PARAMS: Partial<lib.CipherParams> = {
@@ -35,7 +45,7 @@ export const DEFAULT_CIPHER_PARAMS: Partial<lib.CipherParams> = {
  *     n | Cipher
  *     4 | Cipher size (n)
  *    16 | IV
- *    32 | HMAC (HmacSHA256)
+ *    64 | HMAC (HmacSHA512)
  *    16 | Salt
  *     3 | Version (major, minor, revision)
  */
@@ -50,7 +60,7 @@ export const FILE_FORMAT: FixedFileFormat = [
     },
     {
         type: 'WordArray',
-        size: 32
+        size: 64
     },
     {
         type: 'WordArray',
