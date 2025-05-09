@@ -1,6 +1,9 @@
 import { parseVersion } from './common';
 import { IStep, Version } from './interfaces';
 
+// Name of the application
+export const APPLICATION_NAME = 'Cryptographer';
+
 // Version size in bytes
 export const VERSION_SIZE = 3;
 
@@ -11,6 +14,9 @@ export const VERSION: Version = '0.0.1';
 
 // Version parsed into the tuple ([major, minor, revision])
 export const PARSED_VERSION = parseVersion(VERSION, VERSION_SIZE);
+
+// Project URL on GitHub
+export const GITHUB_URL = 'https://github.com/luxluxlux/cryptographer';
 
 // Minimum password length
 export const MIN_PASSWORD_LENGTH = 8;

@@ -25,7 +25,7 @@ const DropArea = (props: IProps) => {
                     message:
                         files.length === 1 ? (
                             <>
-                                <b>{ellipse(files[0].name, MAX_ALERT_FILENAME_LENGTH)}</b>{' '}
+                                <strong>{ellipse(files[0].name, MAX_ALERT_FILENAME_LENGTH)}</strong>{' '}
                                 isn&apos;t uploaded. {validation}
                             </>
                         ) : (

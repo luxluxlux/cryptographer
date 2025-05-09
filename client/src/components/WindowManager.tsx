@@ -16,6 +16,7 @@ interface IState {
 // TODO: Close if page changed
 function WindowManager(props: IProps) {
     const closableRef = useRef(true);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     const [state, setState] = useState<IState>({
         content: null,
@@ -31,6 +32,7 @@ function WindowManager(props: IProps) {
         () => ({
             open: (content, options) => {
                 closableRef.current = options?.closable ?? true;
+                scrollRef?.current?.scrollTo({ top: 0 });
                 setState({
                     content: content,
                     modal: !!options?.modal,
@@ -76,7 +78,10 @@ function WindowManager(props: IProps) {
                 ) : (
                     <div className="window-manager__content">
                         <div className="window-manager__content-container">
-                            <div className="window-manager__content-container-scroll">
+                            <div
+                                ref={scrollRef}
+                                className="window-manager__content-container-scroll"
+                            >
                                 {state.content}
                             </div>
                         </div>

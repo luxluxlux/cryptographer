@@ -9,10 +9,12 @@ import MuiMenu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import QuizIcon from '@mui/icons-material/Quiz';
 import InfoIcon from '@mui/icons-material/Info';
 import { WindowManagerContext } from 'utils/contexts';
 import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
 import HowItWorks from 'windows/HowItWorks';
+import FAQ from 'windows/FAQ';
 import About from 'windows/About';
 
 const Menu = () => {
@@ -23,6 +25,10 @@ const Menu = () => {
 
     const handleHowItWorksClick = useCallback(() => {
         windowContext.open(<HowItWorks />);
+    }, [windowContext.open]);
+
+    const handleFAQClick = useCallback(() => {
+        windowContext.open(<FAQ />);
     }, [windowContext.open]);
 
     const handleAboutClick = useCallback(() => {
@@ -50,6 +56,11 @@ const Menu = () => {
                         </ListItemButton>
                     </ListItem>
                     <ListItem className="menu__list-item">
+                        <ListItemButton className="menu__list-item-button" onClick={handleFAQClick}>
+                            <ListItemText primary="FAQ" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem className="menu__list-item">
                         <ListItemButton
                             className="menu__list-item-button"
                             onClick={handleAboutClick}
@@ -74,6 +85,12 @@ const Menu = () => {
                                 <SettingsSuggestIcon fontSize="small" />
                             </ListItemIcon>
                             How it works
+                        </MenuItem>
+                        <MenuItem divider onClick={handleFAQClick}>
+                            <ListItemIcon>
+                                <QuizIcon fontSize="small" />
+                            </ListItemIcon>
+                            FAQ
                         </MenuItem>
                         <MenuItem onClick={handleAboutClick}>
                             <ListItemIcon>

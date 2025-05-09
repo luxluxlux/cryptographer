@@ -1,14 +1,9 @@
 import Link from '@mui/material/Link';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { GITHUB_URL } from 'utils/constants';
 
 const Credits = () => (
-    // FIXME: Move link to the config
-    <Link
-        href="https://github.com/luxluxlux/cryptographer"
-        target="_blank"
-        rel="noopener"
-        className="credits"
-    >
+    <Link href={GITHUB_URL} target="_blank" rel="noopener" className="credits">
         <div className="credits__text">We’re on GitHub</div>
         <GitHubIcon className="credits__icon" />
     </Link>

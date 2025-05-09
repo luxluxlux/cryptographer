@@ -1,0 +1,12 @@
+.about {
+    &__features {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: var(--offset_s);
+
+        @media (width < $breakpoint-s) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

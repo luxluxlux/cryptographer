@@ -1,6 +1,7 @@
 @import 'abstracts/variables';
 @import 'base/normalize', 'base/base', 'base/typography';
 @import 'components/logo', 'components/menu', 'components/credits', 'components/windowManager',
-    'components/loading', 'components/stage', 'components/dragNDrop', 'components/snackbarProvider';
+    'components/loading', 'components/stage', 'components/dragNDrop', 'components/snackbarProvider',
+    'components/about';
 @import 'layout/base', 'layout/desktopBackground', 'layout/mobileBackground';
 @import 'pages/lobby', 'pages/password', 'pages/success';

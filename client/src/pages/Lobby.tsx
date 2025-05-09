@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import { useSnackbar } from 'components/Snackbar';
-import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
+import { APPLICATION_NAME, MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
 import { ellipse, upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
@@ -29,8 +29,8 @@ const Lobby = memo(() => {
                     title: 'Unable to upload file',
                     message: (
                         <>
-                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> isn&apos;t
-                            uploaded. {validation}
+                            <strong>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</strong>{' '}
+                            isn&apos;t uploaded. {validation}
                         </>
                     ),
                 });
@@ -50,8 +50,8 @@ const Lobby = memo(() => {
     return (
         <div className="lobby">
             <p className="lobby__description">
-                Welcome to the <b>Cryptographer</b>! The easiest way to protect your file with a
-                password or key.
+                Welcome to the <strong>{APPLICATION_NAME}</strong>! The easiest way to protect your
+                file with a password or key.
             </p>
             <Link className="lobby__about" component="button" onClick={handleAboutClick}>
                 How does it work?
