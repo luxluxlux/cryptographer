@@ -17,7 +17,6 @@ export async function readAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 
 /**
  * Convert number to Uint8Array (big-endian)
- * TODO: Maybe make byteLength optional? 
  * @param number Positive number to be converted
  * @param byteLength Length of the result array
  * @returns Uint8Array representation of the number
@@ -67,7 +66,6 @@ export function concatUint8Arrays(...arrays: Uint8Array[]): Uint8Array {
 
 /**
  * Convert WordArray to native Uint8Array
- * TODO: Check that wordArray count grater than sigBytes
  * @param wordArray CryptoJS WordArray to convert
  * @returns A Uint8Array representation of the given WordArray
  */

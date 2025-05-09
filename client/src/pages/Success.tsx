@@ -2,13 +2,13 @@ import { memo, useCallback, useEffect } from 'react';
 import { Link as RouterLink, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import { download, ellipse } from 'utils/common';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { APPLICATION_NAME } from 'utils/constants';
+import { download, ellipse } from 'utils/common';
 
-const SHARED_TEXT =
-    'I protect my files with a password using Cryptographer. Protect your files too!';
+const SHARED_TEXT = `I protect my files with a password using ${APPLICATION_NAME}. Protect your files too!`;
 
 const Success = () => {
     const location = useLocation();

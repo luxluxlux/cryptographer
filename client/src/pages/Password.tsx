@@ -40,8 +40,8 @@ const Password = () => {
                     title: 'Unable to upload file',
                     message: (
                         <>
-                            <b>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</b> isn&apos;t
-                            uploaded. {validation}
+                            <strong>{ellipse(file.name, MAX_ALERT_FILENAME_LENGTH)}</strong>{' '}
+                            isn&apos;t uploaded. {validation}
                         </>
                     ),
                 });

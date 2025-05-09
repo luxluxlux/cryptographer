@@ -185,6 +185,13 @@ export default createTheme({
                     borderRadius: 'var(--border-radius-l)',
                 },
             },
+        },
+        MuiListItem: {
+            styleOverrides: {
+                root: {
+                    marginBottom: 'unset',
+                },
+            },
         }
     },
 });
