@@ -9,10 +9,12 @@ import IconButton from '@mui/material/IconButton';
 import CachedIcon from '@mui/icons-material/Cached';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Action, ValidationResult } from 'utils/interfaces';
 import {
     MIN_PASSWORD_LENGTH,
     MAX_PASSWORD_LENGTH,
     MAX_ALERT_FILENAME_LENGTH,
+    MAX_FILE_SIZE_MB,
 } from 'utils/constants';
 import { ellipse, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
@@ -71,13 +73,13 @@ const Password = () => {
     }, []);
 
     const handleCrypt = useCallback(
-        async (action: 'encrypt' | 'decrypt') => {
-            const validation = validatePassword(password);
-            if (validation !== true) {
+        async (action: Action) => {
+            const passwordValidation = validatePassword(password);
+            if (passwordValidation !== true) {
                 enqueueSnackbar({
                     variant: 'warning',
                     title: `Unable to ${action} file`,
-                    message: validation,
+                    message: passwordValidation,
                 });
                 return;
             }
@@ -97,9 +99,21 @@ const Password = () => {
                     throw result[0].reason;
                 }
                 const data = result[0].value;
+                const blob = new Blob([data], { type: file.type });
+
+                const blobValidation = validateBlob(action, blob);
+                if (blobValidation !== true) {
+                    enqueueSnackbar({
+                        variant: 'warning',
+                        title: `Unable to ${action} file`,
+                        message: blobValidation,
+                    });
+                    return;
+                }
+
                 navigate('/success', {
                     state: {
-                        data: new Blob([data], { type: file.type }),
+                        data: blob,
                         fileName: file.name,
                         action,
                     },
@@ -198,7 +212,7 @@ const Password = () => {
     );
 };
 
-function validatePassword(password: string | null): true | string {
+function validatePassword(password: string | null): ValidationResult {
     if (!password) {
         return 'The password is empty.';
     }
@@ -209,6 +223,19 @@ function validatePassword(password: string | null): true | string {
 
     if (password.length > MAX_PASSWORD_LENGTH) {
         return `Password must contain no more than ${MAX_PASSWORD_LENGTH} characters.`;
+    }
+
+    return true;
+}
+
+function validateBlob(action: Action, blob: Blob): ValidationResult {
+    if (action === 'encrypt' && blob.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        return (
+            <>
+                The encrypted file size exceeds the maximum allowed size of {MAX_FILE_SIZE_MB}
+                &nbsp;MB.
+            </>
+        );
     }
 
     return true;

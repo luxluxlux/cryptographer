@@ -1,5 +1,4 @@
-import { ReactNode } from 'react';
-import { ParsedVersion, Version } from './interfaces';
+import { ParsedVersion, ValidationResult, Version } from './interfaces';
 import { MAX_FILE_SIZE_MB } from './constants';
 
 /**
@@ -70,7 +69,7 @@ export function ellipse(text: string, maxLength: number) {
  * Check one file
  * @param file File
  */
-export function validateFile(file: File): boolean | string | ReactNode {
+export function validateFile(file: File): ValidationResult {
     if (file.size === 0) {
         return 'Folders and empty files are not allowed.';
     }

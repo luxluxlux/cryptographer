@@ -1,4 +1,5 @@
 import { AES, PBKDF2, HmacSHA512, lib } from 'crypto-js';
+import { Action } from 'utils/interfaces';
 import { PARSED_VERSION } from 'utils/constants';
 import {
     assemble,
@@ -169,7 +170,7 @@ export async function decrypt(file: File, password: string): Promise<Uint8Array>
  * @returns A promise that resolves to the encrypted or decrypted file as a Uint8Array
  */
 export async function crypt(
-    action: 'encrypt' | 'decrypt',
+    action: Action,
     file: File,
     password: string
 ): Promise<Uint8Array> {

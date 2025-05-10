@@ -6,6 +6,9 @@ export type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<
 export type Version = `${number}.${number}.${number}`;
 export type ParsedVersion = [number, number, number];
 
+export type Action = 'encrypt' | 'decrypt';
+export type ValidationResult = true | string | ReactNode;
+
 export interface IStep {
     index?: number;
     text?: string;
