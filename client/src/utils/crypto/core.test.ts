@@ -1,5 +1,5 @@
 import { AES, lib } from 'crypto-js';
-import { FILE_FORMAT, SALT_SIZE } from './constants';
+import { FILE_FORMAT, IV_SIZE, KEY_SIZE, SALT_SIZE } from './constants';
 import { buildFile, calcHMAC, crypt, decrypt, encrypt, generateIV, generateSalt, getKey, parseFile } from './core';
 import { disassemble, readAsArrayBuffer } from './utils';
 import { PARSED_VERSION } from 'utils/constants';
@@ -18,9 +18,9 @@ describe('generateSalt', () => {
 });
 
 describe('generateIV', () => {
-    it('Should generate an IV with a length of 16 bytes', () => {
+    it('Should generate an IV with a length of IV_SIZE', () => {
         const iv = generateIV();
-        expect(iv.words.length).toEqual(4);
+        expect(iv.words.length).toEqual(IV_SIZE / 4);
     });
 
     it('Should generate different IVs on each call', () => {
@@ -31,9 +31,9 @@ describe('generateIV', () => {
 });
 
 describe('getKey', () => {
-    it('Should return a key with a length of 32 bytes', () => {
+    it('Should return a key with with a length of KEY_SIZE', () => {
         const key = getKey('test', generateSalt());
-        expect(key.words.length).toEqual(8);
+        expect(key.words.length).toEqual(KEY_SIZE);
     });
 
     it('Should return different keys for different passwords', () => {
