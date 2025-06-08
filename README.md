@@ -14,7 +14,7 @@
 
 This is a non-commercial project focused on helping individuals protect their personal data from unauthorized access. The developers are not responsible for any misuse of the application in ways that violate the laws of any country.
 
-##  Key Features
+##  Key features
 
 | Feature | Description |
 |---------|-------------|
@@ -46,45 +46,47 @@ Security also depends on how well the password is protected and how secure the u
 
 ## Launch
 
-### Python interpreter
+### Running with Python interpreter
 
-Installation requirements:
+**Requirements:**
 - Python
 - Node.js
 
-Go to the project directory.
+1. Navigate to the project directory.
 
-Install Python dependencies:
+2. Install Python dependencies:
 
 ```
 pip install -r server/requirements.txt
 ```
 
-Install npm dependencies:
+3. Install npm dependencies:
 
 ```
 npm i --prefix client
 ```
 
-Build client files:
+4. Build the client files:
 
 ```
 npm run --prefix client build
 ```
 
-Run the application:
+5. Run the application:
 
 ```
 python main.py
 ```
 
-### Docker container
+### Running in a Docker container
 
-Installation requirements:
+**Requirements:**
 - Ubuntu server
 - Nginx web server
 
-Go to the project directory and execute in the console:
+1. Follow steps 1-4 from the section above.
+
+2. Run the startup script:
 
 ```
 sudo bash start.sh
