@@ -51,7 +51,7 @@ const Lobby = memo(() => {
         <div className="lobby">
             <p className="lobby__description">
                 Welcome to the <strong>{APPLICATION_NAME}</strong>! The easiest way to protect your
-                file with a password or key.
+                file with a password.
             </p>
             <Link className="lobby__about" component="button" onClick={handleAboutClick}>
                 How does it work?

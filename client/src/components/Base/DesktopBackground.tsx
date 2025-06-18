@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 const DesktopBackground = () => (
     <div className="desktop-background">
         <div className="desktop-background__gradient">
@@ -14,4 +12,4 @@ const DesktopBackground = () => (
 
 DesktopBackground.displayName = 'DesktopBackground';
 
-export default memo(DesktopBackground);
+export default DesktopBackground;

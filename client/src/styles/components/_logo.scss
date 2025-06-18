@@ -12,9 +12,11 @@
     }
 
     &__image {
-        width: 40px;
+        $size: 40px;
+
+        width: $size;
         // It helps to avoid "jumps" during the loading
-        height: 40px;
+        height: $size;
     }
 
     &__text {

@@ -107,17 +107,3 @@ export function validateFiles(files: FileList) {
 export function wait(interval: number) {
     return new Promise((resolve) => setTimeout(resolve, interval));
 }
-
-/**
- * Checks if the current environment is production
- */
-export function isProduction() {
-    return process.env.NODE_ENV === 'production';
-}
-
-/**
- * Checks if the current environment is development
- */
-export function isDevelopment() {
-    return process.env.NODE_ENV === 'development';
-}
