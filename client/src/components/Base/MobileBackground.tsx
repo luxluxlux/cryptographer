@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 const MobileBackground = () => {
     return (
         <div className="mobile-background">
@@ -11,4 +9,4 @@ const MobileBackground = () => {
 
 MobileBackground.displayName = 'MobileBackground';
 
-export default memo(MobileBackground);
+export default MobileBackground;

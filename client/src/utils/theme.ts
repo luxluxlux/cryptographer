@@ -183,6 +183,7 @@ export default createTheme({
             styleOverrides: {
                 root: {
                     borderRadius: 'var(--border-radius-l)',
+                    fontSize: 'unset',
                 },
             },
         },

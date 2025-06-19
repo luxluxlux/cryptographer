@@ -1,6 +1,5 @@
 import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
-import { APPLICATION_NAME, GITHUB_URL } from 'utils/constants';
+import { GITHUB_URL } from 'utils/constants';
 
 const HowItWorks = () => (
     <div>
@@ -15,14 +14,19 @@ const HowItWorks = () => (
             disk or removable media. Its contents remain inaccessible until it&apos;s decrypted in
             the Cryptographer app using the same password.
         </p>
+        <h2>How reliable is it?</h2>
         <p>
-            <Alert variant="outlined" severity="warning">
-                <strong>Do not modify or compress encrypted files before sharing!</strong>
-                <p></p>Any change, even minor, can corrupt the file and make it impossible to
-                decrypt or recover the original data.
-            </Alert>
+            We encrypt your data using strong, modern cryptographic standards such as{' '}
+            <strong>AES</strong>, <strong>PBKDF2</strong>, and <strong>SHA-512</strong>, making it
+            virtually impossible for attackers to read, modify, or decrypt your files with current
+            or near-future computing power.
         </p>
-        <h2>Can you trust {APPLICATION_NAME}?</h2>
+        <p>
+            Since all encryption is performed locally in your browser, the security of your
+            encrypted files depends on the safety of your device - including how well it&apos;s
+            protected from malware, unauthorized access, or data leaks.
+        </p>
+        <h2>Can I trust you?</h2>
         <p>Yes, and here&apos;s why:</p>
         <h3>✅ We never see your secrets</h3>
         <p>
@@ -68,43 +72,31 @@ const HowItWorks = () => (
             </Link>{' '}
             and confirm for yourself that we follow everything stated above.
         </p>
-        <h2>How reliable is it?</h2>
+        <h2>What else should I know?</h2>
+        <h3>⚠️ Do not modify encrypted files</h3>
         <p>
-            We encrypt your data using strong, modern cryptographic standards such as{' '}
-            <strong>AES</strong>, <strong>PBKDF2</strong>, and <strong>SHA-512</strong>, making it
-            virtually impossible for attackers to read, modify, or decrypt your files with current
-            or near-future computing power.
+            Any change, even minor, can corrupt the file and make it impossible to decrypt or
+            recover the original data.
+        </p>
+        <h3>⚠️ Do not use this service for sensitive materials</h3>
+        <p>
+            This service is designed to protect your <strong>personal data</strong> - such as
+            photos, videos, audio files, text documents, and more. It is{' '}
+            <strong>
+                not intended for encrypting materials involving state, industrial, or commercial
+                secrets, etc.
+            </strong>
+            , where stricter security and compliance standards may be required.
+        </p>
+        <h3>🚫 The use of this product for illegal purposes is strictly prohibited!</h3>
+        <p>
+            The authors of this service only provide tools for encrypting data in the browser. We do
+            not have access to the downloaded files and{' '}
+            <strong>are not responsible for their content</strong>.
         </p>
         <p>
-            Since all encryption is performed locally in your browser, the security of your
-            encrypted files depends on the safety of your device - including how well it&apos;s
-            protected from malware, unauthorized access, or data leaks.
-        </p>
-        <p>
-            <Alert variant="outlined" severity="warning">
-                This service is designed to protect your <strong>personal data</strong> - such as
-                photos, videos, audio files, text documents, and more. It is{' '}
-                <strong>not intended for encrypting sensitive materials</strong> involving{' '}
-                <strong>state, industrial, or commercial secrets</strong>, where stricter security
-                and compliance standards may be required.
-            </Alert>
-        </p>
-        <p>
-            <Alert variant="outlined" severity="error">
-                <strong>
-                    The use of this product for illegal purposes is strictly prohibited!
-                </strong>
-                <p>
-                    The authors of this service only provide tools for encrypting data in the
-                    browser. We do not have access to the downloaded files and{' '}
-                    <strong>are not responsible for their content</strong>.
-                </p>
-                <p>
-                    Be aware that government agencies of any country have the necessary expertise,
-                    technical capabilities, and computing power to potentially access any encrypted
-                    data.
-                </p>
-            </Alert>
+            Be aware that government agencies of any country have the necessary expertise, technical
+            capabilities, and computing power to potentially access any encrypted data.
         </p>
     </div>
 );

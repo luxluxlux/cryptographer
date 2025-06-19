@@ -1,6 +1,6 @@
 import { useCallback, useContext, MouseEvent } from 'react';
 import Link from '@mui/material/Link';
-import { APPLICATION_NAME, GITHUB_URL } from 'utils/constants';
+import { APPLICATION_NAME, GITHUB_URL, VERSION } from 'utils/constants';
 import { WindowManagerContext } from 'utils/contexts';
 import LicenseAgreement from 'windows/LicenseAgreement';
 
@@ -61,7 +61,6 @@ const About = () => {
                     on your device.
                 </div>
             </div>
-
             <h2>Licence agreement</h2>
             <p>
                 By using {APPLICATION_NAME}, you acknowledge that you have read, understood, and
@@ -113,6 +112,9 @@ const About = () => {
                 </Link>{' '}
                 author - however you prefer. We&apos;re always open to conversation, contribution,
                 and ideas.
+            </p>
+            <p>
+                <strong>Version {VERSION}</strong>
             </p>
         </div>
     );

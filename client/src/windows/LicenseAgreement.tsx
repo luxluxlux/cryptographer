@@ -161,10 +161,11 @@ const LicenseAgreement = () => (
             </Link>
             .
         </p>
-        <hr />
         <p>
-            By using {APPLICATION_NAME}, you acknowledge that you have read, understood, and agree
-            to the terms and conditions of this license agreement.
+            <strong>
+                By using {APPLICATION_NAME}, you acknowledge that you have read, understood, and
+                agree to the terms and conditions of this license agreement.
+            </strong>
         </p>
     </div>
 );

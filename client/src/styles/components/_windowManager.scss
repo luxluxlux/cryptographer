@@ -19,7 +19,7 @@
         }
 
         &-container {
-            $transition: 20px;
+            $transition: var(--offset_s);
 
             display: flex;
             overflow-x: hidden;
