@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 // Bootstrap breakpoints as a reliable reference
 // https://getbootstrap.com/docs/5.0/layout/breakpoints/
-export const enum BREAKPOINT {
+export enum BREAKPOINT {
     S = 576,
 }
 

@@ -28,7 +28,7 @@ const HowItWorks = () => (
         </p>
         <h2>Can I trust you?</h2>
         <p>Yes, and here&apos;s why:</p>
-        <h3>✅ We never see your secrets</h3>
+        <h3>🙈 We never see your secrets</h3>
         <p>
             <strong>We don&apos;t collect or store</strong> your passwords, encryption keys, file
             contents, or any other sensitive information.{' '}

@@ -10,8 +10,7 @@ export type Action = 'encrypt' | 'decrypt';
 export type ValidationResult = true | string | ReactNode;
 
 export interface IStep {
-    index?: number;
-    text?: string;
+    path: string;
     color: string;
 }
 

@@ -8,6 +8,10 @@ const breakpoints = unstable_createBreakpoints({});
 export default createTheme({
     palette: {
         mode: 'dark',
+        action: {
+            hover: 'var(--button-translucent-hover-color)',
+            focus: 'var(--button-translucent-focus-color)',
+        }
     },
     typography: {
         fontFamily: 'unset',
@@ -54,10 +58,10 @@ export default createTheme({
                                     ...common,
                                     borderColor: 'unset',
                                     "&:hover": {
-                                        backgroundColor: 'var(--button-outlined-hover-color)',
+                                        backgroundColor: 'var(--button-translucent-hover-color)',
                                     },
                                     '&:focus-visible': {
-                                        backgroundColor: 'var(--button-outlined-focus-color)',
+                                        backgroundColor: 'var(--button-translucent-focus-color)',
                                     },
                                 },
                             },
@@ -88,8 +92,11 @@ export default createTheme({
         MuiIconButton: {
             styleOverrides: {
                 root: {
+                    '&:hover': {
+                        backgroundColor: 'var(--button-translucent-hover-color)',
+                    },
                     '&:focus-visible': {
-                        backgroundColor: 'var(--button-text-focus-color)',
+                        backgroundColor: 'var(--button-translucent-focus-color)',
                     },
                 },
             },
@@ -162,7 +169,7 @@ export default createTheme({
                         outline: 'none',
                         border: 'none',
                         borderRadius: 'var(--border-radius-infinite)',
-                        backgroundColor: 'var(--button-text-focus-color)',
+                        backgroundColor: 'var(--button-translucent-focus-color)',
                     },
                 },
             },

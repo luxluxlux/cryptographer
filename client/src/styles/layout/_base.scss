@@ -1,6 +1,5 @@
 @use 'sass:math';
 @import 'styles/abstracts/breakpoints';
-@import 'styles/layout/variables';
 
 .base {
     background-color: #070707;
@@ -10,74 +9,82 @@
     // For old browsers
     height: 100%;
 
-    &__header {
+    &__background {
         position: absolute;
-        left: var(--offset_xl);
-        right: var(--offset_xl);
-        top: var(--offset_l);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 1;
-
-        @media (width < $breakpoint-s) {
-            left: var(--offset_m);
-            right: var(--offset_m);
-            top: var(--offset_m);
-        }
-    }
-
-    &__body {
-        $stage-height: 100px;
-        $content-height: 350px;
-        $height: $stage-height + $content-height;
-
-        position: absolute;
-
-        @media (width < $breakpoint-s) {
-            width: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: var(--offset_m);
-            box-sizing: border-box;
-        }
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
 
         @media (width >= $breakpoint-s) {
-            width: $body-width;
-            height: $height;
-            top: calc(
-                50% - $height / 2 - (($grad-offset - math.abs($content-height - $stage-height) / 2))
-            );
-            left: calc(50% - $body-width / 2);
-            display: flex;
-            flex-direction: column;
+            background-image: url('/resources/backgrounds/desktop.svg');
+        }
 
-            &-stage {
-                height: $stage-height;
-                box-sizing: border-box;
-                padding: var(--offset_m) var(--offset_2xl);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            &-content {
-                height: $content-height;
-                box-sizing: border-box;
-                padding: var(--offset_2xl);
-            }
+        @media (width < $breakpoint-s) {
+            background-image: url('/resources/backgrounds/mobile.svg');
         }
     }
 
-    &__footer {
+    &__overlay {
         position: absolute;
-        right: var(--offset_xl);
-        bottom: var(--offset_l);
-        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background-color: var(--primary-color);
+        mix-blend-mode: color;
+        transition: background-color 500ms ease-in-out;
+    }
 
-        @media (width < $breakpoint-s) {
-            right: var(--offset_m);
-            bottom: var(--offset_m);
+    &__content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1;
+
+            @media (width >= $breakpoint-s) {
+                padding: var(--offset_l) var(--offset_xl);
+            }
+
+            @media (width < $breakpoint-s) {
+                padding: var(--offset_m);
+            }
+        }
+
+        &-body {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &-content {
+                @media (width >= $breakpoint-s) {
+                    width: 450px;
+                }
+
+                @media (width < $breakpoint-s) {
+                    width: 100%;
+                    padding: 0 var(--offset_m);
+                }
+            }
+        }
+
+        &-footer {
+            z-index: 1;
+            align-self: end;
+
+            @media (width >= $breakpoint-s) {
+                padding: var(--offset_l) var(--offset_xl);
+            }
+
+            @media (width < $breakpoint-s) {
+                padding: var(--offset_m);
+            }
         }
     }
 }
