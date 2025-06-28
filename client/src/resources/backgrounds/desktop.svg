@@ -1,0 +1,27 @@
+<svg width="1980" height="1080" viewBox="0 0 1980 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="backgroundGradient" cx="1" cy="0.6" r="1">
+      <stop offset="0" stop-color="#ffe0ff"/>
+      <stop offset="0.1" stop-color="#eb9dea"/>
+      <stop offset="0.8" stop-color="#bf02bc"/>
+      <stop offset="1" stop-color="#850182"/>
+    </radialGradient>
+    <radialGradient id="blobGradient">
+      <stop offset="0.8" stop-color="#000000"/>
+      <stop offset="1" stop-color="#00000099"/>
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="30"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#backgroundGradient)" />
+  <g filter="url(#blur)" fill="url(#blobGradient)">
+    <path d="M392 -1600C985 -1600 1320 -959 1320 -335C1320 220 920 700 392 700C-267 700 -980 359 -980 -335C-980 -1085 -320 -1600 392 -1600Z">
+      <animateTransform attributeName="transform" type="rotate" from="0 170 -450" to="-360 170 -450" dur="20s" repeatCount="indefinite" />
+    </path>
+    <path d="M1972 380C2565 380 2900 1021 2900 1645C2900 2200 2500 2680 1972 2680C1313 2680 600 2339 600 1645C600 895 1260 380 1972 380Z">
+      <animateTransform attributeName="transform" type="rotate" from="0 1750 1530" to="360 1750 1530" dur="20s" repeatCount="indefinite" />
+    </path>
+  </g>
+</svg>
+

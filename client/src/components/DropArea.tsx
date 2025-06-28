@@ -55,7 +55,11 @@ const DropArea = (props: IProps) => {
         [handleDrop, windowContext.open]
     );
 
-    return <div onDragEnter={handleDragEnter}>{props.children}</div>;
+    return (
+        <div className="drop-area" onDragEnter={handleDragEnter}>
+            {props.children}
+        </div>
+    );
 };
 
 DropArea.displayName = 'DropArea';

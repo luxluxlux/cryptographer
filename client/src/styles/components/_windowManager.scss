@@ -8,14 +8,18 @@
     &__content {
         max-width: 1024px;
         height: 100%;
-        padding: 80px var(--offset_xl);
         overflow-y: hidden;
         box-sizing: border-box;
         display: flex;
 
+        @media screen and (width >= $breakpoint-s) {
+            // Be careful! These are calculated values
+            padding: 84px var(--offset_xl) 80px;
+        }
+
         @media screen and (width < $breakpoint-s) {
-            padding-left: var(--offset_m);
-            padding-right: var(--offset_m);
+            // Be careful! These are calculated values
+            padding: 76px var(--offset_xl) 72px;
         }
 
         &-container {
