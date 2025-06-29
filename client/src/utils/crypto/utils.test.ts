@@ -1,6 +1,8 @@
 import { lib } from 'crypto-js';
+import { ArrType, FileFormat } from './interfaces';
 import {
     assemble,
+    compareArrayBuffers,
     concatUint8Arrays,
     concatWordArrays,
     customizeArr,
@@ -11,7 +13,6 @@ import {
     uint8ArrayToNumber,
     wordArrayToUint8Array
 } from './utils';
-import { ArrType, FileFormat } from './interfaces';
 
 describe('readAsArrayBuffer', () => {
     it('Should return a promise that resolves to an Uint8Array', async () => {
@@ -19,6 +20,20 @@ describe('readAsArrayBuffer', () => {
         const result = await readAsArrayBuffer(file);
         expect(result).toBeInstanceOf(ArrayBuffer);
         expect(result).toEqual(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer);
+    });
+});
+
+describe('compareArrayBuffers', () => {
+    it('Should return true for equal buffers', () => {
+        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 3]).buffer)).toBe(true);
+    });
+
+    it('Should return false for different buffers', () => {
+        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 4]).buffer)).toBe(false);
+    });
+
+    it('Should return false for different length buffers', () => {
+        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 3, 4]).buffer)).toBe(false);
     });
 });
 

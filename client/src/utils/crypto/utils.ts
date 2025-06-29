@@ -16,6 +16,26 @@ export async function readAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 }
 
 /**
+ * Compare two ArrayBuffers
+ * @param buffer1 First buffer to compare
+ * @param buffer2 Second buffer to compare
+ * @returns Whether the buffers are equal
+ */
+export function compareArrayBuffers(buffer1: ArrayBufferLike, buffer2: ArrayBufferLike): boolean {
+    if (buffer1.byteLength !== buffer2.byteLength) {
+        return false;
+    }
+    const arr1 = new Uint8Array(buffer1);
+    const arr2 = new Uint8Array(buffer2);
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Convert number to Uint8Array (big-endian)
  * @param number Positive number to be converted
  * @param byteLength Length of the result array
