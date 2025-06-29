@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import { useSnackbar } from 'components/Snackbar';
-import { APPLICATION_NAME, MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
+import { APPLICATION_NAME, MAX_ALERT_FILENAME_LENGTH, STAGE, STAGE_DATA } from 'utils/constants';
 import { ellipse, upload, validateFile } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
 import HowItWorks from 'windows/HowItWorks';
 
-const Lobby = memo(() => {
+const Upload = () => {
     const isDesktop = useBreakpoint(BREAKPOINT.S);
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -36,7 +36,7 @@ const Lobby = memo(() => {
                 });
                 return;
             }
-            navigate('/password', { state: { file } });
+            navigate(STAGE_DATA[STAGE.SECURE].path, { state: { file } });
         } catch (error) {
             enqueueSnackbar({
                 variant: 'error',
@@ -48,24 +48,24 @@ const Lobby = memo(() => {
     }, [enqueueSnackbar]);
 
     return (
-        <div className="lobby">
-            <p className="lobby__description">
+        <div className="upload">
+            <p className="upload__description">
                 Welcome to the <strong>{APPLICATION_NAME}</strong>! The easiest way to protect your
-                file with a password.
+                file with a password or disguise it as another one.
             </p>
-            <Link className="lobby__about" component="button" onClick={handleAboutClick}>
+            <Link className="upload__about" component="button" onClick={handleAboutClick}>
                 How does it work?
             </Link>
-            <div className="lobby__actions">
+            <div className="upload__actions">
                 <Button variant="contained" onClick={handleFileClick}>
                     Select file
                 </Button>
-                {isDesktop && <div className="lobby__actions-hint">or drop it here</div>}
+                {isDesktop && <div className="upload__actions-hint">or drop it here</div>}
             </div>
         </div>
     );
-});
+};
 
-Lobby.displayName = 'Lobby';
+Upload.displayName = 'Upload';
 
-export default memo(Lobby);
+export default memo(Upload);

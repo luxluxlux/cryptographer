@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { STAGE, STAGE_DATA } from 'utils/constants';
 import theme from 'utils/theme';
-import Lobby from 'pages/Lobby';
-import Password from 'pages/Password';
-import Success from 'pages/Success';
+import Upload from 'pages/Upload';
+import Secure from 'pages/Secure';
+import Download from 'pages/Download';
 import { SnackbarProvider } from 'components/Snackbar';
 import Base from 'components/Base';
 import Logo from 'components/Logo';
@@ -24,9 +24,9 @@ const App = () => (
                     footer={<Credits />}
                     content={
                         <Routes>
-                            <Route path={STAGE_DATA[STAGE.UPLOAD].path} element={<Lobby />} />
-                            <Route path={STAGE_DATA[STAGE.KEY].path} element={<Password />} />
-                            <Route path={STAGE_DATA[STAGE.SUCCESS].path} element={<Success />} />
+                            <Route path={STAGE_DATA[STAGE.UPLOAD].path} element={<Upload />} />
+                            <Route path={STAGE_DATA[STAGE.SECURE].path} element={<Secure />} />
+                            <Route path={STAGE_DATA[STAGE.DOWNLOAD].path} element={<Download />} />
                         </Routes>
                     }
                 />

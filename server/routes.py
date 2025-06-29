@@ -4,7 +4,7 @@ routes = Blueprint("routes", __name__)
 
 # TODO: Use universal route for all paths
 @routes.route('/')
-@routes.route('/password')
-@routes.route('/success')
+@routes.route('/secure')
+@routes.route('/download')
 def index():
     return render_template('index.html')

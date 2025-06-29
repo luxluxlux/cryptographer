@@ -1,6 +1,6 @@
 import { useCallback, useContext, useRef, DragEvent } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { MAX_FILE_SIZE_MB } from 'utils/constants';
+import { MAX_FILES_SIZE_MB } from 'utils/constants';
 import { WindowManagerContext } from 'utils/contexts';
 
 interface IProps {
@@ -46,7 +46,7 @@ const DragNDrop = (props: IProps) => {
             <div className="drag-n-drop__content">
                 <FileUploadIcon fontSize="large" />
                 <div className="drag-n-drop__content-title">{'Drop file here'}</div>
-                <div>One file of any extension no more than {MAX_FILE_SIZE_MB}&nbsp;MB</div>
+                <div>One file of any extension no more than {MAX_FILES_SIZE_MB}&nbsp;MB</div>
             </div>
         </div>
     );

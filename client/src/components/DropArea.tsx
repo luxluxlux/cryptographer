@@ -1,7 +1,7 @@
 import { ReactNode, memo, useContext, useCallback, DragEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'components/Snackbar';
-import { MAX_ALERT_FILENAME_LENGTH } from 'utils/constants';
+import { MAX_ALERT_FILENAME_LENGTH, STAGE, STAGE_DATA } from 'utils/constants';
 import { ellipse, validateFiles } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
 import DragNDrop from 'windows/DragNDrop';
@@ -11,6 +11,7 @@ interface IProps {
 }
 
 const DropArea = (props: IProps) => {
+    const location = useLocation();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
@@ -34,9 +35,9 @@ const DropArea = (props: IProps) => {
                 });
                 return;
             }
-            navigate('/password', { state: { file: files[0] } });
+            navigate(STAGE_DATA[STAGE.SECURE].path, { state: { ...location.state, file: files[0] } });
         },
-        [navigate, windowContext.open]
+        [location, navigate, windowContext.open]
     );
 
     const handleDragEnter = useCallback(

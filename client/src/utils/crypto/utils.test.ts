@@ -2,38 +2,38 @@ import { lib } from 'crypto-js';
 import { ArrType, FileFormat } from './interfaces';
 import {
     assemble,
-    compareArrayBuffers,
+    compareUint8Arrays,
     concatUint8Arrays,
     concatWordArrays,
     customizeArr,
     disassemble,
     normalizeArr,
     numberToUint8Array,
-    readAsArrayBuffer,
+    readAsUint8Array,
     uint8ArrayToNumber,
     wordArrayToUint8Array
 } from './utils';
 
-describe('readAsArrayBuffer', () => {
+describe('readAsUint8Array', () => {
     it('Should return a promise that resolves to an Uint8Array', async () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
-        const result = await readAsArrayBuffer(file);
-        expect(result).toBeInstanceOf(ArrayBuffer);
-        expect(result).toEqual(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer);
+        const result = await readAsUint8Array(file);
+        expect(result).toBeInstanceOf(Uint8Array);
+        expect(result).toEqual(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
     });
 });
 
-describe('compareArrayBuffers', () => {
-    it('Should return true for equal buffers', () => {
-        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 3]).buffer)).toBe(true);
+describe('compareUint8Arrays', () => {
+    it('Should return true for equal arrays', () => {
+        expect(compareUint8Arrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))).toBe(true);
     });
 
-    it('Should return false for different buffers', () => {
-        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 4]).buffer)).toBe(false);
+    it('Should return false for different arrays', () => {
+        expect(compareUint8Arrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]))).toBe(false);
     });
 
-    it('Should return false for different length buffers', () => {
-        expect(compareArrayBuffers(new Uint8Array([1, 2, 3]).buffer, new Uint8Array([1, 2, 3, 4]).buffer)).toBe(false);
+    it('Should return false for different length arrays', () => {
+        expect(compareUint8Arrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3, 4]))).toBe(false);
     });
 });
 
@@ -119,18 +119,44 @@ describe('normalizeArr', () => {
 
 describe('assemble', () => {
     it('Should return the concatenated Uint8Array with calculated sizes', () => {
-        const arr1 = new Uint8Array([1, 2, 3]);
-        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
-        const arr3 = new Uint8Array([9, 10]);
-        const arr4 = new Uint8Array([11, 12, 13, 14]);
         const format: FileFormat = [
             { size: 3, type: 'Uint8Array' },
             { calcSize: 4, type: 'WordArray' },
             { size: 2, type: 'WordArray' },
             { calcSize: 2, type: 'Uint8Array' }
         ];
-        const result = assemble(format, arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4);
+        const arr1 = new Uint8Array([1, 2, 3]);
+        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
+        const arr3 = new Uint8Array([9, 10]);
+        const arr4 = new Uint8Array([11, 12, 13, 14]);
+        const disguise = new Uint8Array([15, 16, 17, 18]);
+        const result = assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4], disguise);
         expect(result).toEqual(new Uint8Array([
+            1, 2, 3,
+            0, 0, 0, 5,
+            9, 10,
+            0, 4,
+            4, 5, 6, 7, 8,
+            11, 12, 13, 14,
+            15, 16, 17, 18,
+        ]));
+    });
+
+    it('Should return the concatenated Uint8Array with calculated sizes with reverse = true', () => {
+        const format: FileFormat = [
+            { size: 3, type: 'Uint8Array' },
+            { calcSize: 4, type: 'WordArray' },
+            { size: 2, type: 'WordArray' },
+            { calcSize: 2, type: 'Uint8Array' }
+        ];
+        const arr1 = new Uint8Array([1, 2, 3]);
+        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
+        const arr3 = new Uint8Array([9, 10]);
+        const arr4 = new Uint8Array([11, 12, 13, 14]);
+        const disguise = new Uint8Array([15, 16, 17, 18]);
+        const result = assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4], disguise, true);
+        expect(result).toEqual(new Uint8Array([
+            15, 16, 17, 18,
             4, 5, 6, 7, 8,
             11, 12, 13, 14,
             1, 2, 3,
@@ -141,17 +167,31 @@ describe('assemble', () => {
     });
 
     it('Should throw an error for invalid data size or format', () => {
-        const arr1 = new Uint8Array([1, 2]);
-        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
-        const arr3 = new Uint8Array([9, 10]);
-        const arr4 = new Uint8Array([11, 12, 13, 14]);
         const format: FileFormat = [
             { size: 3, type: 'Uint8Array' },
             { calcSize: 4, type: 'WordArray' },
             { size: 2, type: 'WordArray' },
             { calcSize: 2, type: 'Uint8Array' }
         ];
-        expect(() => assemble(format, arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4)).toThrow('Invalid data size or format');
+        const arr1 = new Uint8Array([1, 2]);
+        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
+        const arr3 = new Uint8Array([9, 10]);
+        const arr4 = new Uint8Array([11, 12, 13, 14]);
+        expect(() => assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4])).toThrow('Invalid data size or format');
+    });
+
+    it('Should throw an error for invalid data size or format with reverse = true', () => {
+        const format: FileFormat = [
+            { size: 3, type: 'Uint8Array' },
+            { calcSize: 4, type: 'WordArray' },
+            { size: 2, type: 'WordArray' },
+            { calcSize: 2, type: 'Uint8Array' }
+        ];
+        const arr1 = new Uint8Array([1, 2]);
+        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
+        const arr3 = new Uint8Array([9, 10]);
+        const arr4 = new Uint8Array([11, 12, 13, 14]);
+        expect(() => assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4], undefined, true)).toThrow('Invalid data size or format');
     });
 });
 
@@ -186,8 +226,29 @@ describe('disassemble', () => {
         const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
         const arr3 = new Uint8Array([9, 10]);
         const arr4 = new Uint8Array([11, 12, 13, 14]);
-        const assembled = assemble(format, arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4);
-        const result = disassemble(format, assembled);
+        const disguise = new Uint8Array([15, 16, 17, 18]);
+        const assembled = assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4], disguise);
+        const { formattedData: result } = disassemble(format, assembled);
+        expect(result[0]).toEqual(arr1);
+        expect(result[1].toString()).toEqual(lib.WordArray.create(arr2).toString());
+        expect(result[2].toString()).toEqual(lib.WordArray.create(arr3).toString());
+        expect(result[3]).toEqual(arr4);
+    });
+
+    it('Should return the disassembled parts of the Uint8Array with reverse = true', () => {
+        const format: FileFormat = [
+            { size: 3, type: 'Uint8Array' },
+            { calcSize: 4, type: 'WordArray' },
+            { size: 2, type: 'WordArray' },
+            { calcSize: 2, type: 'Uint8Array' }
+        ];
+        const arr1 = new Uint8Array([1, 2, 3]);
+        const arr2 = new Uint8Array([4, 5, 6, 7, 8]);
+        const arr3 = new Uint8Array([9, 10]);
+        const arr4 = new Uint8Array([11, 12, 13, 14]);
+        const disguise = new Uint8Array([15, 16, 17, 18]);
+        const assembled = assemble(format, [arr1, lib.WordArray.create(arr2), lib.WordArray.create(arr3), arr4], disguise, true);
+        const { formattedData: result } = disassemble(format, assembled, true);
         expect(result[0]).toEqual(arr1);
         expect(result[1].toString()).toEqual(lib.WordArray.create(arr2).toString());
         expect(result[2].toString()).toEqual(lib.WordArray.create(arr3).toString());
@@ -201,5 +262,14 @@ describe('disassemble', () => {
         ];
         const invalidData = new Uint8Array([1, 2, 3]);
         expect(() => disassemble(format, invalidData)).toThrow('Invalid data size or format');
+    });
+
+    it('Should throw an error for invalid data size or format with reverse = true', () => {
+        const format: FileFormat = [
+            { size: 3, type: 'Uint8Array' },
+            { calcSize: 4, type: 'WordArray' }
+        ];
+        const invalidData = new Uint8Array([1, 2, 3]);
+        expect(() => disassemble(format, invalidData, true)).toThrow('Invalid data size or format');
     });
 });

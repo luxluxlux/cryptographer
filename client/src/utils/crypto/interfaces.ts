@@ -26,6 +26,20 @@ export type ExtractArrTypes<T extends FileFormat> = {
 /**
  * Just a workaround to hide "as const satisfies ..." bug in react-error-overlay
  */
+export type FixedBodyFormat = [
+    {
+        type: 'Uint8Array',
+        calcSize: number
+    },
+    {
+        type: 'Uint8Array',
+        calcSize: number
+    }
+]
+
+/**
+ * Just a workaround to hide "as const satisfies ..." bug in react-error-overlay
+ */
 export type FixedFileFormat = [
     {
         type: 'WordArray',

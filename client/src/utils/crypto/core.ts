@@ -1,13 +1,17 @@
 import { AES, PBKDF2, HmacSHA512, lib } from 'crypto-js';
-import { Action } from 'utils/interfaces';
-import { PARSED_VERSION } from 'utils/constants';
+import { ValidationResult } from 'utils/interfaces';
+import { MAX_FILES_SIZE_MB, PARSED_VERSION } from 'utils/constants';
+import { parseFileName, validateDisguise, validateFile } from 'utils/common';
 import {
     assemble,
     disassemble,
     concatWordArrays,
-    readAsArrayBuffer,
     wordArrayToUint8Array,
-    compareArrayBuffers,
+    stringToUint8Array,
+    compareUint8Arrays,
+    compareWordArrays,
+    readAsUint8Array,
+    uint8ArrayToString,
 } from './utils';
 import {
     IV_SIZE,
@@ -15,7 +19,8 @@ import {
     KEY_SIZE,
     SALT_SIZE,
     DEFAULT_CIPHER_PARAMS,
-    FILE_FORMAT
+    FILE_FORMAT,
+    BODY_FORMAT
 } from './constants';
 
 /**
@@ -62,11 +67,37 @@ export function calcHMAC(data: lib.CipherParams, iv: lib.WordArray, key: lib.Wor
 }
 
 /**
+ * Build the body of an encrypted file
+ * @param name The name of the file to be encrypted
+ * @param extension The extension of the file to be encrypted
+ * @param data The data to be encrypted
+ * @return The assembled body of the encrypted file
+ */
+export function buildBody({
+    name,
+    extension,
+    data
+}: {
+    name?: string,
+    extension?: string,
+    data: Uint8Array
+}): Uint8Array {
+    return assemble(BODY_FORMAT,
+        [
+            extension ? stringToUint8Array(extension) : new Uint8Array(),
+            name ? stringToUint8Array(name) : new Uint8Array(),
+        ],
+        data,
+    );
+}
+
+/**
  * Build file by encrypted data
  * @param salt Salt used during encryption
  * @param hmac HMAC of the encrypted data
  * @param iv Initialization vector
  * @param cipher Cipher parameters containing the ciphertext
+ * @param disguise Disguise data
  * @returns Concatenated Uint8Array representing the encrypted file
  */
 export function buildFile({
@@ -74,74 +105,97 @@ export function buildFile({
     hmac,
     iv,
     cipher,
+    disguise
 }: {
-    salt: lib.WordArray;
-    hmac: lib.WordArray;
-    iv: lib.WordArray;
-    cipher: lib.CipherParams;
+    salt: lib.WordArray,
+    hmac: lib.WordArray,
+    iv: lib.WordArray,
+    cipher: lib.CipherParams,
+    disguise?: Uint8Array
 }): Uint8Array {
     return assemble(FILE_FORMAT,
-        cipher.ciphertext,
-        iv,
-        hmac,
-        salt,
-        new Uint8Array(PARSED_VERSION)
+        [
+            cipher.ciphertext,
+            iv,
+            hmac,
+            salt,
+            new Uint8Array(PARSED_VERSION),
+        ],
+        disguise,
+        true
     );
 }
 
 /**
- * Check if the decrypted buffer matches the original buffer
- * @param origin The original buffer to compare with
- * @param encrypted The encrypted buffer to decrypt and compare
+ * Check if the decrypted data matches the original data
+ * @param origin The original data to compare with
+ * @param encrypted The encrypted data to decrypt and compare
  * @param password The password used for decryption
- * @returns A promise that resolves to true if the decrypted buffer matches the original buffer, false otherwise
+ * @returns A promise that resolves to true if the decrypted data matches the original data, false otherwise
  */
-export async function checkBack(origin: ArrayBufferLike, encrypted: ArrayBufferLike, password: string): Promise<boolean> {
-    const decrypted = await decryptBuffer(encrypted, password);
-    return compareArrayBuffers(origin, decrypted.buffer);
-}
-
-/**
- * Encrypt a file data using a password
- * @param buffer Data to be encrypted
- * @param password Password used for encryption
- * @returns A promise that resolves to the encrypted file data as a Uint8Array
- */
-export async function encryptBuffer(buffer: ArrayBuffer, password: string): Promise<Uint8Array> {
-    if (buffer.byteLength === 0) {
-        throw new Error('The buffer is empty');
-    }
-    const salt = generateSalt();
-    const key = getKey(password, salt);
-    const iv = generateIV();
-    const data = lib.WordArray.create(buffer);
-    const cipher = AES.encrypt(data, key, { iv });
-    const hmac = calcHMAC(cipher, iv, key);
-    const result = buildFile({
-        salt,
-        hmac,
-        iv,
-        cipher,
-    });
-    const decryptable = await checkBack(buffer, result.buffer, password);
-    if (!decryptable) {
-        throw new Error('Unable to decrypt file back');
-    }
-    return result;
+export async function checkBack(source: Uint8Array, encrypted: Uint8Array, password: string): Promise<boolean> {
+    const decrypted = (await decryptData(encrypted, password)).data;
+    return compareUint8Arrays(source, decrypted);
 }
 
 /**
  * Encrypt a file using a password
  * @param file File to be encrypted
  * @param password Password used for encryption
+ * @param disguiseFile File as a disguise
  * @returns A promise that resolves to the encrypted file as a Uint8Array
  */
-export async function encryptFile(file: File, password: string): Promise<Uint8Array> {
-    const buffer = await readAsArrayBuffer(file);
-    if (buffer.byteLength === 0) {
-        throw new Error('The file is empty');
+export async function encryptFile(sourceFile: File, password: string, disguiseFile?: File): Promise<Uint8Array> {
+    const sourceFileValidation = validateFile(sourceFile);
+    if (sourceFileValidation !== true) {
+        throw new Error(sourceFileValidation);
     }
-    return encryptBuffer(buffer, password);
+
+    const diguiseFileValidation = disguiseFile && validateDisguise(disguiseFile, sourceFile);
+    if (diguiseFileValidation && diguiseFileValidation !== true) {
+        throw new Error(diguiseFileValidation);
+    }
+
+    const salt = generateSalt();
+    const key = getKey(password, salt);
+    const iv = generateIV();
+    const source = await readAsUint8Array(sourceFile);
+    const { name: fileName, extension: fileExtension } = parseFileName(sourceFile.name);
+    const body = buildBody({
+        // We only store the file name if we mask it
+        name: disguiseFile ? fileName : undefined,
+        extension: fileExtension,
+        data: source
+    })
+    const data = lib.WordArray.create(body);
+    const cipher = AES.encrypt(data, key, { iv });
+    const hmac = calcHMAC(cipher, iv, key);
+    const disguise = disguiseFile && await readAsUint8Array(disguiseFile);
+    const result = buildFile({ salt, hmac, iv, cipher, disguise });
+
+    const decryptable = await checkBack(source, result, password);
+    if (!decryptable) {
+        throw new Error('Unable to decrypt file back');
+    }
+
+    return result;
+}
+
+/**
+ * Validates the decrypted data to ensure it meets the required criteria
+ * @param data The decrypted data to be validated
+ * @return True if the data is valid, or an error message if it's not
+ */
+export function validateDecryptedData(data: Uint8Array): ValidationResult {
+    if (data.length === 0) {
+        return 'The data is empty.';
+    }
+
+    if (data.length > MAX_FILES_SIZE_MB * 1024 * 1024) {
+        return `The data must be no more than ${MAX_FILES_SIZE_MB}MB.`;
+    }
+
+    return true;
 }
 
 /**
@@ -150,14 +204,13 @@ export async function encryptFile(file: File, password: string): Promise<Uint8Ar
  * @param password Password used for encryption
  * @returns A promise that resolves to an object containing the parsed file
  */
-export async function parse(buffer: ArrayBufferLike, password: string): Promise<{
+export async function parseFile(data: Uint8Array, password: string): Promise<{
     hmac: lib.WordArray;
     iv: lib.WordArray;
     cipher: lib.CipherParams;
     key: lib.WordArray;
 }> {
-    const arr = new Uint8Array(buffer);
-    const [ciphertext, iv, hmac, salt, _version] = disassemble(FILE_FORMAT, arr);
+    const { formattedData: [ciphertext, iv, hmac, salt, _version] } = disassemble(FILE_FORMAT, data, true);
     const key = getKey(password, salt);
     const cipher = lib.CipherParams.create({
         ciphertext,
@@ -175,21 +228,45 @@ export async function parse(buffer: ArrayBufferLike, password: string): Promise<
 }
 
 /**
+ * Parse the body of an encrypted file into its constituent parts
+ * @param body The body of the encrypted file to parse
+ * @return A promise that resolves to an object containing the parsed body
+ */
+export async function parseBody(body: Uint8Array): Promise<{
+    name?: string;
+    extension?: string;
+    data: Uint8Array;
+}> {
+    const { formattedData: [extension, name], additionalData: data } = disassemble(BODY_FORMAT, body);
+    return {
+        name: name.length ? uint8ArrayToString(name) : undefined,
+        extension: extension.length ? uint8ArrayToString(extension) : undefined,
+        data: data!,
+    };
+}
+
+/**
  * Decrypt a file data with password
  * @param buffer Processed file data
  * @param password Password
  * @returns A promise that resolves to the decrypted file data as a Uint8Array
  */
-export async function decryptBuffer(buffer: ArrayBufferLike, password: string): Promise<Uint8Array> {
-    if (buffer.byteLength === 0) {
-        throw new Error('The buffer is empty');
+export async function decryptData(data: Uint8Array, password: string): Promise<{
+    name?: string;
+    extension?: string;
+    data: Uint8Array;
+}> {
+    const validation = validateDecryptedData(data);
+    if (validation !== true) {
+        throw new Error(validation);
     }
-    const { key, hmac, iv, cipher } = await parse(buffer, password);
-    if (calcHMAC(cipher, iv, key).toString() !== hmac.toString()) {
+
+    const { key, hmac, iv, cipher } = await parseFile(data, password);
+    if (!compareWordArrays(calcHMAC(cipher, iv, key), hmac)) {
         throw new Error("The HMAC isn't correct");
     }
-    const data = AES.decrypt(cipher, key, { iv });
-    return wordArrayToUint8Array(data);
+    const body = wordArrayToUint8Array(AES.decrypt(cipher, key, { iv }));
+    return await parseBody(body);
 }
 
 /**
@@ -198,33 +275,16 @@ export async function decryptBuffer(buffer: ArrayBufferLike, password: string): 
  * @param password Password
  * @returns A promise that resolves to the decrypted file as a Uint8Array
  */
-export async function decryptFile(file: File, password: string): Promise<Uint8Array> {
-    const buffer = await readAsArrayBuffer(file);
-    if (buffer.byteLength === 0) {
-        throw new Error('The file is empty');
+export async function decryptFile(file: File, password: string): Promise<{
+    name?: string;
+    extension?: string;
+    data: Uint8Array;
+}> {
+    const validation = validateFile(file);
+    if (validation !== true) {
+        throw new Error(validation);
     }
-    return decryptBuffer(buffer, password);
-}
 
-/**
- * Crypt a file with password
- * @param action Type of an action
- * @param file Processed file
- * @param password Password
- * @returns A promise that resolves to the encrypted or decrypted file as a Uint8Array
- */
-export async function cryptFile(
-    action: Action,
-    file: File,
-    password: string
-): Promise<Uint8Array> {
-    switch (action) {
-        case 'encrypt':
-            return encryptFile(file, password);
-        case 'decrypt':
-            return decryptFile(file, password);
-        default:
-            throw new Error('The action is not encrypt or decrypt');
-    }
+    const data = await readAsUint8Array(file);
+    return decryptData(data, password);
 }
-
