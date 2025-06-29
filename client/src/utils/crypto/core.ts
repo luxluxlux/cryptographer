@@ -7,6 +7,7 @@ import {
     concatWordArrays,
     readAsArrayBuffer,
     wordArrayToUint8Array,
+    compareArrayBuffers,
 } from './utils';
 import {
     IV_SIZE,
@@ -89,46 +90,72 @@ export function buildFile({
 }
 
 /**
- * Encrypt a file using a password
- * @param file File to be encrypted.
- * @param password Password used for encryption.
- * @returns A promise that resolves to the encrypted file as a Uint8Array
+ * Check if the decrypted buffer matches the original buffer
+ * @param origin The original buffer to compare with
+ * @param encrypted The encrypted buffer to decrypt and compare
+ * @param password The password used for decryption
+ * @returns A promise that resolves to true if the decrypted buffer matches the original buffer, false otherwise
  */
-export async function encrypt(file: File, password: string): Promise<Uint8Array> {
+export async function checkBack(origin: ArrayBufferLike, encrypted: ArrayBufferLike, password: string): Promise<boolean> {
+    const decrypted = await decryptBuffer(encrypted, password);
+    return compareArrayBuffers(origin, decrypted.buffer);
+}
+
+/**
+ * Encrypt a file data using a password
+ * @param buffer Data to be encrypted
+ * @param password Password used for encryption
+ * @returns A promise that resolves to the encrypted file data as a Uint8Array
+ */
+export async function encryptBuffer(buffer: ArrayBuffer, password: string): Promise<Uint8Array> {
+    if (buffer.byteLength === 0) {
+        throw new Error('The buffer is empty');
+    }
     const salt = generateSalt();
     const key = getKey(password, salt);
     const iv = generateIV();
-    const buffer = await readAsArrayBuffer(file);
-    if (buffer.byteLength === 0) {
-        throw new Error('The file is empty');
-    }
     const data = lib.WordArray.create(buffer);
     const cipher = AES.encrypt(data, key, { iv });
     const hmac = calcHMAC(cipher, iv, key);
-    return buildFile({
+    const result = buildFile({
         salt,
         hmac,
         iv,
         cipher,
     });
+    const decryptable = await checkBack(buffer, result.buffer, password);
+    if (!decryptable) {
+        throw new Error('Unable to decrypt file back');
+    }
+    return result;
 }
 
 /**
- * Parse file with encrypted data
- * @param file Processed file
+ * Encrypt a file using a password
+ * @param file File to be encrypted
+ * @param password Password used for encryption
+ * @returns A promise that resolves to the encrypted file as a Uint8Array
+ */
+export async function encryptFile(file: File, password: string): Promise<Uint8Array> {
+    const buffer = await readAsArrayBuffer(file);
+    if (buffer.byteLength === 0) {
+        throw new Error('The file is empty');
+    }
+    return encryptBuffer(buffer, password);
+}
+
+/**
+ * Parse file data with password
+ * @param buffer File data
  * @param password Password used for encryption
  * @returns A promise that resolves to an object containing the parsed file
  */
-export async function parseFile(file: File, password: string): Promise<{
+export async function parse(buffer: ArrayBufferLike, password: string): Promise<{
     hmac: lib.WordArray;
     iv: lib.WordArray;
     cipher: lib.CipherParams;
     key: lib.WordArray;
 }> {
-    const buffer = await readAsArrayBuffer(file);
-    if (buffer.byteLength === 0) {
-        throw new Error('The file is empty');
-    }
     const arr = new Uint8Array(buffer);
     const [ciphertext, iv, hmac, salt, _version] = disassemble(FILE_FORMAT, arr);
     const key = getKey(password, salt);
@@ -148,13 +175,16 @@ export async function parseFile(file: File, password: string): Promise<{
 }
 
 /**
- * Decrypts a file by a secret data
- * @param file Processed file
+ * Decrypt a file data with password
+ * @param buffer Processed file data
  * @param password Password
- * @returns A promise that resolves to the decrypted file as a Uint8Array
+ * @returns A promise that resolves to the decrypted file data as a Uint8Array
  */
-export async function decrypt(file: File, password: string): Promise<Uint8Array> {
-    const { key, hmac, iv, cipher } = await parseFile(file, password);
+export async function decryptBuffer(buffer: ArrayBufferLike, password: string): Promise<Uint8Array> {
+    if (buffer.byteLength === 0) {
+        throw new Error('The buffer is empty');
+    }
+    const { key, hmac, iv, cipher } = await parse(buffer, password);
     if (calcHMAC(cipher, iv, key).toString() !== hmac.toString()) {
         throw new Error("The HMAC isn't correct");
     }
@@ -163,22 +193,36 @@ export async function decrypt(file: File, password: string): Promise<Uint8Array>
 }
 
 /**
- * Crypt a file by a secret data
+ * Decrypt a file with password
+ * @param file Processed file
+ * @param password Password
+ * @returns A promise that resolves to the decrypted file as a Uint8Array
+ */
+export async function decryptFile(file: File, password: string): Promise<Uint8Array> {
+    const buffer = await readAsArrayBuffer(file);
+    if (buffer.byteLength === 0) {
+        throw new Error('The file is empty');
+    }
+    return decryptBuffer(buffer, password);
+}
+
+/**
+ * Crypt a file with password
  * @param action Type of an action
  * @param file Processed file
  * @param password Password
  * @returns A promise that resolves to the encrypted or decrypted file as a Uint8Array
  */
-export async function crypt(
+export async function cryptFile(
     action: Action,
     file: File,
     password: string
 ): Promise<Uint8Array> {
     switch (action) {
         case 'encrypt':
-            return encrypt(file, password);
+            return encryptFile(file, password);
         case 'decrypt':
-            return decrypt(file, password);
+            return decryptFile(file, password);
         default:
             throw new Error('The action is not encrypt or decrypt');
     }

@@ -18,7 +18,7 @@ import {
 } from 'utils/constants';
 import { ellipse, upload, validateFile, wait } from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
-import { crypt } from 'utils/crypto/core';
+import { cryptFile } from 'utils/crypto/core';
 import Loading from 'windows/Loading';
 import LicenseAgreement from 'windows/LicenseAgreement';
 
@@ -91,7 +91,7 @@ const Password = () => {
             const file = location.state.file;
             try {
                 const result = await Promise.allSettled([
-                    crypt(action, file, password!),
+                    cryptFile(action, file, password!),
                     // Give the user some time to think about the universe
                     wait(1000),
                 ]);

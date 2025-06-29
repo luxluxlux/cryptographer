@@ -1,8 +1,21 @@
 import { AES, lib } from 'crypto-js';
-import { FILE_FORMAT, IV_SIZE, KEY_SIZE, SALT_SIZE } from './constants';
-import { buildFile, calcHMAC, crypt, decrypt, encrypt, generateIV, generateSalt, getKey, parseFile } from './core';
-import { disassemble, readAsArrayBuffer } from './utils';
 import { PARSED_VERSION } from 'utils/constants';
+import { FILE_FORMAT, IV_SIZE, KEY_SIZE, SALT_SIZE } from './constants';
+import { disassemble, readAsArrayBuffer } from './utils';
+import {
+    buildFile,
+    calcHMAC,
+    checkBack,
+    cryptFile,
+    decryptBuffer,
+    decryptFile,
+    encryptBuffer,
+    encryptFile,
+    generateIV,
+    generateSalt,
+    getKey,
+    parse
+} from './core';
 
 describe('generateSalt', () => {
     it('Should generate a salt with a length of SALT_SIZE', () => {
@@ -98,12 +111,61 @@ describe('buildFile', () => {
     });
 });
 
-describe('encrypt', () => {
+describe('checkBack', () => {
+    it('Should return true if the decrypted buffer matches the original buffer', async () => {
+        const buffer = Uint8Array.from([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer;
+        const password = 'testPassword';
+
+        const encrypted = await encryptBuffer(buffer, password);
+        const result = await checkBack(buffer, encrypted.buffer, password);
+
+        expect(result).toBe(true);
+    });
+
+    it('Should return false if the decrypted buffer does not match the original buffer', async () => {
+        const buffer = Uint8Array.from([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer;
+        const differentBuffer = Uint8Array.from([68, 105, 102, 102, 101, 114, 101, 110, 116, 32, 67, 111, 110, 116, 101, 110, 116]).buffer;
+        const password = 'testPassword';
+
+        const encrypted = await encryptBuffer(differentBuffer, password);
+        const result = await checkBack(buffer, encrypted.buffer, password);
+
+        expect(result).toBe(false);
+    });
+});
+
+
+describe('encryptBuffer', () => {
+    it('Should return an encrypted Uint8Array with the correct format', async () => {
+        const buffer = Uint8Array.from([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer;
+        const password = 'testPassword';
+
+        const encrypted = await encryptBuffer(buffer, password);
+
+        const [ciphertext, iv, hmac, salt, version] = disassemble(FILE_FORMAT, encrypted);
+        const key = getKey(password, salt);
+        const data = lib.WordArray.create(buffer);
+        const cipher = AES.encrypt(data, key, { iv });
+        const expectedHmac = calcHMAC(cipher, iv, key);
+
+        expect(ciphertext.toString()).toEqual(cipher.ciphertext.toString());
+        expect(expectedHmac.toString()).toEqual(hmac.toString());
+        expect(version).toEqual(new Uint8Array(PARSED_VERSION));
+    });
+
+    it('Should throw an error if the buffer is empty', async () => {
+        const buffer = new ArrayBuffer(0);
+        const password = 'testPassword';
+        await expect(encryptBuffer(buffer, password)).rejects.toThrow();
+    });
+});
+
+describe('encryptFile', () => {
     it('Should return an encrypted Uint8Array with the correct format', async () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
 
-        const encrypted = await encrypt(file, password);
+        const encrypted = await encryptFile(file, password);
 
         const [ciphertext, iv, hmac, salt, version] = disassemble(FILE_FORMAT, encrypted);
         const key = getKey(password, salt);
@@ -119,17 +181,38 @@ describe('encrypt', () => {
     it('Should throw an error if the file is empty', async () => {
         const file = new File([], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
-        await expect(encrypt(file, password)).rejects.toThrow();
+        await expect(encryptFile(file, password)).rejects.toThrow();
     });
 });
 
-describe('decrypt', () => {
+describe('decryptBuffer', () => {
     it('Should return the decrypted Uint8Array', async () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
 
-        const encrypted = new File([await encrypt(file, password)], 'test.txt', { type: 'text/plain' });
-        const decrypted = await decrypt(encrypted, password);
+        const encryptedFile = await encryptFile(file, password);
+        const encrypted = encryptedFile.buffer;
+        const decrypted = await decryptBuffer(encrypted, password);
+
+        const buffer = await readAsArrayBuffer(file);
+        const arr = new Uint8Array(buffer);
+        expect(decrypted).toEqual(arr);
+    });
+
+    it('Should throw an error if the buffer is empty', async () => {
+        const buffer = new ArrayBuffer(0);
+        const password = 'testPassword';
+        await expect(decryptBuffer(buffer, password)).rejects.toThrow();
+    });
+});
+
+describe('decryptFile', () => {
+    it('Should return the decrypted Uint8Array', async () => {
+        const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
+        const password = 'testPassword';
+
+        const encrypted = new File([await encryptFile(file, password)], 'test.txt', { type: 'text/plain' });
+        const decrypted = await decryptFile(encrypted, password);
 
         const buffer = await readAsArrayBuffer(file);
         const arr = new Uint8Array(buffer);
@@ -139,17 +222,17 @@ describe('decrypt', () => {
     it('Should throw an error if the file is empty', async () => {
         const file = new File([], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
-        await expect(decrypt(file, password)).rejects.toThrow();
+        await expect(decryptFile(file, password)).rejects.toThrow();
     });
 });
 
-describe('parseFile', () => {
+describe('parse', () => {
     it('Should return a promise that resolves to an object containing the key, hmac, iv and cipher', async () => {
-        const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
+        const buffer = new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]).buffer;
         const password = 'testPassword';
 
-        const encrypted = new File([await encrypt(file, password)], 'test.txt', { type: 'text/plain' });
-        const { key, hmac, iv, cipher } = await parseFile(encrypted, password);
+        const encrypted = await encryptBuffer(buffer, password);
+        const { key, hmac, iv, cipher } = await parse(encrypted.buffer, password);
 
         expect(key).toHaveProperty('words');
         expect(hmac).toHaveProperty('words');
@@ -157,10 +240,10 @@ describe('parseFile', () => {
         expect(cipher).toHaveProperty('ciphertext');
     });
 
-    it('Should throw an error if the file is empty', async () => {
-        const file = new File([], 'test.txt', { type: 'text/plain' });
+    it('Should throw an error if the buffer is empty', async () => {
+        const buffer = new ArrayBuffer(0);
         const password = 'testPassword';
-        await expect(parseFile(file, password)).rejects.toThrow();
+        await expect(parse(buffer, password)).rejects.toThrow();
     });
 });
 
@@ -169,8 +252,8 @@ describe('decrypt', () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
 
-        const encrypted = new File([await encrypt(file, password)], 'test.txt', { type: 'text/plain' });
-        const decrypted = await decrypt(encrypted, password);
+        const encrypted = new File([await encryptFile(file, password)], 'test.txt', { type: 'text/plain' });
+        const decrypted = await decryptFile(encrypted, password);
 
         const buffer = await readAsArrayBuffer(file);
         const arr = new Uint8Array(buffer);
@@ -180,7 +263,7 @@ describe('decrypt', () => {
     it('Should throw an error if the file is empty', async () => {
         const file = new File([], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
-        await expect(decrypt(file, password)).rejects.toThrow();
+        await expect(decryptFile(file, password)).rejects.toThrow();
     });
 });
 
@@ -189,8 +272,8 @@ describe('crypt', () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
 
-        const encrypted = new File([await encrypt(file, password)], 'test.txt', { type: 'text/plain' });
-        const decrypted = await crypt('decrypt', encrypted, password);
+        const encrypted = new File([await encryptFile(file, password)], 'test.txt', { type: 'text/plain' });
+        const decrypted = await cryptFile('decrypt', encrypted, password);
 
         const buffer = await readAsArrayBuffer(file);
         const arr = new Uint8Array(buffer);
@@ -201,8 +284,8 @@ describe('crypt', () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
 
-        const encrypted = await crypt('encrypt', file, password);
-        const decrypted = await crypt('decrypt', new File([encrypted], 'test.txt', { type: 'text/plain' }), password);
+        const encrypted = await cryptFile('encrypt', file, password);
+        const decrypted = await cryptFile('decrypt', new File([encrypted], 'test.txt', { type: 'text/plain' }), password);
 
         const buffer = await readAsArrayBuffer(file);
         const arr = new Uint8Array(buffer);
@@ -212,13 +295,13 @@ describe('crypt', () => {
     it('Should throw an error if the file is empty', async () => {
         const file = new File([], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
-        await expect(crypt('decrypt', file, password)).rejects.toThrow();
+        await expect(cryptFile('decrypt', file, password)).rejects.toThrow();
     });
 
     it('Should throw an error if the action is not encrypt or decrypt', async () => {
         const file = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
         const password = 'testPassword';
-        await expect(crypt('test' as 'encrypt' | 'decrypt', file, password)).rejects.toThrow();
+        await expect(cryptFile('test' as 'encrypt' | 'decrypt', file, password)).rejects.toThrow();
     });
 
     it('Should successfully encrypt and decrypt various file types', async () => {
@@ -235,8 +318,8 @@ describe('crypt', () => {
             const fileContent = fileType.isBase64 ? Uint8Array.from(atob(fileType.content), c => c.charCodeAt(0)) : fileType.content;
             const file = new File([fileContent], fileType.name, { type: fileType.type });
 
-            const encrypted = await crypt('encrypt', file, password);
-            const decrypted = await crypt('decrypt', new File([encrypted], fileType.name, { type: fileType.type }), password);
+            const encrypted = await cryptFile('encrypt', file, password);
+            const decrypted = await cryptFile('decrypt', new File([encrypted], fileType.name, { type: fileType.type }), password);
 
             const expectedContent = fileType.isBase64
                 ? fileContent as Uint8Array
