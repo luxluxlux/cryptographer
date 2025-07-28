@@ -1,4 +1,4 @@
-.password {
+.secure {
     max-width: 500px;
     display: flex;
     flex-direction: column;
@@ -11,6 +11,21 @@
         flex-direction: column;
         gap: var(--offset_m);
         width: 100%;
+
+        &-disguise {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: var(--offset_s);
+
+            &-title {
+                white-space: nowrap;
+            }
+
+            &-input {
+                flex-grow: 1;
+            }
+        }
     }
 
     &__agreement {

@@ -2,37 +2,73 @@ import { lib } from 'crypto-js';
 import { ArrType, ExtractArrTypes, FileFormat, GetArrType } from './interfaces';
 
 /**
- * Read file as ArrayBuffer
+ * Read file as Uint8Array
  * @param file File to read
- * @returns Promise resolving with the file content as an ArrayBuffer
+ * @returns Promise resolving with the file content as a Uint8Array
  */
-export async function readAsArrayBuffer(file: File): Promise<ArrayBuffer> {
-    return new Promise<ArrayBuffer>((resolve, reject) => {
+export async function readAsUint8Array(file: File): Promise<Uint8Array> {
+    return new Promise<Uint8Array>((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
-        reader.onload = () => resolve(reader.result as ArrayBuffer);
+        reader.onload = () => resolve(new Uint8Array(reader.result as ArrayBuffer));
         reader.onerror = (error) => reject(error);
     });
 }
 
 /**
- * Compare two ArrayBuffers
- * @param buffer1 First buffer to compare
- * @param buffer2 Second buffer to compare
- * @returns Whether the buffers are equal
+ * Compare two Uint8Arrays
+ * @param arr1 First array to compare
+ * @param arr2 Second array to compare
+ * @returns Whether the arrays are equal
  */
-export function compareArrayBuffers(buffer1: ArrayBufferLike, buffer2: ArrayBufferLike): boolean {
-    if (buffer1.byteLength !== buffer2.byteLength) {
+export function compareUint8Arrays(arr1: Uint8Array, arr2: Uint8Array): boolean {
+    if (arr1.length !== arr2.length) {
         return false;
     }
-    const arr1 = new Uint8Array(buffer1);
-    const arr2 = new Uint8Array(buffer2);
     for (let i = 0; i < arr1.length; i++) {
         if (arr1[i] !== arr2[i]) {
             return false;
         }
     }
     return true;
+}
+
+/**
+ * Compare two WordArrays
+ * @param arr1 First array to compare
+ * @param arr2 Second array to compare
+ * @returns Whether the arrays are equal
+ */
+export function compareWordArrays(arr1: lib.WordArray, arr2: lib.WordArray): boolean {
+    if (arr1.sigBytes !== arr2.sigBytes) {
+        return false;
+    }
+    for (let i = 0; i < arr1.words.length; i++) {
+        if (arr1.words[i] ^ arr2.words[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Convert UTF-8 string to Uint8Array
+ * @param str String to be converted
+ * @return The converted Uint8Array
+ */
+export function stringToUint8Array(str: string): Uint8Array {
+    const encoder = new TextEncoder();
+    return encoder.encode(str);
+}
+
+/**
+ * Convert Uint8Array to UTF-8 string
+ * @param arr Uint8Array to be converted
+ * @return The converted string
+ */
+export function uint8ArrayToString(arr: Uint8Array): string {
+    const decoder = new TextDecoder();
+    return decoder.decode(arr);
 }
 
 /**
@@ -136,40 +172,61 @@ export function normalizeArr(arr: Uint8Array | lib.WordArray, type: ArrType): Ui
  * If the size is specified, it will be compared, if not, it will be calculated and converted into
  * Uint8Array of sizeSize length. All calculated sizes of data arrays will be located between data with
  * fixed and variable size.
- * Warning! The function assumes that the data is ordered from the end for the polyglot file structure.
+ * TODO: Try to get rid of the additionalData parameter
  * 
- * @example
+ * @example Straight traversal
  * Bytes | Description 
  * ------+-------------------------------
- *     m | Data 4
- *     n | Data 3
+ *     8 | Data 1
+ *     4 | Size of data 2 (n)
+ *    16 | Data 3
  *     4 | Size of data 4 (m)
- *    16 | Data 2
- *     4 | Size of data 3 (n)
+ *     n | Data 2
+ *     m | Data 4
+ *     . | Unformatted data
+ * 
+ * @example Reverse traversal
+ * Bytes | Description 
+ * ------+-------------------------------
+ *     . | Unformatted data
+ *     m | Data 4
+ *     n | Data 2
+ *     4 | Size of data 4 (m)
+ *    16 | Data 3
+ *     4 | Size of data 2 (n)
  *     8 | Data 1
  *
  * @param format File format to use for assembly
- * @param arrs Array of data arrays
+ * @param formattedData Array of data arrays according to format
+ * @param additionalData Unformatted data
+ * @param reverse Reverse assembling direction, e.g., for polyglot files https://en.wikipedia.org/wiki/Polyglot_(computing)
  * @return Concatenated Uint8Array
  */
-export function assemble<T extends FileFormat>(format: T, ...arrs: ExtractArrTypes<T>): Uint8Array {
+export function assemble<T extends FileFormat>(
+    format: T,
+    formattedData: ExtractArrTypes<T>,
+    additionalData?: Uint8Array,
+    reverse: boolean = false
+): Uint8Array {
     const result: Uint8Array[] = [];
-    // i - format cursor
-    // j - data cursor
-    for (let i = 0, j = 0; i < format.length; i++) {
-        const { size, calcSize, type } = format[i];
-        const arr = arrs[i];
+    for (let i = 0; i < format.length; i++) {
+        const formatIndex = reverse ? format.length - 1 - i : i;
+        const { size, calcSize, type } = format[formatIndex];
+        const arr = formattedData[formatIndex];
         const buffer = normalizeArr(arr, type);
+        const dataIndex = reverse ? result.length - i : i;
         if (size) {
             if (buffer.length !== size) {
                 throw new Error('Invalid data size or format');
             }
-            result.push(buffer);
+            result.splice(dataIndex, 0, buffer);
         } else {
-            result.push(numberToUint8Array(buffer.length, calcSize!));
-            result.splice(j, 0, buffer);
-            j++;
+            result.splice(dataIndex, 0, numberToUint8Array(buffer.length, calcSize!));
+            result[reverse ? 'unshift' : 'push'](buffer);
         }
+    }
+    if (additionalData) {
+        result[reverse ? 'unshift' : 'push'](additionalData);
     }
     return concatUint8Arrays(...result);
 }
@@ -189,41 +246,66 @@ export function customizeArr<T extends ArrType>(bytes: Uint8Array, type: T): Get
 
 /**
  * Split the data array into its component parts based on the provided file format
- * Warning! The function assumes that the data is ordered from the end for the polyglot file structure
  * @param format The file format to use for disassembly
  * @param bytes Data array to disassemble
- * @return The disassembled parts of the Uint8Array
+ * @param reverse Reverse assembling direction, e.g., for polyglot files https://en.wikipedia.org/wiki/Polyglot_(computing)
+ * @return The disassembled formatted and additional data
  */
 export function disassemble<T extends FileFormat>(
     format: T,
     bytes: Uint8Array,
-): ExtractArrTypes<T> {
+    reverse: boolean = false
+): {
+    formattedData: ExtractArrTypes<T>,
+    additionalData?: Uint8Array
+} {
     const formatLength = format.reduce((total, current) => total + (current.size || current.calcSize)!, 0);
-    const result = [] as ExtractArrTypes<T>;
+    const formattedData = [] as ExtractArrTypes<T>;
     // i - format cursor
     // j - fixed data cursor
     // k - variable data cursor
-    for (let i = format.length - 1, j = bytes.length, k = bytes.length - formatLength; i >= 0; i--) {
-        const { size, calcSize, type } = format[i];
-        if (j < (size || calcSize)!) {
+    let k = formatLength;
+    for (let i = 0, j = 0; i < format.length; i++) {
+        const formatIndex = reverse ? format.length - 1 - i : i;
+        const { size, calcSize, type } = format[formatIndex];
+        if (j > formatLength - (size || calcSize)!) {
             throw new Error('Invalid data size or format');
         }
+        const fixedDataIndex = reverse ? bytes.length - j : j;
         if (size) {
-            const buffer = bytes.slice(j - size, j);
+            const buffer = bytes.slice(
+                fixedDataIndex - (reverse ? size : 0),
+                fixedDataIndex + (reverse ? 0 : size)
+            );
             const arr = customizeArr(buffer, type);
-            result.unshift(arr);
-            j -= size;
+            formattedData[reverse ? 'unshift' : 'push'](arr);
+            j += size;
         } else {
-            const length = uint8ArrayToNumber(bytes.slice(j - calcSize!, j));
-            if (k < length) {
+            const length = uint8ArrayToNumber(
+                bytes.slice(
+                    fixedDataIndex - (reverse ? calcSize! : 0),
+                    fixedDataIndex + (reverse ? 0 : calcSize!)
+                )
+            );
+            if (k > bytes.length - length) {
                 throw new Error('Invalid data size or format');
             }
-            const buffer = bytes.slice(k - length, k);
+            const variableDataIndex = reverse ? bytes.length - k : k;
+            const buffer = bytes.slice(
+                variableDataIndex - (reverse ? length : 0),
+                variableDataIndex + (reverse ? 0 : length)
+            );
             const arr = customizeArr(buffer, type);
-            result.unshift(arr);
-            k -= length;
-            j -= calcSize!;
+            formattedData[reverse ? 'unshift' : 'push'](arr);
+            k += length;
+            j += calcSize!;
         }
     }
-    return result;
+    const additionalData = k < bytes.length
+        ? (reverse ? bytes.slice(0, bytes.length - k) : bytes.slice(k))
+        : undefined;
+    return {
+        formattedData,
+        additionalData
+    };
 }

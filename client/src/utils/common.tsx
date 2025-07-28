@@ -1,5 +1,5 @@
 import { ParsedVersion, ValidationResult, Version } from './interfaces';
-import { MAX_FILE_SIZE_MB } from './constants';
+import { FILE_EXTENSION_MAX_LENGTH, FILE_NAME_MAX_LENGTH, MAX_FILES_SIZE_MB } from './constants';
 
 /**
  * Parse a version string into a tuple
@@ -66,24 +66,40 @@ export function ellipse(text: string, maxLength: number) {
 }
 
 /**
- * Check one file
- * @param file File
+ * Validate a file to ensure it meets the required criteria
+ * @param file The file to be validated
+ * @return True if the file is valid, or an error message if it's not
  */
 export function validateFile(file: File): ValidationResult {
+    const { name, extension } = parseFileName(file.name);
+
+    if (!name.length) {
+        return 'File name is required.';
+    }
+
+    if (name.length > FILE_NAME_MAX_LENGTH) {
+        return 'File name is too long.';
+    }
+
+    if (extension && extension.length > FILE_EXTENSION_MAX_LENGTH) {
+        return 'File extension is too long.';
+    }
+
     if (file.size === 0) {
         return 'Folders and empty files are not allowed.';
     }
 
-    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        return <>The file must be no more than {MAX_FILE_SIZE_MB}&nbsp;MB.</>;
+    if (file.size > MAX_FILES_SIZE_MB * 1024 * 1024) {
+        return `The file must be no more than ${MAX_FILES_SIZE_MB}MB.`;
     }
 
     return true;
 }
 
 /**
- * Check file list
- * @param files File list
+ * Validate a list of files to ensure it meets the required criteria
+ * @param files The list of files to be validated
+ * @return An error message if validation fails, or true if validation succeeds
  */
 export function validateFiles(files: FileList) {
     const length = files.length;
@@ -101,9 +117,73 @@ export function validateFiles(files: FileList) {
 }
 
 /**
+ * Validate a disguise file to ensure it meets the required criteria
+ * @param disguiseFile The disguise file to be validated
+ * @param sourceFile The source file associated with the disguise file
+ * @return True if the disguise file is valid, or an error message if it's not
+ */
+export function validateDisguise(disguiseFile: File, sourceFile: File): ValidationResult {
+    const { name: disguiseFileName } = parseFileName(disguiseFile.name);
+
+    if (!disguiseFileName.length) {
+        return 'File name is required.';
+    }
+
+    if (disguiseFile.size === 0) {
+        return 'Folders and empty files are not allowed.';
+    }
+
+    if (disguiseFile.size > MAX_FILES_SIZE_MB * 1024 * 1024) {
+        return `The file must be no more than ${MAX_FILES_SIZE_MB}MB.`;
+    }
+
+    if (sourceFile.size + disguiseFile.size > MAX_FILES_SIZE_MB * 1024 * 1024) {
+        return `The file and disguise must be no more than ${MAX_FILES_SIZE_MB}MB in total.`;
+    }
+
+    return true;
+}
+
+/**
  * Wait for a certain amount of time
  * @param interval In ms
  */
 export function wait(interval: number) {
     return new Promise((resolve) => setTimeout(resolve, interval));
+}
+
+/**
+ * Parse a file name into its name and extension
+ * @param fileName The file name to be parsed
+ * @return An object containing the name and extension
+ */
+export function parseFileName(fileName: string): {
+    name: string;
+    extension?: string;
+} {
+    const match = fileName.match(/^(.*?)(?:\.([^.]+))?\.?$/);
+    return {
+        name: match?.[1] || '',
+        extension: match?.[2] || undefined,
+    };
+}
+
+/**
+ * Add a file extension to a given file name
+ * @param name The original file name
+ * @param extension The extension to add
+ * @return The file name with the added extension
+ */
+export function addExtension(name: string, extension?: string): string {
+    return extension ? `${name}.${extension}` : name;
+}
+
+/**
+ * Change the file extension of a given file name
+ * @param name The original file name
+ * @param extension The new file extension
+ * @return The file name with the new extension
+ */
+export function changeExtension(name: string, extension?: string): string {
+    return name.replace(/(\.[^.]*$|$)/, extension ? `.${extension}` : '');
 }

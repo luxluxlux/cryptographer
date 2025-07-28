@@ -24,16 +24,31 @@ export const MIN_PASSWORD_LENGTH = 8;
 // Maximum password length
 export const MAX_PASSWORD_LENGTH = 127;
 
-// Max file size in MB
-export const MAX_FILE_SIZE_MB = 10;
+// Maximum total size of uploaded files
+export const MAX_FILES_SIZE_MB = 10;
+
+// Size of reserved space for file name size in bytes
+export const FILE_NAME_SIZE_SIZE_BYTES = 2;
+
+// Maximum file name length (UTF-8 - 4 bytes per character)
+export const FILE_NAME_MAX_LENGTH = 2 ** (8 * FILE_NAME_SIZE_SIZE_BYTES) / 4 - 1;
+
+// Size of reserved space for file extension size in bytes
+export const FILE_EXTENSION_SIZE_SIZE_BYTES = 2;
+
+// Maximum file extension length (UTF-8 - 4 bytes per character)
+export const FILE_EXTENSION_MAX_LENGTH = 2 ** (8 * FILE_EXTENSION_SIZE_SIZE_BYTES) / 4 - 1;
 
 // Maximum length of the file name inside the alert
 export const MAX_ALERT_FILENAME_LENGTH = 30;
 
+// Encrypted file extension
+export const FILE_EXTENSION = 'crg';
+
 export enum STAGE {
     UPLOAD = 'upload',
-    KEY = 'key',
-    SUCCESS = 'success',
+    SECURE = 'secure',
+    DOWNLOAD = 'download',
 }
 
 // Data for stage render
@@ -42,12 +57,12 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
         path: '/',
         color: '#009dff',
     },
-    [STAGE.KEY]: {
-        path: '/password',
+    [STAGE.SECURE]: {
+        path: '/secure',
         color: '#00fff0',
     },
-    [STAGE.SUCCESS]: {
-        path: '/success',
+    [STAGE.DOWNLOAD]: {
+        path: '/download',
         color: '#4aff90',
     },
 };

@@ -1,6 +1,6 @@
 import { algo, mode, pad, format, lib } from 'crypto-js';
-import { VERSION_SIZE } from 'utils/constants';
-import { FixedFileFormat } from './interfaces';
+import { FILE_EXTENSION_SIZE_SIZE_BYTES, FILE_NAME_SIZE_SIZE_BYTES, VERSION_SIZE } from 'utils/constants';
+import { FixedBodyFormat, FixedFileFormat } from './interfaces';
 
 // Salt size in bytes
 // The selected value is based on the recommended params
@@ -35,15 +35,37 @@ export const DEFAULT_CIPHER_PARAMS: Partial<lib.CipherParams> = {
 };
 
 /**
+ * Format of the data body to be encrypted
+ * 
+ * Bytes | Description 
+ * ------+-------------------------------
+ *     2 | File name size (n)
+ *     2 | File extension size (m)
+ *     n | File name
+ *     m | File extension
+ *     . | Cipher
+ */
+export const BODY_FORMAT: FixedBodyFormat = [
+    {
+        type: 'Uint8Array',
+        calcSize: FILE_NAME_SIZE_SIZE_BYTES
+    },
+    {
+        type: 'Uint8Array',
+        calcSize: FILE_EXTENSION_SIZE_SIZE_BYTES
+    },
+];
+
+/**
  * Format of the crypted file
  * Attention! The file is read from the end, because it can be a polyglot file
  * https://en.wikipedia.org/wiki/Polyglot_(computing)
  * 
  * Bytes | Description 
  * ------+-------------------------------
- *     . | Unknown data
- *     n | Cipher
- *     4 | Cipher size (n)
+ *     . | Disguise
+ *     n | Body
+ *     4 | Body size (n)
  *    16 | IV
  *    64 | HMAC (HmacSHA512)
  *    16 | Salt

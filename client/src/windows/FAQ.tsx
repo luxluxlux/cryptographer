@@ -1,5 +1,5 @@
 import Link from '@mui/material/Link';
-import { APPLICATION_NAME, GITHUB_URL, MAX_FILE_SIZE_MB } from 'utils/constants';
+import { APPLICATION_NAME, GITHUB_URL, MAX_FILES_SIZE_MB } from 'utils/constants';
 
 const FAQ = () => (
     <div>
@@ -32,7 +32,7 @@ const FAQ = () => (
         <h3>📦 What is the maximum file size?</h3>
         <p>
             The maximum file size you can encrypt or decrypt is{' '}
-            <strong>{MAX_FILE_SIZE_MB}MB</strong>. This ensures that the encryption process is quick
+            <strong>{MAX_FILES_SIZE_MB}MB</strong>. This ensures that the encryption process is quick
             and efficient while maintaining security. If your file exceeds this size, you might need
             to compress or split it into smaller parts.
         </p>

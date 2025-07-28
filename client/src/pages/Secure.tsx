@@ -9,21 +9,33 @@ import IconButton from '@mui/material/IconButton';
 import CachedIcon from '@mui/icons-material/Cached';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import CloseIcon from '@mui/icons-material/Close';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { Action, ValidationResult } from 'utils/interfaces';
 import {
     MIN_PASSWORD_LENGTH,
     MAX_PASSWORD_LENGTH,
     MAX_ALERT_FILENAME_LENGTH,
-    MAX_FILE_SIZE_MB,
+    MAX_FILES_SIZE_MB,
+    STAGE_DATA,
+    STAGE,
+    FILE_EXTENSION,
 } from 'utils/constants';
-import { ellipse, upload, validateFile, wait } from 'utils/common';
+import {
+    addExtension,
+    changeExtension,
+    ellipse,
+    upload,
+    validateDisguise,
+    validateFile,
+    wait,
+} from 'utils/common';
 import { WindowManagerContext } from 'utils/contexts';
-import { cryptFile } from 'utils/crypto/core';
+import { encryptFile, decryptFile } from 'utils/crypto/core';
 import Loading from 'windows/Loading';
 import LicenseAgreement from 'windows/LicenseAgreement';
 
-// TODO: Rename
-const Password = () => {
+const Secure = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -32,7 +44,7 @@ const Password = () => {
     const [password, setPassword] = useState<string | null>(null);
     const [passwordIsVisible, setPasswordIsVisible] = useState<boolean>(false);
 
-    const handleFileClick = useCallback(async () => {
+    const handleUploadFileClick = useCallback(async () => {
         try {
             const file = await upload();
             const validation = validateFile(file);
@@ -49,7 +61,7 @@ const Password = () => {
                 });
                 return;
             }
-            navigate('/password', { state: { file } });
+            navigate(STAGE_DATA[STAGE.SECURE].path, { state: { ...location.state, file } });
         } catch (error) {
             enqueueSnackbar({
                 variant: 'error',
@@ -58,7 +70,42 @@ const Password = () => {
             });
             console.error(error);
         }
-    }, []);
+    }, [location, navigate]);
+
+    const handleUploadDisguiseClick = useCallback(async () => {
+        try {
+            const disguise = await upload();
+            const validation = validateDisguise(disguise, location.state.file);
+            if (validation !== true) {
+                enqueueSnackbar({
+                    variant: 'warning',
+                    title: 'Unable to upload disguise',
+                    message: (
+                        <>
+                            <strong>{ellipse(disguise.name, MAX_ALERT_FILENAME_LENGTH)}</strong>{' '}
+                            isn&apos;t uploaded as disguise. {validation}
+                        </>
+                    ),
+                });
+                return;
+            }
+            navigate(STAGE_DATA[STAGE.SECURE].path, {
+                state: { ...location.state, disguise },
+            });
+        } catch (error) {
+            enqueueSnackbar({
+                variant: 'error',
+                title: 'Failed to upload disguise',
+                message: 'Something went wrong. Please try again.',
+            });
+            console.error(error);
+        }
+    }, [location, navigate]);
+
+    const handleRemoveDisguiseClick = useCallback(async () => {
+        const { disguise: _, ...explicitState } = location.state;
+        navigate(STAGE_DATA[STAGE.SECURE].path, { state: explicitState });
+    }, [location, navigate]);
 
     const handlePasswordChanged = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
@@ -89,17 +136,30 @@ const Password = () => {
                 closable: false,
             });
             const file = location.state.file;
+            const disguise = location.state.disguise;
             try {
                 const result = await Promise.allSettled([
-                    cryptFile(action, file, password!),
+                    action === 'encrypt'
+                        ? encryptFile(file, password!, disguise)
+                        : decryptFile(file, password!),
                     // Give the user some time to think about the universe
                     wait(1000),
                 ]);
                 if (result[0].status === 'rejected') {
                     throw result[0].reason;
                 }
-                const data = result[0].value;
-                const blob = new Blob([data], { type: file.type });
+
+                const value = result[0].value;
+                const fileName =
+                    'data' in value
+                        ? value.name
+                            ? addExtension(value.name, value.extension)
+                            : changeExtension(file.name, value.extension)
+                        : disguise
+                          ? disguise.name
+                          : changeExtension(file.name, FILE_EXTENSION);
+                const data = 'data' in value ? value.data : value;
+                const blob = new Blob([data]);
 
                 const blobValidation = validateBlob(action, blob);
                 if (blobValidation !== true) {
@@ -111,10 +171,10 @@ const Password = () => {
                     return;
                 }
 
-                navigate('/success', {
+                navigate(STAGE_DATA[STAGE.DOWNLOAD].path, {
                     state: {
+                        fileName,
                         data: blob,
-                        fileName: file.name,
                         action,
                     },
                 });
@@ -132,7 +192,7 @@ const Password = () => {
                 windowContext.close();
             }
         },
-        [location.state, navigate, password]
+        [location, navigate, password]
     );
 
     const handleEncryptClick = useCallback(() => handleCrypt('encrypt'), [handleCrypt]);
@@ -140,13 +200,12 @@ const Password = () => {
     const handleDecryptClick = useCallback(() => handleCrypt('decrypt'), [handleCrypt]);
 
     if (!location.state) {
-        return <Navigate to="/" replace />;
+        return <Navigate to={STAGE_DATA[STAGE.UPLOAD].path} replace />;
     }
 
     return (
-        <div className="password">
-            <div className="password__inputs">
-                {/* TODO: Add ellipsis */}
+        <div className="secure">
+            <div className="secure__inputs">
                 <Input
                     value={location.state.file.name}
                     title={location.state.file.name}
@@ -154,16 +213,56 @@ const Password = () => {
                     readOnly
                     endAdornment={
                         <InputAdornment position="end">
+                            {!location.state.disguise && (
+                                <IconButton
+                                    size="small"
+                                    title="Disguise as another file"
+                                    onClick={handleUploadDisguiseClick}
+                                >
+                                    {/* TODO: Try to find a more appropriate icon */}
+                                    <AutoFixHighIcon fontSize="small" />
+                                </IconButton>
+                            )}
                             <IconButton
                                 size="small"
                                 title="Change the file"
-                                onClick={handleFileClick}
+                                onClick={handleUploadFileClick}
                             >
                                 <CachedIcon fontSize="small" />
                             </IconButton>
                         </InputAdornment>
                     }
                 />
+                {location.state.disguise && (
+                    <div className="secure__inputs-disguise">
+                        <div className="secure__inputs-disguise-title">Disguise as</div>
+                        <Input
+                            className="secure__inputs-disguise-input"
+                            value={location.state.disguise.name}
+                            title={location.state.disguise.name}
+                            inputProps={{ tabIndex: -1 }}
+                            readOnly
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        size="small"
+                                        title="Change the disguise"
+                                        onClick={handleUploadDisguiseClick}
+                                    >
+                                        <CachedIcon fontSize="small" />
+                                    </IconButton>
+                                    <IconButton
+                                        size="small"
+                                        title="Remove the disguise"
+                                        onClick={handleRemoveDisguiseClick}
+                                    >
+                                        <CloseIcon fontSize="small" />
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                    </div>
+                )}
                 <Input
                     type={passwordIsVisible ? 'text' : 'password'}
                     placeholder="Enter the password"
@@ -187,11 +286,11 @@ const Password = () => {
                     onChange={handlePasswordChanged}
                 />
             </div>
-            <div className="password__agreement">
+            <div className="secure__agreement">
                 <span>By continuing, you agree to </span>
                 {/* Avoid word wrap on narrow screens */}
                 <Link
-                    className="password__agreement-link"
+                    className="secure__agreement-link"
                     component={'button'}
                     onClick={handleClickAgreement}
                 >
@@ -200,13 +299,15 @@ const Password = () => {
                 <span>.</span>
             </div>
             {/* TODO: Add hints for empty password or key */}
-            <div className="password__actions">
+            <div className="secure__actions">
                 <Button variant="contained" disabled={!password} onClick={handleEncryptClick}>
                     Encrypt
                 </Button>
-                <Button variant="outlined" disabled={!password} onClick={handleDecryptClick}>
-                    Decrypt
-                </Button>
+                {!location.state.disguise && (
+                    <Button variant="outlined" disabled={!password} onClick={handleDecryptClick}>
+                        Decrypt
+                    </Button>
+                )}
             </div>
         </div>
     );
@@ -229,18 +330,13 @@ function validatePassword(password: string | null): ValidationResult {
 }
 
 function validateBlob(action: Action, blob: Blob): ValidationResult {
-    if (action === 'encrypt' && blob.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        return (
-            <>
-                The encrypted file size exceeds the maximum allowed size of {MAX_FILE_SIZE_MB}
-                &nbsp;MB.
-            </>
-        );
+    if (action === 'encrypt' && blob.size > MAX_FILES_SIZE_MB * 1024 * 1024) {
+        return `The encrypted file size exceeds the maximum allowed size of ${MAX_FILES_SIZE_MB}MB.`;
     }
 
     return true;
 }
 
-Password.displayName = 'Password';
+Secure.displayName = 'Secure';
 
-export default memo(Password);
+export default memo(Secure);
