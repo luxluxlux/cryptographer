@@ -1,8 +1,7 @@
 import { useCallback, useContext, MouseEvent } from 'react';
 import Link from '@mui/material/Link';
 import { APPLICATION_NAME, GITHUB_URL, VERSION } from 'utils/constants';
-import { WindowManagerContext } from 'utils/contexts';
-import LicenseAgreement from 'windows/LicenseAgreement';
+import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 
 const About = () => {
     const windowContext = useContext(WindowManagerContext);
@@ -10,7 +9,7 @@ const About = () => {
     const handleClickAgreement = useCallback((event: MouseEvent<HTMLElement>) => {
         // Prevent window from being closed
         event.stopPropagation();
-        windowContext.open(<LicenseAgreement />);
+        windowContext.open(WINDOW.LICENSE_AGREEMENT);
     }, []);
 
     return (
@@ -61,7 +60,7 @@ const About = () => {
                     on your device.
                 </div>
             </div>
-            <h2>Licence agreement</h2>
+            <h2>License agreement</h2>
             <p>
                 By using {APPLICATION_NAME}, you acknowledge that you have read, understood, and
                 agree to be bound by the terms and conditions outlined in this{' '}

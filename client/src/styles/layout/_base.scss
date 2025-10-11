@@ -46,13 +46,12 @@
             align-items: center;
             justify-content: space-between;
             z-index: 1;
+            padding: var(--offset_l) var(--offset_xl);
+            gap: var(--offset_2xl);
 
-            @media (width >= $breakpoint-s) {
-                padding: var(--offset_l) var(--offset_xl);
-            }
-
-            @media (width < $breakpoint-s) {
+            &_mobile {
                 padding: var(--offset_m);
+                gap: var(--offset_m);
             }
         }
 
@@ -77,12 +76,9 @@
         &-footer {
             z-index: 1;
             align-self: end;
+            padding: var(--offset_l) var(--offset_xl);
 
-            @media (width >= $breakpoint-s) {
-                padding: var(--offset_l) var(--offset_xl);
-            }
-
-            @media (width < $breakpoint-s) {
+            &_mobile {
                 padding: var(--offset_m);
             }
         }

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'components/Snackbar';
 import { MAX_ALERT_FILENAME_LENGTH, STAGE, STAGE_DATA } from 'utils/constants';
 import { ellipse, validateFiles } from 'utils/common';
-import { WindowManagerContext } from 'utils/contexts';
+import { WindowManagerContext } from 'components/WindowManager';
 import DragNDrop from 'windows/DragNDrop';
 
 interface IProps {

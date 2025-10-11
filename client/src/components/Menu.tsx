@@ -11,28 +11,24 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import QuizIcon from '@mui/icons-material/Quiz';
 import InfoIcon from '@mui/icons-material/Info';
-import { WindowManagerContext } from 'utils/contexts';
-import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
-import HowItWorks from 'windows/HowItWorks';
-import FAQ from 'windows/FAQ';
-import About from 'windows/About';
+import { isMobile } from 'utils/device';
+import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 
 const Menu = () => {
-    const isDesktop = useBreakpoint(BREAKPOINT.S);
     const windowContext = useContext(WindowManagerContext);
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const handleHowItWorksClick = useCallback(() => {
-        windowContext.open(<HowItWorks />);
+        windowContext.open(WINDOW.HOW_IT_WORKS);
     }, [windowContext.open]);
 
     const handleFAQClick = useCallback(() => {
-        windowContext.open(<FAQ />);
+        windowContext.open(WINDOW.FAQ);
     }, [windowContext.open]);
 
     const handleAboutClick = useCallback(() => {
-        windowContext.open(<About />);
+        windowContext.open(WINDOW.ABOUT);
     }, [windowContext.open]);
 
     const handleOpenMenu = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -45,31 +41,7 @@ const Menu = () => {
 
     return (
         <nav>
-            {isDesktop ? (
-                <List className="menu__list">
-                    <ListItem className="menu__list-item">
-                        <ListItemButton
-                            className="menu__list-item-button"
-                            onClick={handleHowItWorksClick}
-                        >
-                            <ListItemText primary="How&nbsp;it&nbsp;works" />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem className="menu__list-item">
-                        <ListItemButton className="menu__list-item-button" onClick={handleFAQClick}>
-                            <ListItemText primary="FAQ" />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem className="menu__list-item">
-                        <ListItemButton
-                            className="menu__list-item-button"
-                            onClick={handleAboutClick}
-                        >
-                            <ListItemText primary="About" />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            ) : (
+            {isMobile() ? (
                 <>
                     <IconButton onClick={handleOpenMenu}>
                         <MenuIcon fontSize="medium" />
@@ -100,6 +72,30 @@ const Menu = () => {
                         </MenuItem>
                     </MuiMenu>
                 </>
+            ) : (
+                <List className="menu__list">
+                    <ListItem className="menu__list-item">
+                        <ListItemButton
+                            className="menu__list-item-button"
+                            onClick={handleHowItWorksClick}
+                        >
+                            <ListItemText primary="How&nbsp;it&nbsp;works" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem className="menu__list-item">
+                        <ListItemButton className="menu__list-item-button" onClick={handleFAQClick}>
+                            <ListItemText primary="FAQ" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem className="menu__list-item">
+                        <ListItemButton
+                            className="menu__list-item-button"
+                            onClick={handleAboutClick}
+                        >
+                            <ListItemText primary="About" />
+                        </ListItemButton>
+                    </ListItem>
+                </List>
             )}
         </nav>
     );

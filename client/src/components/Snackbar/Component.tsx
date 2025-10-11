@@ -1,9 +1,11 @@
 import { forwardRef, memo, useCallback } from 'react';
+import clsx from 'clsx';
+import { closeSnackbar, CustomContentProps } from 'notistack';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { closeSnackbar, CustomContentProps } from 'notistack';
+import { isMobile } from 'utils/device';
 
 interface IProps extends CustomContentProps {
     title?: string;
@@ -15,7 +17,7 @@ const Component = forwardRef<HTMLDivElement, IProps>((props, ref) => {
 
     return (
         <Alert
-            className="snackback-component"
+            className={clsx('snackback-component', isMobile() && 'snackback-component_mobile')}
             ref={ref}
             variant="outlined"
             severity={props.variant}

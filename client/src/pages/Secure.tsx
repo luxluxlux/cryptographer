@@ -30,10 +30,9 @@ import {
     validateFile,
     wait,
 } from 'utils/common';
-import { WindowManagerContext } from 'utils/contexts';
 import { encryptFile, decryptFile } from 'utils/crypto/core';
+import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 import Loading from 'windows/Loading';
-import LicenseAgreement from 'windows/LicenseAgreement';
 
 const Secure = () => {
     const location = useLocation();
@@ -116,7 +115,7 @@ const Secure = () => {
     }, []);
 
     const handleClickAgreement = useCallback(() => {
-        windowContext.open(<LicenseAgreement />);
+        windowContext.open(WINDOW.LICENSE_AGREEMENT);
     }, []);
 
     const handleCrypt = useCallback(
@@ -200,7 +199,15 @@ const Secure = () => {
     const handleDecryptClick = useCallback(() => handleCrypt('decrypt'), [handleCrypt]);
 
     if (!location.state) {
-        return <Navigate to={STAGE_DATA[STAGE.UPLOAD].path} replace />;
+        return (
+            <Navigate
+                to={{
+                    pathname: STAGE_DATA[STAGE.UPLOAD].path,
+                    search: location.search,
+                }}
+                replace
+            />
+        );
     }
 
     return (

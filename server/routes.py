@@ -1,10 +1,19 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
+from user_agents import parse
 
 routes = Blueprint("routes", __name__)
 
-# TODO: Use universal route for all paths
+
 @routes.route('/')
 @routes.route('/secure')
 @routes.route('/download')
 def index():
-    return render_template('index.html')
+    ua_string = request.headers.get('User-Agent', '')
+    ua = parse(ua_string)
+    prefix = 'mobile/' if ua.is_mobile else ''
+
+    popup = request.args.get('popup')
+    if popup in ['how-it-works', 'faq', 'about', 'license-agreement']:
+        return render_template(f'{prefix}{popup}/index.html')
+
+    return render_template(f'{prefix}index.html')
