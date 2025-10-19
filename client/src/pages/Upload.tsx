@@ -5,18 +5,16 @@ import Link from '@mui/material/Link';
 import { useSnackbar } from 'components/Snackbar';
 import { APPLICATION_NAME, MAX_ALERT_FILENAME_LENGTH, STAGE, STAGE_DATA } from 'utils/constants';
 import { ellipse, upload, validateFile } from 'utils/common';
-import { WindowManagerContext } from 'utils/contexts';
-import { BREAKPOINT, useBreakpoint } from 'utils/breakpoints';
-import HowItWorks from 'windows/HowItWorks';
+import { isMobile } from 'utils/device';
+import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 
 const Upload = () => {
-    const isDesktop = useBreakpoint(BREAKPOINT.S);
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const windowContext = useContext(WindowManagerContext);
 
     const handleAboutClick = useCallback(() => {
-        windowContext.open(<HowItWorks />);
+        windowContext.open(WINDOW.HOW_IT_WORKS);
     }, [windowContext.open]);
 
     const handleFileClick = useCallback(async () => {
@@ -60,7 +58,7 @@ const Upload = () => {
                 <Button variant="contained" onClick={handleFileClick}>
                     Select file
                 </Button>
-                {isDesktop && <div className="upload__actions-hint">or drop it here</div>}
+                {!isMobile() && <div className="upload__actions-hint">or drop it here</div>}
             </div>
         </div>
     );

@@ -17,12 +17,19 @@ const Download = () => {
 
     const downloadFile = useCallback(() => {
         download(location.state.data, location.state.fileName);
-        navigate(STAGE_DATA[STAGE.DOWNLOAD].path, {
-            state: {
-                ...location.state,
-                downloaded: true,
+        navigate(
+            {
+                pathname: STAGE_DATA[STAGE.DOWNLOAD].path,
+                // Set it not to lose the search params after deferred download
+                search: location.search,
             },
-        });
+            {
+                state: {
+                    ...location.state,
+                    downloaded: true,
+                },
+            }
+        );
     }, [location]);
 
     useEffect(() => {
@@ -37,7 +44,15 @@ const Download = () => {
     }, [location]);
 
     if (!location.state) {
-        return <Navigate to={STAGE_DATA[STAGE.UPLOAD].path} replace />;
+        return (
+            <Navigate
+                to={{
+                    pathname: STAGE_DATA[STAGE.UPLOAD].path,
+                    search: location.search,
+                }}
+                replace
+            />
+        );
     }
 
     return (

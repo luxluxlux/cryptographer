@@ -1,9 +1,8 @@
 @use 'sass:color';
-@import 'styles/abstracts/breakpoints';
 
 :root {
     // Default value, depends on the current page
-    --primarty-color: #009dff;
+    --primary-color: #009dff;
     --text-color: #fff;
     --text-readonly-color: #ffffff7f;
     --text-unaccented-color: #ffffff7f;

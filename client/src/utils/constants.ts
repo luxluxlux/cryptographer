@@ -45,6 +45,7 @@ export const MAX_ALERT_FILENAME_LENGTH = 30;
 // Encrypted file extension
 export const FILE_EXTENSION = 'crg';
 
+// Handling stages
 export enum STAGE {
     UPLOAD = 'upload',
     SECURE = 'secure',

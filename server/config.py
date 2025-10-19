@@ -5,9 +5,9 @@ from .constants import TEMP_DIR
 # Default configuration
 DEFAULT = {
     'Limits': {
-        'MaxConnectionsNumberPerMinute': 10,
-        'MaxConnectionsNumberPerHour': 50,
-        'MaxConnectionsNumberPerDay': 100
+        'MaxConnectionsNumberPerMinute': 100,
+        'MaxConnectionsNumberPerHour': 1000,
+        'MaxConnectionsNumberPerDay': 10000
     }
 }
 

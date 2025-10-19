@@ -4,7 +4,8 @@
     max-width: 400px;
     backdrop-filter: var(--blur-filter);
 
-    @media (width < $breakpoint-s) {
+    // TODO: Set 100% width on mobile
+    &_mobile {
         max-width: 100%;
     }
 }
