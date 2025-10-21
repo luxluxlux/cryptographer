@@ -22,7 +22,12 @@ const Component = forwardRef<HTMLDivElement, IProps>((props, ref) => {
             variant="outlined"
             severity={props.variant}
             action={
-                <IconButton size="small" title="Close" onClick={handleClose}>
+                <IconButton
+                    size="small"
+                    title="Close"
+                    aria-label="Close alert"
+                    onClick={handleClose}
+                >
                     <CloseIcon fontSize="small" color={props.variant} />
                 </IconButton>
             }

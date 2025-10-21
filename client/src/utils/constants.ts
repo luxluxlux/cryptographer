@@ -1,8 +1,13 @@
+import { WINDOW_DATA } from 'components/WindowManager';
 import { parseVersion } from './common';
 import { IStep, Version } from './interfaces';
 
 // Name of the application
 export const APPLICATION_NAME = 'Cryptographer';
+
+// URL of the application
+// TODO: Get it from the app params
+export const APPLICATION_URL = 'https://cryptographer.com/';
 
 // Version size in bytes
 export const VERSION_SIZE = 3;
@@ -67,3 +72,9 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
         color: '#4aff90',
     },
 };
+
+// Artificial rendering paths for react-snap 
+export const REACT_SNAP_PATHS = [
+    '/mobile',
+    ...Object.values(WINDOW_DATA).flatMap(({ path }) => [`/${path}`, `/mobile/${path}`]),
+];

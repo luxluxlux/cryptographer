@@ -21,6 +21,7 @@
     "react": "^18.3.1",
     "react-device-detect": "^2.2.3",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
     "sass": "^1.87.0",
@@ -65,7 +66,8 @@
       "/mobile/how-it-works",
       "/mobile/faq",
       "/mobile/about",
-      "/mobile/license-agreement"
+      "/mobile/license-agreement",
+      "/404.html"
     ]
   },
   "devDependencies": {

@@ -3,5 +3,5 @@
 @import 'components/logo', 'components/menu', 'components/credits', 'components/windowManager',
     'components/loading', 'components/dragNDrop', 'components/snackbarProvider', 'components/about',
     'components/dropArea';
-@import 'layout/base';
-@import 'pages/upload', 'pages/secure', 'pages/download';
+@import 'layout/page';
+@import 'pages/upload', 'pages/secure', 'pages/download', 'pages/notFound';

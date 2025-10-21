@@ -1,5 +1,19 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { WINDOW } from './constants';
+
+export interface IWindowManagerProps {
+    /**
+     * The content of the component
+     */
+    children: ReactNode;
+}
+
+export interface IWindowManagerState {
+    content: ReactElement | null;
+    modal: boolean;
+    fullscreen: boolean;
+}
+
 
 export interface IWindowManagerOptions {
     /**

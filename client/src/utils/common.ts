@@ -187,3 +187,12 @@ export function addExtension(name: string, extension?: string): string {
 export function changeExtension(name: string, extension?: string): string {
     return name.replace(/(\.[^.]*$|$)/, extension ? `.${extension}` : '');
 }
+
+/**
+ * Remove trailing slashes from a given path
+ * @param path The path from which trailing slashes will be removed
+ * @return The path with trailing slashes removed
+ */
+export function removeTrailingSlashes(path: string) {
+  return path.replace(/(?<=.)\/+$/g, '');
+}

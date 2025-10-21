@@ -1,4 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
-# Temporarily disallow web app for search engines
-Disallow: /
+Disallow: /secure/
+Disallow: /download/
+
+Sitemap: https://cryptographer.com/sitemap.xml

@@ -1,13 +1,4 @@
-import {
-    useState,
-    useCallback,
-    useMemo,
-    useRef,
-    useEffect,
-    memo,
-    ReactNode,
-    ReactElement,
-} from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect, memo, ReactElement } from 'react';
 import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import Backdrop from '@mui/material/Backdrop';
@@ -15,21 +6,16 @@ import { TransitionProps } from '@mui/material/transitions';
 import { isEnumValue } from 'utils/types';
 import { getUserAgent, isMobile } from 'utils/device';
 import { useUpdateSearchParams } from 'utils/hooks';
-import { IWindowManagerContext, IWindowManagerOptions } from './interfaces';
+import {
+    IWindowManagerContext,
+    IWindowManagerOptions,
+    IWindowManagerProps,
+    IWindowManagerState,
+} from './interfaces';
 import { WINDOW, WINDOW_DATA } from './constants';
 import { WindowManagerContext } from './contexts';
 
-interface IProps {
-    children: ReactNode;
-}
-
-interface IState {
-    content: ReactElement | null;
-    modal: boolean;
-    fullscreen: boolean;
-}
-
-function WindowManager(props: IProps) {
+function WindowManager(props: IWindowManagerProps) {
     const location = useLocation();
     const { setParam, removeParam } = useUpdateSearchParams();
 
@@ -37,7 +23,7 @@ function WindowManager(props: IProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const transitionRef = useRef<TransitionProps['timeout']>(0);
 
-    const [state, setState] = useState<IState>({
+    const [state, setState] = useState<IWindowManagerState>({
         content: null,
         modal: false,
         fullscreen: false,
