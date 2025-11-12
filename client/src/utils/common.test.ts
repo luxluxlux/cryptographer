@@ -4,6 +4,7 @@ import {
     ellipse,
     parseFileName,
     parseVersion,
+    removeTrailingSlashes,
     validateDisguise,
     validateFile,
     validateFiles,
@@ -226,5 +227,15 @@ describe('changeExtension', () => {
 
     it('Should not change the extension if it is not passed', () => {
         expect(changeExtension('test')).toEqual('test');
+    });
+});
+
+describe('removeTrailingSlashes', () => {
+    it('Should remove trailing slashes from a string', () => {
+        expect(removeTrailingSlashes('/test/')).toEqual('/test');
+        expect(removeTrailingSlashes('/test///')).toEqual('/test');
+        expect(removeTrailingSlashes('/test')).toEqual('/test');
+        expect(removeTrailingSlashes('/test/test/')).toEqual('/test/test');
+        expect(removeTrailingSlashes('/')).toEqual('/');
     });
 });

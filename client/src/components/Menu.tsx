@@ -40,10 +40,10 @@ const Menu = () => {
     };
 
     return (
-        <nav>
+        <nav aria-label="Main Menu">
             {isMobile() ? (
                 <>
-                    <IconButton onClick={handleOpenMenu}>
+                    <IconButton aria-label="Open main menu" onClick={handleOpenMenu}>
                         <MenuIcon fontSize="medium" />
                     </IconButton>
                     <MuiMenu

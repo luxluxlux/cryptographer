@@ -1,5 +1,6 @@
 import { memo, useCallback, useState, useContext, ChangeEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useSnackbar } from 'components/Snackbar';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
@@ -20,6 +21,7 @@ import {
     STAGE_DATA,
     STAGE,
     FILE_EXTENSION,
+    APPLICATION_NAME,
 } from 'utils/constants';
 import {
     addExtension,
@@ -211,112 +213,129 @@ const Secure = () => {
     }
 
     return (
-        <div className="secure">
-            <div className="secure__inputs">
-                <Input
-                    value={location.state.file.name}
-                    title={location.state.file.name}
-                    inputProps={{ tabIndex: -1 }}
-                    readOnly
-                    endAdornment={
-                        <InputAdornment position="end">
-                            {!location.state.disguise && (
-                                <IconButton
-                                    size="small"
-                                    title="Disguise as another file"
-                                    onClick={handleUploadDisguiseClick}
-                                >
-                                    {/* TODO: Try to find a more appropriate icon */}
-                                    <AutoFixHighIcon fontSize="small" />
-                                </IconButton>
-                            )}
-                            <IconButton
-                                size="small"
-                                title="Change the file"
-                                onClick={handleUploadFileClick}
-                            >
-                                <CachedIcon fontSize="small" />
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                />
-                {location.state.disguise && (
-                    <div className="secure__inputs-disguise">
-                        <div className="secure__inputs-disguise-title">Disguise as</div>
-                        <Input
-                            className="secure__inputs-disguise-input"
-                            value={location.state.disguise.name}
-                            title={location.state.disguise.name}
-                            inputProps={{ tabIndex: -1 }}
-                            readOnly
-                            endAdornment={
-                                <InputAdornment position="end">
+        <>
+            <Helmet>
+                <title>{APPLICATION_NAME} | Secure</title>
+                <meta name="robots" content="noindex" />
+            </Helmet>
+            <div className="secure">
+                <div className="secure__inputs">
+                    <Input
+                        value={location.state.file.name}
+                        title={location.state.file.name}
+                        inputProps={{ tabIndex: -1 }}
+                        readOnly
+                        endAdornment={
+                            <InputAdornment position="end">
+                                {!location.state.disguise && (
                                     <IconButton
                                         size="small"
-                                        title="Change the disguise"
+                                        title="Disguise as another file"
+                                        aria-label="Disguise as another file"
                                         onClick={handleUploadDisguiseClick}
                                     >
-                                        <CachedIcon fontSize="small" />
+                                        {/* TODO: Try to find a more appropriate icon */}
+                                        <AutoFixHighIcon fontSize="small" />
                                     </IconButton>
-                                    <IconButton
-                                        size="small"
-                                        title="Remove the disguise"
-                                        onClick={handleRemoveDisguiseClick}
-                                    >
-                                        <CloseIcon fontSize="small" />
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                        />
-                    </div>
-                )}
-                <Input
-                    type={passwordIsVisible ? 'text' : 'password'}
-                    placeholder="Enter the password"
-                    value={password}
-                    autoFocus
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <IconButton
-                                size="small"
-                                title={passwordIsVisible ? 'Hide password' : 'Show password'}
-                                onClick={handleTogglePassword}
-                            >
-                                {passwordIsVisible ? (
-                                    <VisibilityOffIcon fontSize="small" />
-                                ) : (
-                                    <VisibilityIcon fontSize="small" />
                                 )}
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                    onChange={handlePasswordChanged}
-                />
-            </div>
-            <div className="secure__agreement">
-                <span>By continuing, you agree to </span>
-                {/* Avoid word wrap on narrow screens */}
-                <Link
-                    className="secure__agreement-link"
-                    component={'button'}
-                    onClick={handleClickAgreement}
-                >
-                    the license terms
-                </Link>
-                <span>.</span>
-            </div>
-            {/* TODO: Add hints for empty password or key */}
-            <div className="secure__actions">
-                <Button variant="contained" disabled={!password} onClick={handleEncryptClick}>
-                    Encrypt
-                </Button>
-                {!location.state.disguise && (
-                    <Button variant="outlined" disabled={!password} onClick={handleDecryptClick}>
-                        Decrypt
+                                <IconButton
+                                    size="small"
+                                    title="Change the file"
+                                    aria-label="Change file"
+                                    onClick={handleUploadFileClick}
+                                >
+                                    <CachedIcon fontSize="small" />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                    {location.state.disguise && (
+                        <div className="secure__inputs-disguise">
+                            <div className="secure__inputs-disguise-title">Disguise as</div>
+                            <Input
+                                className="secure__inputs-disguise-input"
+                                value={location.state.disguise.name}
+                                title={location.state.disguise.name}
+                                inputProps={{ tabIndex: -1 }}
+                                readOnly
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            size="small"
+                                            title="Change the disguise"
+                                            aria-label="Change the disguise"
+                                            onClick={handleUploadDisguiseClick}
+                                        >
+                                            <CachedIcon fontSize="small" />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            title="Remove the disguise"
+                                            aria-label="Remove the disguise"
+                                            onClick={handleRemoveDisguiseClick}
+                                        >
+                                            <CloseIcon fontSize="small" />
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        </div>
+                    )}
+                    <Input
+                        type={passwordIsVisible ? 'text' : 'password'}
+                        placeholder="Enter the password"
+                        value={password}
+                        autoFocus
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    size="small"
+                                    title={passwordIsVisible ? 'Hide password' : 'Show password'}
+                                    aria-label={
+                                        passwordIsVisible ? 'Hide password' : 'Show password'
+                                    }
+                                    onClick={handleTogglePassword}
+                                >
+                                    {passwordIsVisible ? (
+                                        <VisibilityOffIcon fontSize="small" />
+                                    ) : (
+                                        <VisibilityIcon fontSize="small" />
+                                    )}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                        onChange={handlePasswordChanged}
+                    />
+                </div>
+                <div className="secure__agreement">
+                    <span>By continuing, you agree to </span>
+                    {/* Avoid word wrap on narrow screens */}
+                    <Link
+                        className="secure__agreement-link"
+                        component={'button'}
+                        onClick={handleClickAgreement}
+                    >
+                        the license terms
+                    </Link>
+                    <span>.</span>
+                </div>
+                {/* TODO: Add hints for empty password or key */}
+                <div className="secure__actions">
+                    <Button variant="contained" disabled={!password} onClick={handleEncryptClick}>
+                        Encrypt
                     </Button>
-                )}
+                    {!location.state.disguise && (
+                        <Button
+                            variant="outlined"
+                            disabled={!password}
+                            onClick={handleDecryptClick}
+                        >
+                            Decrypt
+                        </Button>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

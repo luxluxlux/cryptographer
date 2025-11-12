@@ -1,7 +1,17 @@
 {
   "short_name": "Cryptographer",
-  "name": "Cryptographer - Secure Client-Side File Encryption",
-  "description": "Cryptographer is a free, open-source web app for secure client-side file encryption. Protect your files with a password directly in your browser - no installation, no accounts, and no data sent to a server.",
+  "name": "Cryptographer — Protect Files with Password Online",
+  "description": "Protect your files with a password and disguise them as another files directly in your browser. Simple, private, and open source.",
+  "categories": [
+    "business",
+    "developer",
+    "developer tools",
+    "network",
+    "photo",
+    "photo & video",
+    "productivity",
+    "video"
+  ],
   "icons": [
     {
       "src": "favicon.ico",
