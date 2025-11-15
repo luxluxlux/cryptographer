@@ -1,13 +1,14 @@
+import { memo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { APPLICATION_URL } from 'utils/constants';
 import { IHeaderProps } from './interfaces';
 
 /**
- * Header content of the page
- * @param props Page header props
- * @returns Page header
+ * Page header content. Renders HTML meta tags required for SEO.
+ * @param props Page header properties.
+ * @returns Helmet object for a specific page.
  */
-const Header = ({ path = '', ...props }: IHeaderProps) => {
+export const Header = ({ path = '', ...props }: IHeaderProps) => {
     const ogTitle = props.ogTitle ? props.ogTitle : props.metaTitle;
     const ogDescription = props.ogDescription ? props.ogDescription : props.metaDescription;
     return (
@@ -26,4 +27,4 @@ const Header = ({ path = '', ...props }: IHeaderProps) => {
 
 Header.displayName = 'Header';
 
-export default Header;
+export default memo(Header);

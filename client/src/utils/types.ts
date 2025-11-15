@@ -1,8 +1,8 @@
 /**
- * Check if a value is present in an enum object
- * @param enumObj The enum object to check against
- * @param value The value to check
- * @return Returns true if the value is present in the enum object, false otherwise
+ * Checks if a value is present in an enum object.
+ * @param enumObj The enum object to check against.
+ * @param value The value to check.
+ * @returns Returns true if the value is present in the enum object, false otherwise.
  */
 export function isEnumValue<T extends Record<string, string | number>>(
     enumObj: T,

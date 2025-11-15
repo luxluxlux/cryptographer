@@ -4,7 +4,9 @@ import HowItWorks from 'windows/HowItWorks';
 import LicenseAgreement from 'windows/LicenseAgreement';
 import { IWindow } from './interfaces';
 
-// Pop-up windows
+/**
+ * Pop-up windows.
+ */
 export enum WINDOW {
     ABOUT = 'about',
     FAQ = 'faq',
@@ -12,7 +14,9 @@ export enum WINDOW {
     LICENSE_AGREEMENT = 'license-agreement',
 }
 
-// Data for pop-up widnows
+/**
+ * Data for pop-up widnows.
+ */
 export const WINDOW_DATA: Record<WINDOW, IWindow> = {
     [WINDOW.ABOUT]: {
         path: 'about',

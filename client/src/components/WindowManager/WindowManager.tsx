@@ -15,7 +15,12 @@ import {
 import { WINDOW, WINDOW_DATA } from './constants';
 import { WindowManagerContext } from './contexts';
 
-function WindowManager(props: IWindowManagerProps) {
+/**
+ * The component that manages the state and rendering of pop-up windows.
+ * @param props The properties for the WindowManager component.
+ * @returns Provider for opening pop-up windows.
+ */
+export function WindowManager(props: IWindowManagerProps) {
     const location = useLocation();
     const { setParam, removeParam } = useUpdateSearchParams();
 

@@ -7,11 +7,11 @@ import { IPageProps } from './interfaces';
 import { usePrimaryColor } from './hooks';
 
 /**
- * Basic page layout
- * @param props The props for the page
- * @return The rendered page
+ * Basic page layout.
+ * @param props The properties for the page.
+ * @returns Design of page layout with accompanying functionality.
  */
-const Page = (props: IPageProps) => {
+export const Page = (props: IPageProps) => {
     const color = usePrimaryColor();
     return (
         <div

@@ -25,6 +25,10 @@ import '@fontsource/inter/700.css';
 
 const OG_IMAGE = `${APPLICATION_URL}preview.png`;
 
+/**
+ * The entry point component of the application.
+ * @returns The application content.
+ */
 const App = () => (
     <HelmetProvider>
         <Helmet>

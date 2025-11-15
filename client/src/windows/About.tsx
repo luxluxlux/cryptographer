@@ -5,6 +5,10 @@ import { APPLICATION_NAME, GITHUB_URL, VERSION } from 'utils/constants';
 import { WindowManagerContext, WINDOW, WINDOW_DATA } from 'components/WindowManager';
 import { Header } from 'components/Page';
 
+/**
+ * Information, goals and benefits of the project.
+ * @returns Window content.
+ */
 const About = () => {
     const windowContext = useContext(WindowManagerContext);
 
@@ -12,7 +16,7 @@ const About = () => {
         // Prevent window from being closed
         event.stopPropagation();
         windowContext.open(WINDOW.LICENSE_AGREEMENT);
-    }, []);
+    }, [windowContext.open]);
 
     return (
         <>

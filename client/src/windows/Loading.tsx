@@ -1,10 +1,23 @@
+import { memo } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
-interface IProps {
+/**
+ * The properties for the loading component.
+ */
+export interface IProps {
+    /**
+     * Custom waiting label.
+     * @defaultValue Loading, please wait...
+     */
     title?: string;
 }
 
-const Loading = ({ title = 'Loading, please wait...' }: IProps) => (
+/**
+ * Loading overlay.
+ * @param props The properties for the loading component.
+ * @return The loading component.
+ */
+export const Loading = ({ title = 'Loading, please wait...' }: IProps) => (
     <div className="loading">
         <CircularProgress color="inherit" size={60} />
         <div>{title}</div>
@@ -13,4 +26,4 @@ const Loading = ({ title = 'Loading, please wait...' }: IProps) => (
 
 Loading.displayName = 'Loading';
 
-export default Loading;
+export default memo(Loading);

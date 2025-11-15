@@ -4,8 +4,8 @@ import { REACT_SNAP_PATHS, STAGE, STAGE_DATA } from 'utils/constants';
 import { getUserAgent } from 'utils/device';
 
 /**
- * Get the primary color for the current page based on the location pathname
- * @return The primary color for the current stage or undefined if not found
+ * Gets the primary color for the current page based on the location pathname.
+ * @returns The primary color for the current stage or undefined if not found.
  */
 export function usePrimaryColor(): string | undefined {
     const location = useLocation();

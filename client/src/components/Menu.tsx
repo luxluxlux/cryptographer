@@ -1,4 +1,4 @@
-import { memo, useContext, useCallback, useState, MouseEvent } from 'react';
+import { useContext, useCallback, useState, MouseEvent } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -14,6 +14,10 @@ import InfoIcon from '@mui/icons-material/Info';
 import { isMobile } from 'utils/device';
 import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 
+/**
+ * Main site menu.
+ * @returns Adaptive menu of the app.
+ */
 const Menu = () => {
     const windowContext = useContext(WindowManagerContext);
 
@@ -103,4 +107,4 @@ const Menu = () => {
 
 Menu.displayName = 'Menu';
 
-export default memo(Menu);
+export default Menu;

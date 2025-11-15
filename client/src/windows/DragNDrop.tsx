@@ -1,13 +1,26 @@
-import { useCallback, useContext, useRef, DragEvent } from 'react';
+import { useCallback, useContext, useRef, DragEvent, memo } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { MAX_FILES_SIZE_MB } from 'utils/constants';
 import { WindowManagerContext } from 'components/WindowManager';
 
-interface IProps {
+/**
+ * The properties for the file drop zone.
+ */
+export interface IProps {
+    /**
+     * Callback for file drop.
+     * @param files The dropped files.
+     */
     onDrop?: (files: FileList) => void;
 }
 
-const DragNDrop = (props: IProps) => {
+// TODO: Rename to FileDrop
+/**
+ * File drop area.
+ * @param props The properties for the file drop zone.
+ * @returns File drop area.
+ */
+export const DragNDrop = (props: IProps) => {
     const rootRef = useRef<HTMLDivElement>(null);
     const windowContext = useContext(WindowManagerContext);
 
@@ -18,7 +31,7 @@ const DragNDrop = (props: IProps) => {
             props.onDrop?.(event.dataTransfer.files);
             windowContext.close();
         },
-        [props.onDrop]
+        [props.onDrop, windowContext.close]
     );
 
     const handleDragOver = useCallback((event: DragEvent<HTMLElement>) => {
@@ -54,4 +67,4 @@ const DragNDrop = (props: IProps) => {
 
 DragNDrop.displayName = 'DragNDrop';
 
-export default DragNDrop;
+export default memo(DragNDrop);

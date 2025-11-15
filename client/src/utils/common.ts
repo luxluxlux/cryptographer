@@ -2,9 +2,9 @@ import { ParsedVersion, ValidationResult, Version } from './interfaces';
 import { FILE_EXTENSION_MAX_LENGTH, FILE_NAME_MAX_LENGTH, MAX_FILES_SIZE_MB } from './constants';
 
 /**
- * Parse a version string into a tuple
- * @param str The version string to parse, in the format 'major.minor.revision'
- * @return The parsed version tuple, or throws an error if the version string is invalid
+ * Parses a version string into a tuple.
+ * @param str The version string to parse, in the format 'major.minor.revision'.
+ * @returns The parsed version tuple, or throws an error if the version string is invalid.
  */
 export function parseVersion(str: Version, size: number): ParsedVersion {
     const version = str.split('.').map(Number);
@@ -17,9 +17,11 @@ export function parseVersion(str: Version, size: number): ParsedVersion {
 }
 
 /**
- * Upload file by the system dialog
+ * Uploads file by the system dialog.
+ * @param type File type.
+ * @returns A promise that resolves to the selected file.
  */
-export async function upload(type?: string) {
+export async function upload(type?: string): Promise<File> {
     return new Promise<File>((resolve, reject) => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -33,11 +35,11 @@ export async function upload(type?: string) {
 }
 
 /**
- * Download file
- * @param data Blob data
- * @param fileName Name string
+ * Downloads file.
+ * @param data Blob data.
+ * @param fileName Name string.
  */
-export function download(data: Blob, fileName: string) {
+export function download(data: Blob, fileName: string): void {
     const anchor = document.createElement('a');
     anchor.href = window.URL.createObjectURL(data);
     anchor.download = fileName;
@@ -45,11 +47,12 @@ export function download(data: Blob, fileName: string) {
 }
 
 /**
- * Hide the end of the string under an ellipsis
- * @param text String
- * @param maxLength Max length of the string
+ * Hides the middle part of the string under an ellipsis.
+ * @param text String.
+ * @param maxLength Max length of the string.
+ * @returns Ellipsed string.
  */
-export function ellipse(text: string, maxLength: number) {
+export function ellipse(text: string, maxLength: number): string {
     if (text.length > maxLength) {
         const maxLengthWithDots = maxLength - 3;
         const ellipsis = '...';
@@ -66,9 +69,9 @@ export function ellipse(text: string, maxLength: number) {
 }
 
 /**
- * Validate a file to ensure it meets the required criteria
- * @param file The file to be validated
- * @return True if the file is valid, or an error message if it's not
+ * Validates a file to ensure it meets the required criteria.
+ * @param file The file to be validated.
+ * @returns True if the file is valid, or an error message if it's not.
  */
 export function validateFile(file: File): ValidationResult {
     const { name, extension } = parseFileName(file.name);
@@ -97,11 +100,11 @@ export function validateFile(file: File): ValidationResult {
 }
 
 /**
- * Validate a list of files to ensure it meets the required criteria
- * @param files The list of files to be validated
- * @return An error message if validation fails, or true if validation succeeds
+ * Validates a list of files to ensure it meets the required criteria.
+ * @param files The list of files to be validated.
+ * @returns An error message if validation fails, or true if validation succeeds.
  */
-export function validateFiles(files: FileList) {
+export function validateFiles(files: FileList): ValidationResult {
     const length = files.length;
 
     if (length < 1) {
@@ -117,10 +120,10 @@ export function validateFiles(files: FileList) {
 }
 
 /**
- * Validate a disguise file to ensure it meets the required criteria
- * @param disguiseFile The disguise file to be validated
- * @param sourceFile The source file associated with the disguise file
- * @return True if the disguise file is valid, or an error message if it's not
+ * Validates a disguise file to ensure it meets the required criteria.
+ * @param disguiseFile The disguise file to be validated.
+ * @param sourceFile The source file associated with the disguise file.
+ * @returns True if the disguise file is valid, or an error message if it's not.
  */
 export function validateDisguise(disguiseFile: File, sourceFile: File): ValidationResult {
     const { name: disguiseFileName } = parseFileName(disguiseFile.name);
@@ -145,17 +148,20 @@ export function validateDisguise(disguiseFile: File, sourceFile: File): Validati
 }
 
 /**
- * Wait for a certain amount of time
- * @param interval In ms
+ * Waits for a certain amount of time.
+ * @param interval Time interval in ms.
+ * @returns A promise that resolves after the specified interval.
  */
-export function wait(interval: number) {
-    return new Promise((resolve) => setTimeout(resolve, interval));
+export function wait(interval: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+    });
 }
 
 /**
- * Parse a file name into its name and extension
- * @param fileName The file name to be parsed
- * @return An object containing the name and extension
+ * Parses a file name into its name and extension.
+ * @param fileName The file name to be parsed.
+ * @returns An object containing the name and extension.
  */
 export function parseFileName(fileName: string): {
     name: string;
@@ -169,30 +175,31 @@ export function parseFileName(fileName: string): {
 }
 
 /**
- * Add a file extension to a given file name
- * @param name The original file name
- * @param extension The extension to add
- * @return The file name with the added extension
+ * Adds a file extension to a given file name.
+ * @param name The original file name.
+ * @param extension The extension to add.
+ * @returns The file name with the added extension.
  */
 export function addExtension(name: string, extension?: string): string {
     return extension ? `${name}.${extension}` : name;
 }
 
 /**
- * Change the file extension of a given file name
- * @param name The original file name
- * @param extension The new file extension
- * @return The file name with the new extension
+ * Changes the file extension of a given file name.
+ * @param name The original file name.
+ * @param extension The new file extension.
+ * @returns The file name with the new extension.
  */
 export function changeExtension(name: string, extension?: string): string {
     return name.replace(/(\.[^.]*$|$)/, extension ? `.${extension}` : '');
 }
 
 /**
- * Remove trailing slashes from a given path
- * @param path The path from which trailing slashes will be removed
- * @return The path with trailing slashes removed
+ * Removes trailing slashes from a given path.
+ * @remarks Does not remove the leading slash, even if there is only one.
+ * @param path The path from which trailing slashes will be removed.
+ * @returns The path with trailing slashes removed.
  */
 export function removeTrailingSlashes(path: string) {
-  return path.replace(/(?<=.)\/+$/g, '');
+    return path.replace(/(?<=.)\/+$/g, '');
 }

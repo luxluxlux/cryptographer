@@ -4,6 +4,10 @@ import { APPLICATION_NAME, GITHUB_URL } from 'utils/constants';
 import { WINDOW_DATA, WINDOW } from 'components/WindowManager';
 import { Header } from 'components/Page';
 
+/**
+ * The license agreement for the use of the application.
+ * @return Page content.
+ */
 const LicenseAgreement = () => (
     <>
         <Helmet>

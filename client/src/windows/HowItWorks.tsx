@@ -4,6 +4,10 @@ import { APPLICATION_NAME, GITHUB_URL } from 'utils/constants';
 import { WINDOW_DATA, WINDOW } from 'components/WindowManager';
 import { Header } from 'components/Page';
 
+/**
+ * How the application works, its reliability, and what to know.
+ * @returns Window content.
+ */
 const HowItWorks = () => (
     <>
         <Helmet>

@@ -2,9 +2,9 @@ import { lib } from 'crypto-js';
 import { ArrType, ExtractArrTypes, FileFormat, GetArrType } from './interfaces';
 
 /**
- * Read file as Uint8Array
- * @param file File to read
- * @returns Promise resolving with the file content as a Uint8Array
+ * Reads file as Uint8Array.
+ * @param file File to read.
+ * @returns Promise resolving with the file content as a Uint8Array.
  */
 export async function readAsUint8Array(file: File): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve, reject) => {
@@ -16,10 +16,10 @@ export async function readAsUint8Array(file: File): Promise<Uint8Array> {
 }
 
 /**
- * Compare two Uint8Arrays
- * @param arr1 First array to compare
- * @param arr2 Second array to compare
- * @returns Whether the arrays are equal
+ * Compares two Uint8Arrays.
+ * @param arr1 First array to compare.
+ * @param arr2 Second array to compare.
+ * @returns Whether the arrays are equal.
  */
 export function compareUint8Arrays(arr1: Uint8Array, arr2: Uint8Array): boolean {
     if (arr1.length !== arr2.length) {
@@ -34,10 +34,10 @@ export function compareUint8Arrays(arr1: Uint8Array, arr2: Uint8Array): boolean 
 }
 
 /**
- * Compare two WordArrays
- * @param arr1 First array to compare
- * @param arr2 Second array to compare
- * @returns Whether the arrays are equal
+ * Compares two WordArrays.
+ * @param arr1 First array to compare.
+ * @param arr2 Second array to compare.
+ * @returns Whether the arrays are equal.
  */
 export function compareWordArrays(arr1: lib.WordArray, arr2: lib.WordArray): boolean {
     if (arr1.sigBytes !== arr2.sigBytes) {
@@ -52,9 +52,9 @@ export function compareWordArrays(arr1: lib.WordArray, arr2: lib.WordArray): boo
 }
 
 /**
- * Convert UTF-8 string to Uint8Array
- * @param str String to be converted
- * @return The converted Uint8Array
+ * Converts UTF-8 string to Uint8Array.
+ * @param str String to be converted.
+ * @returns The converted Uint8Array.
  */
 export function stringToUint8Array(str: string): Uint8Array {
     const encoder = new TextEncoder();
@@ -62,9 +62,9 @@ export function stringToUint8Array(str: string): Uint8Array {
 }
 
 /**
- * Convert Uint8Array to UTF-8 string
- * @param arr Uint8Array to be converted
- * @return The converted string
+ * Converts Uint8Array to UTF-8 string.
+ * @param arr Uint8Array to be converted.
+ * @returns The converted string.
  */
 export function uint8ArrayToString(arr: Uint8Array): string {
     const decoder = new TextDecoder();
@@ -72,10 +72,12 @@ export function uint8ArrayToString(arr: Uint8Array): string {
 }
 
 /**
- * Convert number to Uint8Array (big-endian)
- * @param number Positive number to be converted
- * @param byteLength Length of the result array
- * @returns Uint8Array representation of the number
+ * Converts number to Uint8Array.
+ * @remarks Uses big-endian byte order.
+ * @see https://en.wikipedia.org/wiki/Endianness
+ * @param number Positive number to be converted.
+ * @param byteLength Length of the result array.
+ * @returns Uint8Array representation of the number.
  */
 export function numberToUint8Array(number: number, byteLength: number): Uint8Array {
     if (number < 0) {
@@ -96,18 +98,20 @@ export function numberToUint8Array(number: number, byteLength: number): Uint8Arr
 }
 
 /**
- * Convert Uint8Array to number (big-endian)
- * @param arr Uint8Array to be converted
- * @returns Number representation of the array
+ * Converts Uint8Array to number.
+ * @remarks Uses big-endian byte order.
+ * @see https://en.wikipedia.org/wiki/Endianness
+ * @param arr Uint8Array to be converted.
+ * @returns Number representation of the array.
  */
 export function uint8ArrayToNumber(arr: Uint8Array): number {
     return arr.reduce((total, byte) => (total << 8) | byte, 0);
 }
 
 /**
- * Concatenate multiple Uint8Arrays into one
- * @param arrays Uint8Arrays to be concatenated
- * @returns Concatenated Uint8Arrays
+ * Concatenates multiple Uint8Arrays into one.
+ * @param arrays Uint8Arrays to be concatenated.
+ * @returns Concatenated Uint8Arrays.
  */
 export function concatUint8Arrays(...arrays: Uint8Array[]): Uint8Array {
     const totalLength = arrays.reduce((total, current) => total + current.length, 0);
@@ -121,9 +125,9 @@ export function concatUint8Arrays(...arrays: Uint8Array[]): Uint8Array {
 }
 
 /**
- * Convert WordArray to native Uint8Array
- * @param wordArray CryptoJS WordArray to convert
- * @returns A Uint8Array representation of the given WordArray
+ * Converts WordArray to native Uint8Array.
+ * @param wordArray CryptoJS WordArray to convert.
+ * @returns A Uint8Array representation of the given WordArray.
  */
 export function wordArrayToUint8Array(wordArray: lib.WordArray): Uint8Array {
     const length = wordArray.sigBytes;
@@ -139,19 +143,19 @@ export function wordArrayToUint8Array(wordArray: lib.WordArray): Uint8Array {
 }
 
 /**
- * Concatenate multiple WordArrays into one
- * @param wordArrays WordArrays to be concatenated
- * @returns Concatenated WordArray
+ * Concatenates multiple WordArrays into one.
+ * @param wordArrays WordArrays to be concatenated.
+ * @returns Concatenated WordArray.
  */
 export function concatWordArrays(...wordArrays: lib.WordArray[]): lib.WordArray {
     return wordArrays.reduce((total, current) => total.concat(current), lib.WordArray.create([]));
 }
 
 /**
- * Convert an array to a Uint8Array based on the provided format
- * @param arr Array to be converted
- * @param type Format of the array
- * @return Converted array
+ * Converts an array to a Uint8Array based on the provided format.
+ * @param arr Array to be converted.
+ * @param type Format of the array.
+ * @returns Converted array.
  */
 export function normalizeArr(arr: Uint8Array | lib.WordArray, type: ArrType): Uint8Array {
     const error = new Error('Invalid array format');
@@ -167,14 +171,21 @@ export function normalizeArr(arr: Uint8Array | lib.WordArray, type: ArrType): Ui
     return arr;
 }
 
+// TODO: Try to get rid of the additionalData parameter
 /**
- * Combine multiple data arrays into one
- * If the size is specified, it will be compared, if not, it will be calculated and converted into
- * Uint8Array of sizeSize length. All calculated sizes of data arrays will be located between data with
- * fixed and variable size.
- * TODO: Try to get rid of the additionalData parameter
+ * Combines multiple data arrays into one.
+ * @remarks If the size is specified, it will be compared, if not, it will be calculated and
+ * converted into Uint8Array of sizeSize length. All calculated sizes of data arrays will be
+ * located between data with fixed and variable size.
+ * @see https://en.wikipedia.org/wiki/Polyglot_(computing)
+ * @param format File format to use for assembly.
+ * @param formattedData Array of data arrays according to format.
+ * @param additionalData Unformatted data.
+ * @param reverse Reverse assembling direction, e.g., for polyglot files.
+ * @returns Concatenated Uint8Array.
  * 
  * @example Straight traversal
+ * ```
  * Bytes | Description 
  * ------+-------------------------------
  *     8 | Data 1
@@ -184,8 +195,10 @@ export function normalizeArr(arr: Uint8Array | lib.WordArray, type: ArrType): Ui
  *     n | Data 2
  *     m | Data 4
  *     . | Unformatted data
+ * ```
  * 
  * @example Reverse traversal
+ * ```
  * Bytes | Description 
  * ------+-------------------------------
  *     . | Unformatted data
@@ -195,12 +208,7 @@ export function normalizeArr(arr: Uint8Array | lib.WordArray, type: ArrType): Ui
  *    16 | Data 3
  *     4 | Size of data 2 (n)
  *     8 | Data 1
- *
- * @param format File format to use for assembly
- * @param formattedData Array of data arrays according to format
- * @param additionalData Unformatted data
- * @param reverse Reverse assembling direction, e.g., for polyglot files https://en.wikipedia.org/wiki/Polyglot_(computing)
- * @return Concatenated Uint8Array
+ * ```
  */
 export function assemble<T extends FileFormat>(
     format: T,
@@ -232,10 +240,10 @@ export function assemble<T extends FileFormat>(
 }
 
 /**
- * Convert bytes array to the specified type
- * @param bytes Array to be converted
- * @param type Type to which the array should be converted
- * @return The converted array
+ * Converts bytes array to the specified type.
+ * @param bytes Array to be converted.
+ * @param type Type to which the array should be converted.
+ * @returns The converted array.
  */
 export function customizeArr<T extends ArrType>(bytes: Uint8Array, type: T): GetArrType<T> {
     if (!['Uint8Array', 'WordArray'].includes(type)) {
@@ -245,11 +253,12 @@ export function customizeArr<T extends ArrType>(bytes: Uint8Array, type: T): Get
 }
 
 /**
- * Split the data array into its component parts based on the provided file format
- * @param format The file format to use for disassembly
- * @param bytes Data array to disassemble
- * @param reverse Reverse assembling direction, e.g., for polyglot files https://en.wikipedia.org/wiki/Polyglot_(computing)
- * @return The disassembled formatted and additional data
+ * Splits the data array into its component parts based on the provided file format.
+ * @see https://en.wikipedia.org/wiki/Polyglot_(computing)
+ * @param format The file format to use for disassembly.
+ * @param bytes Data array to disassemble.
+ * @param reverse Reverse assembling direction, e.g., for polyglot files.
+ * @returns The disassembled formatted and additional data.
  */
 export function disassemble<T extends FileFormat>(
     format: T,

@@ -1,11 +1,8 @@
-import { memo, ReactNode } from 'react';
+import { memo } from 'react';
 import { SnackbarProvider as NotistackProvider } from 'notistack';
 import { isMobile } from 'utils/device';
 import { getComponentWithVariant } from './utils';
-
-interface IProps {
-    children: ReactNode;
-}
+import { ISnackbarProviderProps } from './interfaces';
 
 const COMPONENTS = {
     default: getComponentWithVariant('info'),
@@ -15,8 +12,13 @@ const COMPONENTS = {
     info: getComponentWithVariant('info'),
 };
 
-// FIXME: It adds goober css-in-js inline styles. Get rid of it.
-const SnackbarProvider = (props: IProps) => (
+// FIXME: It adds goober css-in-js inline styles, get rid of it
+/**
+ * A Notistack provider wrapper.
+ * @param props The properties for the Notistack provider.
+ * @returns Provider for calling custom pop-up windows.
+ */
+export const SnackbarProvider = (props: ISnackbarProviderProps) => (
     <NotistackProvider
         maxSnack={isMobile() ? 1 : 2}
         autoHideDuration={5000}
