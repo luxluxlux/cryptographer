@@ -29,6 +29,12 @@ const HowItWorks = () => (
                 data is ever sent to a server.
             </p>
             <p>
+                During encryption, you can also{' '}
+                <strong>disguise the protected file as a different file type</strong> (for example,
+                making a PDF file look like an image). This adds an extra layer of obfuscation,
+                making the file less noticeable and less attractive to attackers.
+            </p>
+            <p>
                 The encrypted file can then be safely shared via email, social networks, or stored
                 on a disk or removable media. Its contents remain inaccessible until it&apos;s
                 decrypted in the Cryptographer app using the same password.

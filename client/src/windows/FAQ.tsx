@@ -23,14 +23,12 @@ const FAQ = () => (
         />
         <div>
             <h2>Frequently asked questions (FAQ)</h2>
-
             <h3>💰 How much does it cost?</h3>
             <p>
                 It&apos;s <strong>100% free</strong>! There are no hidden fees, no subscriptions,
                 and no payments required. Our goal is to make digital security accessible to
                 everyone without any barriers.
             </p>
-
             <h3>🗝️ Where can I decrypt encrypted files?</h3>
             <p>
                 You can <strong>only decrypt files here, in this web app</strong>. All encryption
@@ -38,7 +36,6 @@ const FAQ = () => (
                 private. We&apos;re working on offline and mobile versions of the app for even more
                 convenience, but now, this web app is the only place where decryption is supported.
             </p>
-
             <h3>🔓 Can I decrypt files here that were encrypted in another app?</h3>
             <p>
                 No. You can only decrypt files that were{' '}
@@ -47,7 +44,6 @@ const FAQ = () => (
                 We do not intend to support third-party encryption formats, as our focus is on
                 maintaining a simple, secure, and consistent experience within this application.
             </p>
-
             <h3>📦 What is the maximum file size?</h3>
             <p>
                 The maximum file size you can encrypt or decrypt is{' '}
@@ -55,7 +51,6 @@ const FAQ = () => (
                 quick and efficient while maintaining security. If your file exceeds this size, you
                 might need to compress or split it into smaller parts.
             </p>
-
             <h3>📁 What file types can I use?</h3>
             <p>
                 You can use <strong>any file format</strong>, whether it&apos;s a document, image,
@@ -63,7 +58,6 @@ const FAQ = () => (
                 <strong>folder uploads are currently not supported</strong>, but we are working on
                 it.
             </p>
-
             <h3>📂 Can I upload multiple files or a whole folder?</h3>
             <p>
                 At this time, we do not support uploading multiple files or entire folders for
@@ -71,8 +65,19 @@ const FAQ = () => (
                 <strong>ZIP archive</strong> and then encrypt that archive. We&apos;re also working
                 on adding native support for multiple file uploads and folders in a future release.
             </p>
-
-            <h3>🚫 I can’t encrypt or decrypt a file. What should I do?</h3>
+            <h3>🎭 Can I disguise an encrypted file as another file type?</h3>
+            <p>
+                Yes. {APPLICATION_NAME} allows you to disguise an encrypted file as a different file
+                type (for example, making a document look like an image). This provides an
+                additional layer of privacy and makes sensitive files less noticeable.
+            </p>
+            <h3>🪄 Is disguising a file reversible? How do I restore it?</h3>
+            <p>
+                Yes. To reveal the disguised encrypted file, simply import it back into
+                {APPLICATION_NAME}. The app automatically detects the hidden encrypted content and
+                prompts you for the correct password to decrypt it.
+            </p>
+            <h3>🚫 I can&apos;t encrypt or decrypt a file. What should I do?</h3>
             <p>
                 If you&apos;re having trouble encrypting or decrypting a file, first, ensure that:
             </p>
@@ -108,7 +113,6 @@ const FAQ = () => (
                 another example file that reproduces the issue (without sensitive data), it would
                 help us resolve the issue faster.
             </p>
-
             <h3>🐞 I found a bug in the code or interface</h3>
             <p>
                 If you&apos;ve encountered a bug in the code or the user interface, we appreciate
@@ -120,7 +124,6 @@ const FAQ = () => (
                 </Link>
                 . We welcome contributions!
             </p>
-
             <h3>🤝 I want to contribute</h3>
             <p>
                 We&apos;re thrilled to have passionate individuals like you join the project!
@@ -133,7 +136,6 @@ const FAQ = () => (
                 or get in touch with the project author through any means that&apos;s convenient for
                 you.
             </p>
-
             <h3>🏢 I represent an organization interested in your product</h3>
             <p>
                 Although Cryptographer is an open-source project, we are open to cooperation,
