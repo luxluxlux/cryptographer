@@ -1,4 +1,4 @@
-import { memo, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
@@ -9,6 +9,10 @@ import { isMobile } from 'utils/device';
 import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 import { Header } from 'components/Page';
 
+/**
+ * The upload page.
+ * @returns Home page for files upload.
+ */
 const Upload = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -56,8 +60,8 @@ const Upload = () => {
             />
             <div className="upload">
                 <p className="upload__description">
-                    Welcome to the <strong>{APPLICATION_NAME}</strong>! The easiest way to protect
-                    your file with a password or disguise it as another file.
+                    Welcome to <strong>{APPLICATION_NAME}</strong>! The easiest way to protect your
+                    file with a password or disguise it as another file.
                 </p>
                 <Link className="upload__about" component="button" onClick={handleAboutClick}>
                     How does it work?
@@ -75,4 +79,4 @@ const Upload = () => {
 
 Upload.displayName = 'Upload';
 
-export default memo(Upload);
+export default Upload;

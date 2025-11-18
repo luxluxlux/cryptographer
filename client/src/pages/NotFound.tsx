@@ -4,6 +4,10 @@ import Button from '@mui/material/Button';
 import { Header } from 'components/Page';
 import { APPLICATION_NAME, STAGE, STAGE_DATA } from 'utils/constants';
 
+/**
+ * 404 error page.
+ * @returns A page with a warning and a button to return to the main page.
+ */
 const NotFound = () => (
     <>
         <Helmet>

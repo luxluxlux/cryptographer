@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useContext, ChangeEvent } from 'react';
+import { useCallback, useState, useContext, ChangeEvent } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useSnackbar } from 'components/Snackbar';
@@ -36,6 +36,10 @@ import { encryptFile, decryptFile } from 'utils/crypto/core';
 import { WindowManagerContext, WINDOW } from 'components/WindowManager';
 import Loading from 'windows/Loading';
 
+/**
+ * Encryption settings page.
+ * @returns The page for setting up password, disguising, etc.
+ */
 const Secure = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -71,7 +75,7 @@ const Secure = () => {
             });
             console.error(error);
         }
-    }, [location, navigate]);
+    }, [location, enqueueSnackbar]);
 
     const handleUploadDisguiseClick = useCallback(async () => {
         try {
@@ -101,12 +105,12 @@ const Secure = () => {
             });
             console.error(error);
         }
-    }, [location, navigate]);
+    }, [location, enqueueSnackbar]);
 
     const handleRemoveDisguiseClick = useCallback(async () => {
         const { disguise: _, ...explicitState } = location.state;
         navigate(STAGE_DATA[STAGE.SECURE].path, { state: explicitState });
-    }, [location, navigate]);
+    }, [location]);
 
     const handlePasswordChanged = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
@@ -118,7 +122,7 @@ const Secure = () => {
 
     const handleClickAgreement = useCallback(() => {
         windowContext.open(WINDOW.LICENSE_AGREEMENT);
-    }, []);
+    }, [windowContext.open]);
 
     const handleCrypt = useCallback(
         async (action: Action) => {
@@ -193,7 +197,7 @@ const Secure = () => {
                 windowContext.close();
             }
         },
-        [location, navigate, password]
+        [location, enqueueSnackbar, windowContext.open, windowContext.close, password]
     );
 
     const handleEncryptClick = useCallback(() => handleCrypt('encrypt'), [handleCrypt]);
@@ -365,4 +369,4 @@ function validateBlob(action: Action, blob: Blob): ValidationResult {
 
 Secure.displayName = 'Secure';
 
-export default memo(Secure);
+export default Secure;

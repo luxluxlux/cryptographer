@@ -1,6 +1,9 @@
 import { ReactElement, ReactNode } from 'react';
 import { WINDOW } from './constants';
 
+/**
+ * Window manager properties
+ */
 export interface IWindowManagerProps {
     /**
      * The content of the component
@@ -8,13 +11,18 @@ export interface IWindowManagerProps {
     children: ReactNode;
 }
 
+/**
+ * Window manager inner state
+ */
 export interface IWindowManagerState {
     content: ReactElement | null;
     modal: boolean;
     fullscreen: boolean;
 }
 
-
+/**
+ * Options for opening windows using window manager
+ */
 export interface IWindowManagerOptions {
     /**
      * The window will be displayed on top of other elements
@@ -30,6 +38,9 @@ export interface IWindowManagerOptions {
     fullscreen?: boolean;
 }
 
+/**
+ * Context for updating the window manager state
+ */
 export interface IWindowManagerContext {
     open: {
         /**
@@ -50,6 +61,9 @@ export interface IWindowManagerContext {
     close: () => void;
 }
 
+/**
+ * Preset window options
+ */
 export interface IWindow {
     /**
      * URL path

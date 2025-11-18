@@ -24,26 +24,26 @@ import {
 } from './constants';
 
 /**
- * Generate random salt
- * @returns Randomly generated salt
+ * Generates random salt.
+ * @returns Randomly generated salt.
  */
 export function generateSalt(): lib.WordArray {
     return lib.WordArray.random(SALT_SIZE);
 }
 
 /**
- * Generate random initialization vector (IV)
- * @returns Randomly generated initialization vector (IV)
+ * Generates random initialization vector (IV).
+ * @returns Randomly generated initialization vector (IV).
  */
 export function generateIV(): lib.WordArray {
     return lib.WordArray.random(IV_SIZE);
 }
 
 /**
- * Derive key from password and salt
- * @param password Password to be derived
- * @param salt Salt to be used
- * @returns Derived key
+ * Derives key from password and salt.
+ * @param password Password to be derived.
+ * @param salt Salt to be used.
+ * @returns Derived key.
  */
 export function getKey(password: string, salt: lib.WordArray): lib.WordArray {
     return PBKDF2(password, salt, {
@@ -53,11 +53,11 @@ export function getKey(password: string, salt: lib.WordArray): lib.WordArray {
 }
 
 /**
- * Calculate HMAC of the encrypted data
- * @param data Encrypted data
- * @param iv Initialization vector (IV)
- * @param key Hashed key
- * @returns HMAC of the encrypted data
+ * Calculates HMAC of the encrypted data.
+ * @param data Encrypted data.
+ * @param iv Initialization vector (IV).
+ * @param key Hashed key.
+ * @returns HMAC of the encrypted data.
  */
 export function calcHMAC(data: lib.CipherParams, iv: lib.WordArray, key: lib.WordArray): lib.WordArray {
     // The chosen method is based on recommended parameters (https://www.keylength.com/)
@@ -67,11 +67,12 @@ export function calcHMAC(data: lib.CipherParams, iv: lib.WordArray, key: lib.Wor
 }
 
 /**
- * Build the body of an encrypted file
- * @param name The name of the file to be encrypted
- * @param extension The extension of the file to be encrypted
- * @param data The data to be encrypted
- * @return The assembled body of the encrypted file
+ * Builds the body of an encrypted file.
+ * @param options The options for building the body.
+ * @param options.name The name of the file to be encrypted.
+ * @param options.extension The extension of the file to be encrypted.
+ * @param options.data The data to be encrypted.
+ * @returns The assembled body of the encrypted file.
  */
 export function buildBody({
     name,
@@ -92,13 +93,14 @@ export function buildBody({
 }
 
 /**
- * Build file by encrypted data
- * @param salt Salt used during encryption
- * @param hmac HMAC of the encrypted data
- * @param iv Initialization vector
- * @param cipher Cipher parameters containing the ciphertext
- * @param disguise Disguise data
- * @returns Concatenated Uint8Array representing the encrypted file
+ * Builds file by encrypted data.
+ * @param options The options for building the file.
+ * @param options.salt Salt used during encryption.
+ * @param options.hmac HMAC of the encrypted data.
+ * @param options.iv Initialization vector.
+ * @param options.cipher Cipher parameters containing the ciphertext.
+ * @param options.disguise Disguise data.
+ * @returns Concatenated Uint8Array representing the encrypted file.
  */
 export function buildFile({
     salt,
@@ -127,11 +129,11 @@ export function buildFile({
 }
 
 /**
- * Check if the decrypted data matches the original data
- * @param origin The original data to compare with
- * @param encrypted The encrypted data to decrypt and compare
- * @param password The password used for decryption
- * @returns A promise that resolves to true if the decrypted data matches the original data, false otherwise
+ * Checks if the decrypted data matches the original data.
+ * @param source The original data to compare with.
+ * @param encrypted The encrypted data to decrypt and compare.
+ * @param password The password used for decryption.
+ * @returns A promise that resolves to true if the decrypted data matches the original data, false otherwise.
  */
 export async function checkBack(source: Uint8Array, encrypted: Uint8Array, password: string): Promise<boolean> {
     const decrypted = (await decryptData(encrypted, password)).data;
@@ -139,11 +141,11 @@ export async function checkBack(source: Uint8Array, encrypted: Uint8Array, passw
 }
 
 /**
- * Encrypt a file using a password
- * @param file File to be encrypted
- * @param password Password used for encryption
- * @param disguiseFile File as a disguise
- * @returns A promise that resolves to the encrypted file as a Uint8Array
+ * Encrypts a file using a password.
+ * @param sourceFile File to be encrypted.
+ * @param password Password used for encryption.
+ * @param disguiseFile File as a disguise.
+ * @returns A promise that resolves to the encrypted file as a Uint8Array.
  */
 export async function encryptFile(sourceFile: File, password: string, disguiseFile?: File): Promise<Uint8Array> {
     const sourceFileValidation = validateFile(sourceFile);
@@ -182,9 +184,9 @@ export async function encryptFile(sourceFile: File, password: string, disguiseFi
 }
 
 /**
- * Validates the decrypted data to ensure it meets the required criteria
- * @param data The decrypted data to be validated
- * @return True if the data is valid, or an error message if it's not
+ * Validates the decrypted data to ensure it meets the required criteria.
+ * @param data The decrypted data to be validated.
+ * @returns True if the data is valid, or an error message if it's not.
  */
 export function validateDecryptedData(data: Uint8Array): ValidationResult {
     if (data.length === 0) {
@@ -199,10 +201,10 @@ export function validateDecryptedData(data: Uint8Array): ValidationResult {
 }
 
 /**
- * Parse file data with password
- * @param buffer File data
- * @param password Password used for encryption
- * @returns A promise that resolves to an object containing the parsed file
+ * Parses file data with password.
+ * @param data File data.
+ * @param password Password used for encryption.
+ * @returns A promise that resolves to an object containing the parsed file.
  */
 export async function parseFile(data: Uint8Array, password: string): Promise<{
     hmac: lib.WordArray;
@@ -228,9 +230,9 @@ export async function parseFile(data: Uint8Array, password: string): Promise<{
 }
 
 /**
- * Parse the body of an encrypted file into its constituent parts
- * @param body The body of the encrypted file to parse
- * @return A promise that resolves to an object containing the parsed body
+ * Parses the body of an encrypted file into its constituent parts.
+ * @param body The body of the encrypted file to parse.
+ * @returns A promise that resolves to an object containing the parsed body.
  */
 export async function parseBody(body: Uint8Array): Promise<{
     name?: string;
@@ -246,10 +248,10 @@ export async function parseBody(body: Uint8Array): Promise<{
 }
 
 /**
- * Decrypt a file data with password
- * @param buffer Processed file data
- * @param password Password
- * @returns A promise that resolves to the decrypted file data as a Uint8Array
+ * Decrypts a file data with password.
+ * @param data Processed file data.
+ * @param password Password.
+ * @returns A promise that resolves to the decrypted file data as a Uint8Array.
  */
 export async function decryptData(data: Uint8Array, password: string): Promise<{
     name?: string;
@@ -270,10 +272,10 @@ export async function decryptData(data: Uint8Array, password: string): Promise<{
 }
 
 /**
- * Decrypt a file with password
- * @param file Processed file
- * @param password Password
- * @returns A promise that resolves to the decrypted file as a Uint8Array
+ * Decrypts a file with password.
+ * @param file Processed file.
+ * @param password Password.
+ * @returns A promise that resolves to the decrypted file as a Uint8Array.
  */
 export async function decryptFile(file: File, password: string): Promise<{
     name?: string;

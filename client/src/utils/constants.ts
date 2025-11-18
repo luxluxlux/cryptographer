@@ -2,62 +2,98 @@ import { WINDOW_DATA } from 'components/WindowManager';
 import { parseVersion } from './common';
 import { IStep, Version } from './interfaces';
 
-// Name of the application
+/**
+ * Name of the application.
+ */
 export const APPLICATION_NAME = 'Cryptographer';
 
-// URL of the application
 // TODO: Get it from the app params
+/**
+ * URL of the application.
+ */
 export const APPLICATION_URL = 'https://cryptographer.com/';
 
-// Version size in bytes
-export const VERSION_SIZE = 3;
-
-// Web application version ('major.minor.revision')
-// Warning! No letters! Only numbers! No greater than 1 byte (0-255) for each number
-// Don't forget to sync with the package.json
-export const VERSION: Version = '0.0.1';
-
-// Version parsed into the tuple ([major, minor, revision])
-export const PARSED_VERSION = parseVersion(VERSION, VERSION_SIZE);
-
-// Project URL on GitHub
+/**
+ * Project URL on GitHub.
+ */
 export const GITHUB_URL = 'https://github.com/luxluxlux/cryptographer';
 
-// Minimum password length
+/**
+ * Version size in bytes.
+ */
+export const VERSION_SIZE = 3;
+
+/**
+ * Web application version ('major.minor.revision').
+ * @remarks No letters! Only numbers! No greater than 1 byte (0-255) for each number. Don't forget
+ * to sync it with the package.json.
+ */
+export const VERSION: Version = '1.0.0';
+
+/**
+ * Version parsed into the tuple ([major, minor, revision]).
+ */
+export const PARSED_VERSION = parseVersion(VERSION, VERSION_SIZE);
+
+/**
+ * Minimum password length.
+ */
 export const MIN_PASSWORD_LENGTH = 8;
 
-// Maximum password length
+/**
+ * Maximum password length.
+ */
 export const MAX_PASSWORD_LENGTH = 127;
 
-// Maximum total size of uploaded files
+/**
+ * Maximum total size of uploaded files.
+ */
 export const MAX_FILES_SIZE_MB = 10;
 
-// Size of reserved space for file name size in bytes
+/**
+ * Size of reserved space for file name size in bytes.
+ */
 export const FILE_NAME_SIZE_SIZE_BYTES = 2;
 
-// Maximum file name length (UTF-8 - 4 bytes per character)
+/**
+ * Maximum file name length.
+ * @remarks UTF-8 - 4 bytes per character.
+ */
 export const FILE_NAME_MAX_LENGTH = 2 ** (8 * FILE_NAME_SIZE_SIZE_BYTES) / 4 - 1;
 
-// Size of reserved space for file extension size in bytes
+/**
+ * Size of reserved space for file extension size in bytes
+ */
 export const FILE_EXTENSION_SIZE_SIZE_BYTES = 2;
 
-// Maximum file extension length (UTF-8 - 4 bytes per character)
+/**
+ * Maximum file extension length.
+ * @remarks UTF-8 - 4 bytes per character.
+ */
 export const FILE_EXTENSION_MAX_LENGTH = 2 ** (8 * FILE_EXTENSION_SIZE_SIZE_BYTES) / 4 - 1;
 
-// Maximum length of the file name inside the alert
+/**
+ * Maximum length of the file name inside the alert.
+ */
 export const MAX_ALERT_FILENAME_LENGTH = 30;
 
-// Encrypted file extension
+/**
+ * Encrypted file extension.
+ */
 export const FILE_EXTENSION = 'crg';
 
-// Handling stages
+/**
+ * Data processing stages.
+ */
 export enum STAGE {
     UPLOAD = 'upload',
     SECURE = 'secure',
     DOWNLOAD = 'download',
 }
 
-// Data for stage render
+/**
+ * Data for stage render.
+ */
 export const STAGE_DATA: Record<STAGE, IStep> = {
     [STAGE.UPLOAD]: {
         path: '/',
@@ -73,7 +109,9 @@ export const STAGE_DATA: Record<STAGE, IStep> = {
     },
 };
 
-// Artificial rendering paths for react-snap 
+/**
+ * Artificial rendering paths for react-snap environment.
+ */
 export const REACT_SNAP_PATHS = [
     '/mobile',
     ...Object.values(WINDOW_DATA).flatMap(({ path }) => [`/${path}`, `/mobile/${path}`]),

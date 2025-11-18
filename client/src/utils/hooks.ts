@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
+// TODO: Try to get rid of the location in the dependencies
 /**
- * Updates the search parameters of the current URL
- * TODO: Try to get rid of the location in the dependencies
- * @return The functions to set and remove the search parameters
+ * Updates the search parameters of the current URL.
+ * @returns The functions to set and remove the search parameters.
  */
 export function useUpdateSearchParams() {
     const location = useLocation();

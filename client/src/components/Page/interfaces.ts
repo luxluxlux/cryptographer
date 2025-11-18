@@ -1,47 +1,53 @@
 import { ReactNode } from 'react';
 
+/**
+ * Page component properties.
+ */
 export interface IPageProps {
     /**
-     * Page logo
+     * Page logo.
      */
     logo: ReactNode;
     /**
-     * Page menu
+     * Page menu.
      */
     menu: ReactNode;
     /**
-     * Page footer
+     * Page footer.
      */
     footer: ReactNode;
     /**
-     * Page content
+     * Page content.
      */
     content: ReactNode;
 }
 
+/**
+ * Page header properties.
+ */
 export interface IHeaderProps {
     /**
-     * Relative path to the page
+     * Relative path to the page.
      */
     path?: string;
     /**
-     * Meta title
+     * Meta title.
      */
     metaTitle: string;
     /**
-     * Meta description
+     * Meta description.
      */
     metaDescription: string;
     /**
-     * Meta keywords
+     * Meta keywords.
      */
     metaKeywords?: string;
     /**
-     * Open Graph title
+     * Open Graph title.
      */
     ogTitle?: string;
     /**
-     * Open Graph description
+     * Open Graph description.
      */
     ogDescription?: string;
 }

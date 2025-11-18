@@ -4,6 +4,10 @@ import { APPLICATION_NAME, GITHUB_URL, MAX_FILES_SIZE_MB } from 'utils/constants
 import { WINDOW_DATA, WINDOW } from 'components/WindowManager';
 import { Header } from 'components/Page';
 
+/**
+ * Frequently asked questions (FAQ).
+ * @returns Window content.
+ */
 const FAQ = () => (
     <>
         <Helmet>

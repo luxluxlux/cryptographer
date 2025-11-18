@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Link as RouterLink, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import MuiLink from '@mui/material/Link';
@@ -11,6 +11,10 @@ import { download, ellipse } from 'utils/common';
 
 const SHARED_TEXT = `I protect my files with a password using ${APPLICATION_NAME}. Protect your files too!`;
 
+/**
+ * File download and share page.
+ * @returns File processing summary page.
+ */
 const Download = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -123,4 +127,4 @@ const Download = () => {
 
 Download.displayName = 'Download';
 
-export default memo(Download);
+export default Download;

@@ -5,6 +5,9 @@ const breakpoints = unstable_createBreakpoints({});
 
 // TODO: Is it possible to use it as CSS?
 // https://mui.com/material-ui/integrations/interoperability/#global-css
+/**
+ * Current theme of the app.
+ */
 export default createTheme({
     palette: {
         mode: 'dark',

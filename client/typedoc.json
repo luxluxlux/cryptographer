@@ -1,0 +1,18 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "name": "Cryptographer Client API",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeNotDocumented": true,
+  "exclude": [
+    "src/react-app-env.d.ts",
+    "src/reportWebVitals.ts",
+    "src/setupTests.ts"
+  ],
+  "theme": "default",
+  "readme": "README.md"
+}

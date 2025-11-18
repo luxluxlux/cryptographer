@@ -6,11 +6,22 @@ import { ellipse, validateFiles } from 'utils/common';
 import { WindowManagerContext } from 'components/WindowManager';
 import DragNDrop from 'windows/DragNDrop';
 
-interface IProps {
+/**
+ * The properties for the drag and drop area.
+ */
+export interface IProps {
+    /**
+     * The wrapped content.
+     */
     children: ReactNode;
 }
 
-const DropArea = (props: IProps) => {
+/**
+ * Drag and drop area for file upload.
+ * @param props The properties for the drag and drop area.
+ * @returns Zone for dragging files.
+ */
+export const DropArea = (props: IProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -35,9 +46,11 @@ const DropArea = (props: IProps) => {
                 });
                 return;
             }
-            navigate(STAGE_DATA[STAGE.SECURE].path, { state: { ...location.state, file: files[0] } });
+            navigate(STAGE_DATA[STAGE.SECURE].path, {
+                state: { ...location.state, file: files[0] },
+            });
         },
-        [location, navigate, windowContext.open]
+        [location, enqueueSnackbar]
     );
 
     const handleDragEnter = useCallback(
